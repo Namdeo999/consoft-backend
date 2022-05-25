@@ -1,6 +1,7 @@
 import express from 'express'
 import { PORT, DATABASE_URL} from './config/index.js';
-import connectDB from "./db/connectDB.js";
+// import connectDB from "./db/connectDB.js";
+import connectDB from "./config/connectDB.js";
 import errorHandler from './middlewares/errorHandler.js';
 import routes from './routes/index.js';
 import cors from 'cors'
@@ -17,9 +18,7 @@ connectDB(DATABASE_URL);
 app.use(express.json())
 
 // Load Routes
-// app.use("/api/user", userRoutes)
 app.use('/api', routes);
-
 
 app.use(errorHandler);
 
