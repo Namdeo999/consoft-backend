@@ -9,19 +9,12 @@ import JwtService from '../../services/JwtService.js'
 
 const registerController = {
     async register(req, res, next){
-        /// CHECKLIST
-        // [ ] validate the request
-        // [ ] authorise the request
-        // [ ] check if user is in the database already
-        // [ ] prepare model
-        // [ ] store in database
-        // [ ] generate jwt token
-        // [ ] send response
-
         //velidation
         const registerSchema = Joi.object({
-            name: Joi.string().min(5).max(15).required(),
+            name: Joi.string().min(5).max(15).required(), 
             email: Joi.string().email().required(),
+            mobile: Joi.number().min(10).required(),
+            role: Joi.string().required(),
             password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
             //repeat_password: Joi.ref('password')
         });
@@ -35,9 +28,10 @@ const registerController = {
         
         // check if user is in the database already
         try {
-            const exist = await User.exists({email:req.body.email});
+            const exist = await User.exists({mobile:req.body.mobile});
             if (exist) {
-                return next(CustomErrorHandler.alreadyExist('This email is already taken.'));
+                // return next(CustomErrorHandler.alreadyExist('This email is already taken.'));
+                return next(CustomErrorHandler.alreadyExist('This mobile is already taken.'));
             }
 
         } catch (err) {
@@ -45,7 +39,7 @@ const registerController = {
             return next(err);
         }
 
-        const { name, email, password } = req.body;
+        const { name, email, mobile,password, role } = req.body;
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -55,6 +49,8 @@ const registerController = {
         const user = new User({
             name,
             email,
+            mobile,
+            role,
             password: hashedPassword
         });
         let access_token;
@@ -64,7 +60,9 @@ const registerController = {
             console.log(result);
     
             // Token
+            // access_token = JwtService.sign({ _id: result._id });
             access_token = JwtService.sign({ _id: result._id, role: result.role });
+
             // refresh_token = JwtService.sign({ _id: result._id, role: result.role }, '1y', REFRESH_SECRET);
             // // database whitelist
             // await RefreshToken.create({ token: refresh_token });
