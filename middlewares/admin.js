@@ -1,6 +1,6 @@
-import { User } from "../models";
-import CustomErrorHandler from "../services/CustomErrorHandler";
-import Constants from "../constants";
+import { User } from "../models/index.js";
+import CustomErrorHandler from "../services/CustomErrorHandler.js";
+import Constants from "../constants/index.js";
 
 const admin = async (req, res, next) =>{
     try {
