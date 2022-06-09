@@ -14,6 +14,7 @@ const ItemController = {
         }
         return res.json(documents);
     },
+
     async store(req, res, next){
         //validation
         const itemSchema = Joi.object({
@@ -47,7 +48,51 @@ const ItemController = {
         } catch (err) {
             return next(err);
         }
-    }
+    },
+
+    async edit(req, res, next){
+        let document;
+        try {
+            document = await Item.findOne({ _id:req.params.id }).select('-createdAt -updatedAt -__v');
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+
+        return res.json(document);
+    },
+
+    async update(req, res, next){
+        const itemSchema = Joi.object({
+            unit_id: Joi.string().required(),
+            item_name: Joi.string().required(),
+        });
+
+        const {error} = itemSchema.validate(req.body);
+        if(error){
+            return next(error);
+        }
+
+        const {unit_id, item_name} = req.body;
+        let document ;
+        try {
+            document = await Item.findOneAndUpdate(
+                {_id: req.params.id},
+                {unit_id, item_name,},
+                {new : true}
+            ).select('-createdAt -updatedAt -__v');
+        } catch (err) {
+            return next(err);
+        }
+        res.status(201).json(document);
+    },
+
+    async destroy(req, res, next) {
+        const document = await Item.findOneAndRemove({ _id: req.params.id });
+        if (!document) {
+            return next(new Error('Nothing to delete'));
+        }
+        return res.json(document);
+    },
 
 }
 

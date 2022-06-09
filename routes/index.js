@@ -3,7 +3,8 @@ const router = express.Router();
 
 import { 
     loginController, refreshController, registerController, userController, CompanyController, 
-    ProjectController, ProjectCategoryController, ProjectTypeController, UnitController, ItemController, ManageStockController, UserRoleController
+    ProjectController, ProjectCategoryController, ProjectTypeController, UnitController, ItemController, 
+    ManageStockController, UserRoleController
 } from '../controllers/index.js';
 import auth from '../middlewares/auth.js';
 import admin from '../middlewares/admin.js';
@@ -36,9 +37,15 @@ router.post('/project-type',  ProjectTypeController.store);
 //stock
 router.get('/unit', UnitController.index);
 router.post('/unit', UnitController.store);
+router.get('/unit/:id', UnitController.edit);
+router.put('/unit/:id', UnitController.update);
+router.delete('/unit/:id', UnitController.destroy);
 
 router.get('/item', ItemController.index);
 router.post('/item', ItemController.store);
+router.get('/item/:id', ItemController.edit);
+router.put('/item/:id', ItemController.update);
+router.delete('/item/:id', ItemController.destroy);
 
 router.post('/stock-entry', ManageStockController.store);
 
@@ -48,7 +55,10 @@ router.post('/stock-entry', ManageStockController.store);
 // router.get('/products/:id', productController.show);
 
 //project routes
+router.get('/projects',  ProjectController.index);
 router.post('/projects',  ProjectController.store);
-router.get('/projects',  ProjectController.show);
+router.get('/projects/:id', ProjectController.edit);
+router.put('/projects/:id', ProjectController.update);
+router.delete('/projects/:id', ProjectController.destroy);
 
 export default router;
