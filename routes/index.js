@@ -55,10 +55,12 @@ router.post('/stock-entry', ManageStockController.store);
 // router.get('/products/:id', productController.show);
 
 //project routes
+
 router.get('/projects',  ProjectController.index);
 router.post('/projects',  ProjectController.store);
 router.get('/projects/:id', ProjectController.edit);
 router.put('/projects/:id', ProjectController.update);
 router.delete('/projects/:id', ProjectController.destroy);
+
 
 export default router;
