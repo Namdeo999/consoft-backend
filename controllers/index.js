@@ -21,4 +21,7 @@ export { default as UnitController } from './stock/UnitController.js';
 export { default as ItemController } from './stock/ItemController.js';
 export { default as ManageStockController } from './stock/ManageStockController.js';
 
+//checklist
+export { default as ChecklistController } from './checklist/ChecklistController.js'
+
 
