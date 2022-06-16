@@ -4,7 +4,7 @@ const router = express.Router();
 import { 
     loginController, refreshController, registerController, userController, CompanyController, 
     ProjectController, ProjectCategoryController, ProjectTypeController, UnitController, ItemController, 
-    ManageStockController, UserRoleController
+    ManageStockController, UserRoleController,ChecklistController
 } from '../controllers/index.js';
 
 import auth from '../middlewares/auth.js';
@@ -70,5 +70,12 @@ router.get('/projects/:id', ProjectController.edit);
 router.put('/projects/:id', ProjectController.update);
 router.delete('/projects/:id', ProjectController.destroy);
 
+//Checklist items
+
+router.get('/checklists',ChecklistController.index);
+router.post('/checklists',ChecklistController.store);
+router.get('/checklists/:id',ChecklistController.edit);
+router.put('/checklists/:id', ChecklistController.update);
+router.delete('/checklists/:id', ChecklistController.destroy);
 
 export default router;

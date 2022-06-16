@@ -5,6 +5,7 @@ export { default as Company } from './Company.js';
 export { default as Project } from './Project.js';
 export { default as ProjectCategory } from './ProjectCategory.js';
 export { default as ProjectType } from './ProjectType.js';
+export {default as Checklist} from './Checklist.js';
 
 //stock
 export { default as Unit } from './Unit.js';
