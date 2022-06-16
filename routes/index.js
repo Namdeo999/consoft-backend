@@ -6,6 +6,7 @@ import {
     ProjectController, ProjectCategoryController, ProjectTypeController, UnitController, ItemController, 
     ManageStockController, UserRoleController
 } from '../controllers/index.js';
+
 import auth from '../middlewares/auth.js';
 import admin from '../middlewares/admin.js';
 
@@ -47,7 +48,10 @@ router.get('/item/:id', ItemController.edit);
 router.put('/item/:id', ItemController.update);
 router.delete('/item/:id', ItemController.destroy);
 
+router.get('/stock-entry', ManageStockController.index);
 router.post('/stock-entry', ManageStockController.store);
+router.get('/stock-entry/:id', ManageStockController.edit);
+router.put('/stock-entry/:id', ManageStockController.update);
 
 // router.put('/products/:id', [auth, admin], productController.update);
 // router.delete('/products/:id', [auth, admin], productController.destroy);
@@ -55,7 +59,7 @@ router.post('/stock-entry', ManageStockController.store);
 // router.get('/products/:id', productController.show);
 
 
-//project rouSET
+//project rouSET ok
 
 
 router.get('/projects',  ProjectController.index);
