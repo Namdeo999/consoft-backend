@@ -55,7 +55,9 @@ router.post('/stock-entry', ManageStockController.store);
 // router.get('/products/:id', productController.show);
 
 
+
 //project rouSETDSFDSFS
+
 
 
 router.get('/projects',  ProjectController.index);
