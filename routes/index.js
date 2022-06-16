@@ -59,7 +59,9 @@ router.put('/stock-entry/:id', ManageStockController.update);
 // router.get('/products/:id', productController.show);
 
 
-//project rouSET ok
+
+//project rouSETDSFDSFS
+
 
 
 router.get('/projects',  ProjectController.index);
