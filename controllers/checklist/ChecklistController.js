@@ -17,7 +17,7 @@ const ChecklistController = {
     },
 
     async store(req, res, next) {
-        
+
         const checklistSchema = Joi.object({
             title: Joi.string().required(),
             check_items: Joi.required(),
