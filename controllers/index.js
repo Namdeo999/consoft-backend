@@ -16,12 +16,11 @@ export { default as ProjectTypeController } from './ProjectTypeController.js';
 export { default as TeamController } from './TeamController.js';
 
 //stock controller 
-
 export { default as UnitController } from './stock/UnitController.js';
 export { default as ItemController } from './stock/ItemController.js';
 export { default as ManageStockController } from './stock/ManageStockController.js';
 
 //checklist
-export { default as ChecklistController } from './checklist/ChecklistController.js'
+export { default as ChecklistController } from './checklist/ChecklistController.js';
 
 

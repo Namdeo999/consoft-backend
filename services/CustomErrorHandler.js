@@ -26,5 +26,4 @@ class CustomErrorHandler extends Error{
 }
 
 
-
 export default CustomErrorHandler;

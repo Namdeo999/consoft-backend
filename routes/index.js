@@ -13,6 +13,7 @@ import admin from '../middlewares/admin.js';
 // router.get('/me', userController.me);
 router.post('/login', loginController.login);
 
+router.post('/company-login', CompanyController.companyLogin);
 router.get('/company',  CompanyController.index);
 router.post('/company',  CompanyController.store);
 
@@ -33,7 +34,10 @@ router.put('/project-category/:id', ProjectCategoryController.update);
 router.delete('/project-category/:id', ProjectCategoryController.destroy);
 
 router.get('/project-type', ProjectTypeController.index);
-router.post('/project-type',  ProjectTypeController.store);
+router.post('/project-type', ProjectTypeController.store);
+router.get('/project-type/:id', ProjectTypeController.edit);
+router.put('/project-type/:id', ProjectTypeController.update);
+router.delete('/project-type/:id', ProjectTypeController.destroy);
 
 //stock
 router.get('/unit', UnitController.index);
