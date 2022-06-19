@@ -1,9 +1,11 @@
 import Joi from "joi";
-import { Company } from "../../models/index.js";
+import { Company, RefreshToken, ProductKey } from "../../models/index.js";
 import bcrypt from 'bcrypt';
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
-import GenerateRandomString from "../../services/GenerateRandomString.js";
+import CustomFunction from "../../services/CustomFunction.js";
+import JwtService from "../../services/JwtService.js";
+import { REFRESH_SECRET } from "../../config/index.js";
 
 import transporter from "../../config/emailConfig.js";
 import { EMAIL_FROM } from "../../config/index.js";
@@ -27,12 +29,18 @@ const CompanyController = {
                 return next(CustomErrorHandler.wrongCredentials())
             }
 
-            const match = await bcrypt.compare(password, company.password);
+            const match = await bcrypt.compare(req.body.password,company.password);
             if (!match) {
                 return next(CustomErrorHandler.wrongCredentials());
             }
-            console.log(match);
-            return false;
+
+            const access_token = JwtService.sign({ _id: company._id, role: company.role });
+            const refresh_token = JwtService.sign({ _id: company._id, role: company.role }, '1y', REFRESH_SECRET);
+
+            await RefreshToken.create({ token: refresh_token });
+            // res.json({ access_token, id: user._id, role: user.role });
+
+            res.json({ access_token, refresh_token, id: company._id, role: company.role });
             
         } catch (err) {
             return next(err);
@@ -55,7 +63,7 @@ const CompanyController = {
             pan:Joi.string().required(),
             mobile:Joi.number().required(),
             email:Joi.string().required(),
-            password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
+            // password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
         });
 
         const {error} = companySchema.validate(req.body);
@@ -80,19 +88,17 @@ const CompanyController = {
         } catch (err) {
             return next(err);
         }
+        // const pass12 = GenerateRandomString.stringPassword(6);
+        const password = CustomFunction.stringPassword(6);
         
-        // const pass = GenerateRandomString.stringPassword(6);
-        // const salt = await bcrypt.genSalt(10)
-        // const hashedPassword = await bcrypt.hash(pass.message, salt);
-
-        // const hashedPassword = await bcrypt.hash(pass.message, 10);
-        
-        
+        // const password = stringPassword(8);
         // Hash password
         // const hashedPassword = await bcrypt.hash(data, 10);
         
-        const {company_name, pan, mobile, email, password} = req.body;
+        const {company_name, pan, mobile, email} = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
+        // const hashedPassword = await bcrypt.hash(pass.message, 10);
+
         const company = new Company({
             company_name,
             pan,
@@ -103,14 +109,29 @@ const CompanyController = {
 
         try {
 
+            const result = await company.save();
+            
+            if (result) {
+                
+                const product_key = new ProductKey({
+                    company_id:result._id,
+                    product_key:password,
+                });
+
+                try {
+                    const product_key_data = await product_key.save();
+                } catch (err) {
+                    return next(err);
+                }
+
+            }
+
             let info = transporter.sendMail({
                 from: EMAIL_FROM, // sender address
                 to: email, // list of receivers
-                subject: "Login Password", // Subject line
-                text: req.body.password, // plain text body
+                subject: "Login Password and Product Key", // Subject line
+                text: result._id + " / " + password, // plain text body
             });
-            
-            const result = await company.save();
 
             res.send(CustomSuccessHandler.success('Company created successfully'));
         } catch (err) {
@@ -119,5 +140,17 @@ const CompanyController = {
     }
     
 }
+
+// function stringPassword(len){
+//     var gen_pass = "";
+//     var charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+//     for( var i=0; i < len; i++ ){
+//         gen_pass +=charset.charAt(Math.floor(Math.random()*charset.length));
+//     }
+//     return gen_pass;
+// }
+
+
 
 export default CompanyController;

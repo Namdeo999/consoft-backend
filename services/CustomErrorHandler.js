@@ -23,6 +23,15 @@ class CustomErrorHandler extends Error{
     static serverError(message = 'Internal server error') {
         return new CustomErrorHandler(500, message);
     }
+
+    static inValid(message) {
+        return new CustomErrorHandler(406, message);
+    }
+
+    static notExist(message){
+        return new CustomErrorHandler(401, message)
+    }
+
 }
 
 

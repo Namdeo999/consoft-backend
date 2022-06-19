@@ -7,6 +7,9 @@ export { default as UserRoleController } from './UserRoleController.js';
 //mail
 // export { default as MailControllher } from './MailController.js';
 
+//product 
+export { default as ProductKeyController } from '../controllers/auth/ProductKeyController.js';
+
 //company
 export { default as CompanyController } from '../controllers/company/CompanyController.js';
 
@@ -22,6 +25,6 @@ export { default as ManageStockController } from './stock/ManageStockController.
 
 //checklist
 export { default as ChecklistController } from './checklist/ChecklistController.js'
-export {default as AssignWorkController} from './AssignWorkController.js';
+export { default as AssignWorkController} from './AssignWorkController.js';
 
 

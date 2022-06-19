@@ -4,7 +4,6 @@ import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 
 
-
 const ChecklistController = {
     async index(req, res, next) {
         let documents;
@@ -95,7 +94,6 @@ const ChecklistController = {
         }
         return res.json(document);
     },
-
 
 
 }

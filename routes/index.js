@@ -2,7 +2,7 @@ import express from "express";
 const router = express.Router();
 
 import {  
-    loginController, refreshController, registerController, userController, CompanyController, 
+    loginController, refreshController, registerController, userController, CompanyController, ProductKeyController,
     ProjectController, ProjectCategoryController, ProjectTypeController, UnitController, ItemController, 
     ManageStockController, UserRoleController,ChecklistController,AssignWorkController
 
@@ -17,6 +17,8 @@ router.post('/login', loginController.login);
 router.post('/company-login', CompanyController.companyLogin);
 router.get('/company',  CompanyController.index);
 router.post('/company',  CompanyController.store);
+
+router.post('/verify-product-key',  ProductKeyController.verifyProductKey);
 
 router.post('/register', registerController.register);
 router.get('/users', userController.index);
@@ -86,12 +88,11 @@ router.delete('/checklists/:id', ChecklistController.destroy);
 
 //AssignWork
 
-router.get('/assignWorks',AssignWorkController.index);
-router.post('/assignWorks',AssignWorkController.store);
-router.get('/assignWorks/:id',AssignWorkController.edit);
-router.put('/assignWorks/:id',AssignWorkController.update);
-router.delete('/assignWorks/delete/:id',AssignWorkController.destroy);
-
+router.get('/assign-works', AssignWorkController.index);
+router.post('/assign-works', AssignWorkController.store);
+router.get('/assign-works/:id', AssignWorkController.edit);
+router.put('/assign-works/:id', AssignWorkController.update);
+router.delete('/assign-works/:id', AssignWorkController.destroy);
 
 //SubworkAssign 
 
