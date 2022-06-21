@@ -2,9 +2,20 @@ import express from "express";
 const router = express.Router();
 
 import {  
-    loginController, refreshController, registerController, userController, CompanyController, ProductKeyController,
-    ProjectController, ProjectCategoryController, ProjectTypeController, UnitController, ItemController, 
-    ManageStockController, UserRoleController,ChecklistController,AssignWorkController
+    //auth
+    registerController, loginController, refreshController, userController, 
+
+    //company
+    CompanyController, ProductKeyController, UserRoleController,
+
+    //project
+    ProjectCategoryController, ProjectTypeController, ProjectController, AssignWorkController,
+
+    //stock
+    UnitController, ItemController, ManageStockController,
+
+    //checklist
+    ChecklistOptionTypeController, ChecklistOptionController, ChecklistController
 
 } from '../controllers/index.js';
 
@@ -69,8 +80,6 @@ router.put('/stock-entry/:id', ManageStockController.update);
 
 //project rouSETDSFDSFS
 
-
-
 router.get('/projects',  ProjectController.index);
 router.post('/projects',  ProjectController.store);
 router.get('/projects/:id', ProjectController.edit);
@@ -79,12 +88,23 @@ router.delete('/projects/:id', ProjectController.destroy);
 
 //Checklist items
 
+router.get('/checklist-option-type', ChecklistOptionTypeController.index);
+router.post('/checklist-option-type', ChecklistOptionTypeController.store);
+router.get('/checklist-option-type/:id', ChecklistOptionTypeController.edit);
+router.put('/checklist-option-type/:id', ChecklistOptionTypeController.update);
+router.delete('/checklist-option-type/:id', ChecklistOptionTypeController.destroy);
+
+router.get('/checklist-option', ChecklistOptionController.index);
+router.post('/checklist-option', ChecklistOptionController.store);
+router.get('/checklist-option/:id', ChecklistOptionController.edit);
+router.put('/checklist-option/:id', ChecklistOptionController.update);
+router.delete('/checklist-option/:id', ChecklistOptionController.destroy);
+
 router.get('/checklists',ChecklistController.index);
 router.post('/checklists',ChecklistController.store);
 router.get('/checklists/:id',ChecklistController.edit);
 router.put('/checklists/:id', ChecklistController.update);
 router.delete('/checklists/:id', ChecklistController.destroy);
-
 
 //AssignWork
 

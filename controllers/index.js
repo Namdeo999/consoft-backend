@@ -24,6 +24,8 @@ export { default as ItemController } from './stock/ItemController.js';
 export { default as ManageStockController } from './stock/ManageStockController.js';
 
 //checklist
+export { default as ChecklistOptionTypeController } from './checklist/ChecklistOptionTypeController.js';
+export { default as ChecklistOptionController } from './checklist/ChecklistOptionController.js';
 export { default as ChecklistController } from './checklist/ChecklistController.js'
 export { default as AssignWorkController} from './AssignWorkController.js';
 
