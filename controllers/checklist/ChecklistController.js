@@ -4,7 +4,6 @@ import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 
 
-
 const ChecklistController = {
     async index(req, res, next) {
         let documents;
@@ -22,6 +21,7 @@ const ChecklistController = {
             title: Joi.string().required(),
             check_items: Joi.required(),
             checklist_option_type_id:Joi.required()
+
         });
 
         const { error } = checklistSchema.validate(req.body);
@@ -38,6 +38,7 @@ const ChecklistController = {
         } catch (err) {
             return next(err);
         }
+
 
         const { title, check_items,checklist_option_type_id } = req.body;
         const checklist = new Checklist({
@@ -75,7 +76,7 @@ const ChecklistController = {
             return next(error);
         }
 
-        const {title, check_items} = req.body;
+        const {title, check_items, checklist_option_type_id} = req.body;
         let document ;
         try {
             document = await Checklist.findByIdAndUpdate(
@@ -99,7 +100,6 @@ const ChecklistController = {
         }
         return res.json(document);
     },
-
 
 
 }

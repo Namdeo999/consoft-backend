@@ -5,6 +5,7 @@ const companySchema = mongoose.Schema({
     pan: {type:String, required:true },
     mobile: { type: Number, required: true, unique: true },
     email: { type: String, required: true, unique: true },
+    password: { type: String},
     role: { type: String, default: 'Administrator' },
 })
 

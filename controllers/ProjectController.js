@@ -20,8 +20,10 @@ const ProjectController = {
         const projectSchema = Joi.object({
             project_name: Joi.string().min(5).max(50).required(),
             project_location: Joi.string().required(),
-            plot_area: Joi.number().required(),
+            project_category: Joi.string().required(),
             project_type: Joi.string().required(),
+            project_area: Joi.number().required(),
+            project_measurement: Joi.string().required(),
         });
 
         const {error} = projectSchema.validate(req.body);
@@ -39,12 +41,14 @@ const ProjectController = {
             return next(err);
         }
 
-        const {project_name, project_location, plot_area, project_type} = req.body;
+        const {project_name, project_location,project_category,project_type,project_area,project_measurement} = req.body;
         const project = new Project({
             project_name:project_name,
             project_location:project_location,
-            plot_area:plot_area,
+            project_category:project_category,
             project_type:project_type,
+            project_area:project_area,
+            project_measurement:project_measurement,
         }) ;
 
         try {
@@ -71,8 +75,10 @@ const ProjectController = {
         const projectSchema = Joi.object({
             project_name: Joi.string().min(5).max(50).required(),
             project_location: Joi.string().required(),
-            plot_area: Joi.number().required(),
+            project_category: Joi.string().required(),
             project_type: Joi.string().required(),
+            project_area: Joi.number().required(),
+            project_measurement: Joi.string().required(),
         });
 
         const {error} = projectSchema.validate(req.body);
@@ -80,7 +86,7 @@ const ProjectController = {
             return next(error);
         }
 
-        const {project_name, project_location, plot_area, project_type} = req.body;
+        const {project_name, project_location,project_category,project_type,project_area,project_measurement} = req.body;
         let document ;
         try {
             document = await Project.findByIdAndUpdate(
@@ -88,8 +94,10 @@ const ProjectController = {
                 {
                     project_name,
                     project_location,
-                    plot_area,
-                    project_type
+                    project_category,
+                    project_type,
+                    project_area,
+                    project_measurement
                 },
                 {new : true},
             ).select('-createdAt -updatedAt -__v');

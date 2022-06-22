@@ -5,9 +5,11 @@ class CustomErrorHandler extends Error{
         this.status = status;
         this.message = msg;
     }
+    
     static alreadyExist(message){
         return new CustomErrorHandler(409, message)
     }
+
     static wrongCredentials(message = 'Username & password is wrong!'){
         return new CustomErrorHandler(401, message)
     }
@@ -23,8 +25,15 @@ class CustomErrorHandler extends Error{
     static serverError(message = 'Internal server error') {
         return new CustomErrorHandler(500, message);
     }
+
+    static inValid(message) {
+        return new CustomErrorHandler(406, message);
+    }
+
+    static notExist(message){
+        return new CustomErrorHandler(401, message)
+    }
+
 }
-
-
 
 export default CustomErrorHandler;

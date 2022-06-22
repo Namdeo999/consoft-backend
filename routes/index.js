@@ -2,9 +2,20 @@ import express from "express";
 const router = express.Router();
 
 import {  
-    loginController, refreshController, registerController, userController, CompanyController, 
-    ProjectController, ProjectCategoryController, ProjectTypeController, UnitController, ItemController, 
-    ManageStockController, UserRoleController,ChecklistController,AssignWorkController
+    //auth
+    registerController, loginController, refreshController, userController, 
+
+    //company
+    CompanyController, ProductKeyController, UserRoleController,
+
+    //project
+    ProjectCategoryController, ProjectTypeController, ProjectController, AssignWorkController,
+
+    //stock
+    UnitController, ItemController, ManageStockController,
+
+    //checklist
+    ChecklistOptionTypeController, ChecklistOptionController, ChecklistController
 
 } from '../controllers/index.js';
 
@@ -14,8 +25,11 @@ import admin from '../middlewares/admin.js';
 // router.get('/me', userController.me);
 router.post('/login', loginController.login);
 
+router.post('/company-login', CompanyController.companyLogin);
 router.get('/company',  CompanyController.index);
 router.post('/company',  CompanyController.store);
+
+router.post('/verify-product-key',  ProductKeyController.verifyProductKey);
 
 router.post('/register', registerController.register);
 router.get('/users', userController.index);
@@ -34,7 +48,10 @@ router.put('/project-category/:id', ProjectCategoryController.update);
 router.delete('/project-category/:id', ProjectCategoryController.destroy);
 
 router.get('/project-type', ProjectTypeController.index);
-router.post('/project-type',  ProjectTypeController.store);
+router.post('/project-type', ProjectTypeController.store);
+router.get('/project-type/:id', ProjectTypeController.edit);
+router.put('/project-type/:id', ProjectTypeController.update);
+router.delete('/project-type/:id', ProjectTypeController.destroy);
 
 //stock
 router.get('/unit', UnitController.index);
@@ -60,10 +77,7 @@ router.put('/stock-entry/:id', ManageStockController.update);
 // router.get('/products/:id', productController.show);
 
 
-
 //project rouSETDSFDSFS
-
-
 
 router.get('/projects',  ProjectController.index);
 router.post('/projects',  ProjectController.store);
@@ -73,20 +87,33 @@ router.delete('/projects/:id', ProjectController.destroy);
 
 //Checklist items
 
+router.get('/checklist-option-type', ChecklistOptionTypeController.index);
+router.post('/checklist-option-type', ChecklistOptionTypeController.store);
+router.get('/checklist-option-type/:id', ChecklistOptionTypeController.edit);
+router.put('/checklist-option-type/:id', ChecklistOptionTypeController.update);
+router.delete('/checklist-option-type/:id', ChecklistOptionTypeController.destroy);
+
+router.get('/checklist-option', ChecklistOptionController.index);
+router.post('/checklist-option', ChecklistOptionController.store);
+router.get('/checklist-option/:id', ChecklistOptionController.edit);
+router.put('/checklist-option/:id', ChecklistOptionController.update);
+router.delete('/checklist-option/:id', ChecklistOptionController.destroy);
+
 router.get('/checklists',ChecklistController.index);
 router.post('/checklists',ChecklistController.store);
 router.get('/checklists/:id',ChecklistController.edit);
 router.put('/checklists/:id', ChecklistController.update);
 router.delete('/checklists/:id', ChecklistController.destroy);
 
-
 //AssignWork
+
 
 router.get('/assign-works',AssignWorkController.index);
 router.post('/assign-works',AssignWorkController.store);
 router.get('/assign-works/:id',AssignWorkController.edit);
 router.put('/assign-works/:id',AssignWorkController.update);
 router.delete('/assign-works/:id',AssignWorkController.destroy);
+
 
 
 //SubworkAssign 

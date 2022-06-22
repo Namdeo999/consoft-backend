@@ -44,6 +44,7 @@ const loginController = {
             return next(err);
         }
     },
+
     async logout(req, res, next) {
         // validation
         const refreshSchema = Joi.object({
@@ -63,7 +64,6 @@ const loginController = {
         res.json({ status: 1 });
     }
 
-    
 };
 
 
