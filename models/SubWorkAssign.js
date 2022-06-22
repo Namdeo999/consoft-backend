@@ -5,7 +5,7 @@ import { ObjectId } from 'mongodb'
 
 const SubWorkAssign = mongoose.Schema({
     assign_work_id: { type:ObjectId },  
-    user_id: { type: String },
+    user_id: { type: ObjectId },
     work: { type: Array }, 
     status:{type:Boolean}
 })   
