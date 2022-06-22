@@ -107,13 +107,17 @@ router.delete('/checklists/:id', ChecklistController.destroy);
 
 //AssignWork
 
-router.get('/assign-works', AssignWorkController.index);
-router.post('/assign-works', AssignWorkController.store);
-router.get('/assign-works/:id', AssignWorkController.edit);
-router.put('/assign-works/:id', AssignWorkController.update);
-router.delete('/assign-works/:id', AssignWorkController.destroy);
+
+router.get('/assign-works',AssignWorkController.index);
+router.post('/assign-works',AssignWorkController.store);
+router.get('/assign-works/:id',AssignWorkController.edit);
+router.put('/assign-works/:id',AssignWorkController.update);
+router.delete('/assign-works/:id',AssignWorkController.destroy);
+
+
 
 //SubworkAssign 
+
 
 
 

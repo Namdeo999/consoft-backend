@@ -7,9 +7,6 @@ export { default as ProductKey } from './ProductKey.js';
 export { default as Project } from './Project.js';
 export { default as ProjectCategory } from './ProjectCategory.js';
 export { default as ProjectType } from './ProjectType.js';
-export { default as Checklist } from './Checklist.js';
-export { default as AssignWork } from './AssignWork.js';
-export { default as SubWorkAssign } from './SubWorkAssign.js';
 
 
 //checklist
@@ -22,6 +19,7 @@ export { default as Checklist } from './Checklist.js';
 
 export { default as AssignWork } from './AssignWork.js';
 export { default as SubWorkAssign } from './SubWorkAssign.js';
+
 
 
 //stock
