@@ -41,9 +41,9 @@ const ChecklistController = {
 
         const { title, check_items,checklist_option_type_id } = req.body;
         const checklist = new Checklist({
-            title: title,
-            check_items: check_items,
-            checklist_option_type_id:checklist_option_type_id
+            title,
+            check_items,
+            checklist_option_type_id
         });
 
         try {
