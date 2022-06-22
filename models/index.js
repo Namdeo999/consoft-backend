@@ -9,9 +9,7 @@ export { default as Checklist } from './Checklist.js';
 export { default as AssignWork } from './AssignWork.js';
 export { default as SubWorkAssign } from './SubWorkAssign.js';
 
-export { default as Checklist } from './Checklist.js';
-export { default as AssignWork } from './AssignWork.js';
-export { default as SubWorkAssign } from './SubWorkAssign.js';
+
 
 
 //stock
