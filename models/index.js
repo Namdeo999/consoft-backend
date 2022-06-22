@@ -14,6 +14,7 @@ export { default as ChecklistOptionType } from './checklist/ChecklistOptionType.
 export { default as ChecklistOption } from './checklist/ChecklistOption.js';
 
 export { default as Checklist } from './checklist/Checklist.js';
+export { default as ChecklistItem } from './checklist/ChecklistItem.js';
 
 
 
