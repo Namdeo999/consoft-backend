@@ -10,6 +10,7 @@ const AssignWorkController = {
         let documents;
         try {
             documents = await AssignWork.find().select('-createdAt -updatedAt -__v');
+            documents = await SubWorkAssign.find().select('-createdAt -updatedAt -__v');
         } catch (error) {
             return next(CustomErrorHandler.serverError());
         }
