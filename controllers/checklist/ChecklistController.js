@@ -15,6 +15,44 @@ const ChecklistController = {
         return res.json(documents);
     },
 
+    // async store(req, res, next) {
+
+    //     const checklistSchema = Joi.object({
+    //         title: Joi.string().required(),
+    //         check_items: Joi.required(),
+    //         checklist_option_type_id: Joi.required(),
+    //     });
+
+    //     const { error } = checklistSchema.validate(req.body);
+
+    //     if (error) {
+    //         return next(error);
+    //     }
+
+    //     try {
+    //         const exist = await Checklist.exists({ title: req.body.title });
+    //         if (exist) {
+    //             return next(CustomErrorHandler.alreadyExist('The Title already exists'));
+    //         }
+    //     } catch (err) {
+    //         return next(err);
+    //     }
+
+    //     const { title, check_items, checklist_option_type_id } = req.body;
+    //     const checklist = new Checklist({
+    //         title,
+    //         check_items,
+    //         checklist_option_type_id,
+    //     });
+
+    //     try {
+    //         const result = await checklist.save();
+    //         res.send(CustomSuccessHandler.success('Title created successfully'));
+    //     } catch (err) {
+    //         return next(err);
+    //     }
+    // },
+
     async store(req, res, next) {
 
         const checklistSchema = Joi.object({
@@ -52,6 +90,7 @@ const ChecklistController = {
             return next(err);
         }
     },
+    
     async edit(req, res, next) {
         let document;
         try {
