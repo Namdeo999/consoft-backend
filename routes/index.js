@@ -77,7 +77,6 @@ router.put('/stock-entry/:id', ManageStockController.update);
 // router.get('/products/:id', productController.show);
 
 
-
 //project rouSETDSFDSFS
 
 router.get('/projects',  ProjectController.index);
