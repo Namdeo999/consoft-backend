@@ -7,6 +7,7 @@ const AssignWorkController = {
 
     async index(req, res, next) {
         let documents;
+
         try {
 
             documents = await AssignWork.aggregate([
@@ -31,7 +32,21 @@ const AssignWorkController = {
                         from: "users",
                         localField: "user_id",
                         foreignField: "_id",
-                        as: 'users_collection',    
+                        as: 'users_collection',
+                    }
+                },
+                {
+                    $project: {
+                        role_id: 1,
+                        user_id: 1,
+                        subworkassign_colle: {
+                            _id: 1,
+                            assign_work_id: 1,
+                            work: 1,
+                            status: 1
+                        },
+                        userrole_collection: { user_role: 1 },
+                        users_collection: { name: 1 }
                     }
                 },
 
@@ -44,16 +59,16 @@ const AssignWorkController = {
                 {
                     $unwind: { path: "$users_collection", preserveNullAndEmptyArrays: true },
                 },
-        
+
             ])
- 
-            // .then((result) => {
-            //     console.log(result);
-            // })
-            //     .catch((error) => {
-            //         console.log(error);
-            //     });
-     
+
+                // .then((result) => {
+                //     console.log(result);
+                // })
+                // .catch((error) => {
+                //     console.log(error);
+                // });
+
 
 
 
@@ -65,7 +80,7 @@ const AssignWorkController = {
     },
     async store(req, res, next) {
 
-        const { role_id, user_id } = req.body;
+        const { role_id, user_id, work, status } = req.body;
 
         const assignWork = new AssignWork({
             role_id: role_id,
@@ -77,16 +92,21 @@ const AssignWorkController = {
 
         if (assign_result) {
 
-            const { work,status } = req.body
-            const assign_work_ids = assign_result._id;
+            const assign_work_id = assign_result._id;
+            const assign_user_id = assign_result.user_id;
 
-            const subwork_assign = new SubWorkAssign({
-                assign_work_id: assign_work_ids,
-                user_id: user_id,
-                work: work,
-                status:status
+            work.forEach(async function (elements) {
+                const subwork_assign = new SubWorkAssign({
+                    assign_work_id: assign_work_id,
+                    user_id: assign_user_id,
+                    work: elements,
+                    status
+                })
+                const sub_assign_result = subwork_assign.save()
             })
-            const sub_assign_result = subwork_assign.save()
+
+
+
 
 
             try {
