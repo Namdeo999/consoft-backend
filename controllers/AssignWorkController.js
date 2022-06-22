@@ -62,6 +62,12 @@ const AssignWorkController = {
 
             ])
 
+            // .then((result) => {
+            //     console.log(result);
+            // })
+            //     .catch((error) => {
+            //         console.log(error);
+            //     });
                 // .then((result) => {
                 //     console.log(result);
                 // })
@@ -91,6 +97,9 @@ const AssignWorkController = {
         const assign_result = await assignWork.save();
 
         if (assign_result) {
+
+
+            // const { work, status } = req.body
 
             const assign_work_id = assign_result._id;
             const assign_user_id = assign_result.user_id;
