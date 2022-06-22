@@ -8,7 +8,7 @@ const AssignWorkController = {
     async index(req, res, next) {
         let documents;
         try {
-            // documents = await AssignWork.find().select('-createdAt -updatedAt -__v');
+
             documents = await AssignWork.aggregate([
                 {
                     $lookup: {
@@ -53,6 +53,7 @@ const AssignWorkController = {
             //     .catch((error) => {
             //         console.log(error);
             //     });
+
 
 
 
@@ -166,7 +167,7 @@ const AssignWorkController = {
             document = await SubWorkAssign.findByIdAndUpdate(
                 { _id: req.params.id },
                 {
-                    assign_user_id,
+                    user_id,
                     work
                 },
                 { new: true },
