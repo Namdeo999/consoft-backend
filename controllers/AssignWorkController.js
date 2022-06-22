@@ -1,30 +1,75 @@
-import { AssignWork, SubWorkAssign } from './../models/index.js'
-import Joi from 'joi'
+import { AssignWork, SubWorkAssign, UserRole, User } from './../models/index.js'
 import CustomErrorHandler from '../services/CustomErrorHandler.js'
 import CustomSuccessHandler from '../services/CustomSuccessHandler.js'
-// import {ObjectId}  from 'mongodb'
+import { ObjectId } from 'mongodb'
 import mongoose from "mongoose";
 const AssignWorkController = {
 
     async index(req, res, next) {
         let documents;
         try {
-            documents = await AssignWork.find().select('-createdAt -updatedAt -__v');
-            documents = await SubWorkAssign.find().select('-createdAt -updatedAt -__v');
+
+            documents = await AssignWork.aggregate([
+                {
+                    $lookup: {
+                        from: "subWorkAssigns",
+                        localField: "user_id",
+                        foreignField: "user_id",
+                        as: 'subworkassign_colle'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "userRoles",
+                        localField: "role_id",
+                        foreignField: "_id",
+                        as: 'userrole_collection'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "user_id",
+                        foreignField: "_id",
+                        as: 'users_collection',
+                    }
+                },
+
+                {
+                    $unwind: { path: "$subworkassign_colle", preserveNullAndEmptyArrays: true },
+                },
+                {
+                    $unwind: { path: "$userrole_collection", preserveNullAndEmptyArrays: true },
+                },
+                {
+                    $unwind: { path: "$users_collection", preserveNullAndEmptyArrays: true },
+                },
+
+            ])
+
+            // .then((result) => {
+            //     console.log(result);
+            // })
+            //     .catch((error) => {
+            //         console.log(error);
+            //     });
+
+
+
+
         } catch (error) {
             return next(CustomErrorHandler.serverError());
         }
         return res.json(documents);
 
     },
-
     async store(req, res, next) {
 
-        const { role_id, list } = req.body;
+        const { role_id, user_id, work, status } = req.body;
 
         const assignWork = new AssignWork({
             role_id: role_id,
-            list: list
+            user_id: user_id
         });
 
 
@@ -32,21 +77,25 @@ const AssignWorkController = {
 
         if (assign_result) {
 
-            let obj_id;
-            const { work } = req.body
-            const assign_work_ids = await AssignWork.find({}, { _id: 1 }).sort({ _id: -1 }).limit(1)
-            assign_work_ids.map(item => {
-                obj_id = String(item._id.valueOf())
-            });
+            // const { work, status } = req.body
+            const assign_work_id = assign_result._id;
+            const assign_user_id = assign_result.user_id;
 
-            list.forEach(function (value) {
+            work.forEach(async function (elements) {
                 const subwork_assign = new SubWorkAssign({
-                    assign_work_id: obj_id,
-                    list_id: value,
-                    work: work
+                    assign_work_id: assign_work_id,
+                    user_id: assign_user_id,
+                    work:elements,
+                    status
                 })
                 const sub_assign_result = subwork_assign.save()
-            });
+            })
+
+
+            // work.array.forEach(element => {
+
+
+            // });
 
 
             try {
@@ -61,6 +110,7 @@ const AssignWorkController = {
 
 
     },
+
     async edit(req, res, next) {
         let document;
         try {
@@ -76,12 +126,13 @@ const AssignWorkController = {
     async update(req, res, next) {
 
         let document;
-        const { list, role_id, work, list_id } = req.body;
+        const { user_id, role_id, work, assign_user_id } = req.body;
         try {
+
             document = await AssignWork.findByIdAndUpdate(
                 { _id: req.params.id },
                 {
-                    list,
+                    user_id,
                     role_id,
                 },
                 { new: true }
@@ -89,37 +140,34 @@ const AssignWorkController = {
             ).select('-createdAt -updatedAt -__v');
             // console.log(mongoose.Types.ObjectId.isValid('62ad5db48966f5e867b8d58a'));
 
-            if (document) {
-                let updated_assign_work
+            // if (document) {
 
-                list.forEach(async function (updated_list) {
-                    var assign_work_id = req.params.id;
-                    console.log("updated list= " + updated_list + ' assign work id= ' + assign_work_id);
-                    updated_assign_work = await SubWorkAssign.findByIdAndUpdate(
-                       assign_work_id,
-                       { list_id: updated_list },
-                       { new: true }
-                   ).select('-createdAt -updatedAt -__v')
+            //     list.forEach(async function (updated_list) {
 
-                })
+            //         console.log("updated list= " + updated_list + typeof (updated_list));
+            //         const update_ = updated_list;
 
-                try {
-                    res.send(CustomSuccessHandler.success("Sub-assigned successfully!"))
-                } catch (error) {
-                    return next(error)
-                }
-                // if (updated_assign_work) {
-                //     res.status(201).json(updated_assign_work)
-                // } else {
-                //     res.send("not updating")
+            //         try {
+            //             console.log(update_);
+            //             document = await SubWorkAssign.updateMany({ "assign_work_id": "62adc25f6bc423e18fcb2a16" }, { $set: { "list_id": update_ } })
 
-                // }
-            }
+            //             if (document) {
+            //                 console.log("running");
+            //             } else {
+            //                 console.log("not working");
+            //             }
+
+            //         } catch (error) {
+            //             console.error(err);
+            //             res.status(500).send("Server Error");
+            //         }
+            //     })
+            // }
 
             document = await SubWorkAssign.findByIdAndUpdate(
                 { _id: req.params.id },
                 {
-                    list_id,
+                    user_id,
                     work
                 },
                 { new: true },

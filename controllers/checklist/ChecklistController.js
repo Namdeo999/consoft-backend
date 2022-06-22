@@ -58,7 +58,8 @@ const ChecklistController = {
         const checklistSchema = Joi.object({
             title: Joi.string().required(),
             check_items: Joi.required(),
-            checklist_option_type_id: Joi.required(),
+            checklist_option_type_id:Joi.required()
+
         });
 
         const { error } = checklistSchema.validate(req.body);
@@ -76,11 +77,12 @@ const ChecklistController = {
             return next(err);
         }
 
-        const { title, check_items, checklist_option_type_id } = req.body;
+
+        const { title, check_items,checklist_option_type_id } = req.body;
         const checklist = new Checklist({
             title,
             check_items,
-            checklist_option_type_id,
+            checklist_option_type_id
         });
 
         try {
@@ -105,7 +107,7 @@ const ChecklistController = {
         const checklistSchema = Joi.object({
             title: Joi.string().required(),
             check_items: Joi.required(),
-            checklist_option_type_id: Joi.required(),
+            checklist_option_type_id:Joi.required()
         });
 
         const {error} = checklistSchema.validate(req.body);
