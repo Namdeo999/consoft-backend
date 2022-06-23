@@ -84,8 +84,8 @@ const AssignWorkController = {
         const { role_id, user_id, work, status } = req.body;
 
         const assignWork = new AssignWork({
-            role_id: role_id,
-            user_id: user_id
+            role_id,
+            user_id
         });
 
 
@@ -94,7 +94,6 @@ const AssignWorkController = {
         if (assign_result) {
 
 
-            // const { work, status } = req.body
 
             const assign_work_id = assign_result._id;
             const assign_user_id = assign_result.user_id;
@@ -110,7 +109,7 @@ const AssignWorkController = {
             })
 
             try {
-                res.send(CustomSuccessHandler.success("Sub-assigned successfully!"))
+                res.send(CustomSuccessHandler.success("Work submitted successfully!"))
             } catch (error) {
                 return next(error)
             }
@@ -137,84 +136,100 @@ const AssignWorkController = {
     async update(req, res, next) {
 
         let documents;
-        const { user_id, role_id, work, assign_user_id, status } = req.body;
+        let assign_result;
+        const { user_id, role_id, work, status } = req.body;
         try {
 
-            // document = await AssignWork.findByIdAndUpdate(
+            assign_result = await AssignWork.findByIdAndUpdate(
+                { _id: req.params.id },
+                {
+                    user_id,
+                    role_id,
+                },
+                { new: true }
+
+            ).select('-createdAt -updatedAt -__v');
+            if (assign_result) {
+                documents = await SubWorkAssign.deleteMany(
+                    { assign_work_id: req.params.id }
+                )
+            }
+            const assign_work_id = assign_result._id;
+            const assign_user_id = assign_result.user_id;
+
+            const subwork_assign = new SubWorkAssign({
+                assign_work_id: assign_work_id,
+                user_id: assign_user_id,
+                work,
+                status
+            })
+            const sub_assign_result = subwork_assign.save()
+            // documents = await AssignWork.findOneAndUpdate(
             //     { _id: req.params.id },
             //     {
-            //         user_id,
-            //         role_id,
+            //         $set: {
+            //             role_id: role_id,
+            //             user_id: user_id
+            //         }
             //     },
             //     { new: true }
+            // )
 
-            // ).select('-createdAt -updatedAt -__v');
-            documents=await AssignWork.findOneAndUpdate(
-                {_id:req.params.id},
-                {
-                    $set:{
-                        role_id:role_id,
-                        user_id:user_id
-                    }
-                },
-                {new:true}
-            )
-       
-                console.log(documents);
-            if (documents) {
-                documents = await SubWorkAssign.updateMany(
-                    { _id: req.params.id },
-                    {
-                        $set: {
-                            assign_work_id: documents._id,
-                            user_id: documents.user_id,
-                            work: work,
-                            status: status
-                        }
-                    }
-                )
-
-            } else {
-                console.log("not updated");
-            }
-
-            // console.log(mongoose.Types.ObjectId.isValid('62ad5db48966f5e867b8d58a'));
-
-            // if (document) {
-
-            //     list.forEach(async function (updated_list) {
-
-            //         console.log("updated list= " + updated_list + typeof (updated_list));
-            //         const update_ = updated_list;
-
-            //         try {
-            //             console.log(update_);
-            //             document = await SubWorkAssign.updateMany({ "assign_work_id": "62adc25f6bc423e18fcb2a16" }, { $set: { "list_id": update_ } })
-
-            //             if (document) {
-            //                 console.log("running");
-            //             } else {
-            //                 console.log("not working");
+            // if (documents) {
+            //     console.log(documents._id + '  ' + documents.user_id);
+            //     documents = await SubWorkAssign.updateMany(
+            //         { assign_work_id: req.params.id },
+            //         {
+            //             $set: {
+            //                 user_id: documents.user_id,
+            //                 // work: ["worktest1","worktest2"],
+            //                 // status: status
             //             }
-
-            //         } catch (error) {
-            //             console.error(err);
-            //             res.status(500).send("Server Error");
             //         }
-            //     })
+            //     )
+
+            // } else {
+            //     console.log("not updated");
             // }
 
+            // sub_update = await SubWorkAssign.updateMany(
+            //     { _id: req.params.id },
+            //     {
+            //         $set: {
+            //             user_id: user_id
+            //         }
+            //     },
+            //     { new: true }
+            // )
+            // if (sub_update) {
+            //     documents = await AssignWork.updateMany(
+            //         { user_id: req.params.id },
+            //         {
+            //             $set: {
+            //                 user_id: sub_update.user_id,
+            //                 // work: ["worktest1","worktest2"],
+            //                 // status: status
+            //             }
+            //         }
+            //     )
+
+            // } else {
+            //     console.log("No sub_update ");
+            // }
+
+
+       
         } catch (err) {
             return next(err);
         }
         res.status(201).json(documents);
     },
 
+
+
     async destroy(req, res, next) {
         const document = await AssignWork.findOneAndRemove({ _id: req.params.id });
         const documents = await SubWorkAssign.findOneAndRemove({ _id: req.params.id });
-        // const document = await AssignWork.deleteMany({})
-        // const documents = await SubWorkAssign.deleteMany({})
         if (!document && !documents) {
             return next(new Error("Nothing to delete"))
         } else {

@@ -119,7 +119,7 @@ const ChecklistController = {
             const result = await checklist.save();
             if(result){
                 const checklist_id = result._id;
-
+                        console.log(checklist_item);
                 checklist_item.forEach(async function (item) {
                     const document = new ChecklistItem({
                         checklist_id: checklist_id,
