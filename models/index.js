@@ -13,7 +13,8 @@ export { default as ProjectType } from './ProjectType.js';
 export { default as ChecklistOptionType } from './checklist/ChecklistOptionType.js';
 export { default as ChecklistOption } from './checklist/ChecklistOption.js';
 
-export { default as Checklist } from './Checklist.js';
+export { default as Checklist } from './checklist/Checklist.js';
+export { default as ChecklistItem } from './checklist/ChecklistItem.js';
 
 
 
