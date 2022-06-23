@@ -34,8 +34,8 @@ router.post('/verify-product-key',  ProductKeyController.verifyProductKey);
 router.post('/register', registerController.register);
 router.get('/users', userController.index);
 
-router.get('/role',  UserRoleController.index);
-router.post('/role',  UserRoleController.store);
+router.get('/role', UserRoleController.index);
+router.post('/role', UserRoleController.store);
 
 router.post('/refresh', refreshController.refresh);
 router.post('/logout', auth, loginController.logout);
