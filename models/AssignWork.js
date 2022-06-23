@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb'
 
 const assignWork = mongoose.Schema({
     role_id: { type: ObjectId, required: true },
-    user_id: { type: String, required: true },
+    user_id: { type: ObjectId, required: true },
 
 })
 

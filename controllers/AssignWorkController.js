@@ -34,7 +34,7 @@ const AssignWorkController = {
                         as: 'users_collection',
                     }
                 },
-
+                
                 {
                     $unwind: { path: "$subworkassign_colle", preserveNullAndEmptyArrays: true },
                 },
@@ -47,13 +47,7 @@ const AssignWorkController = {
 
             ])
 
-            // .then((result) => {
-            //     console.log(result);
-            // })
-            //     .catch((error) => {
-            //         console.log(error);
-            //     });
-
+      
 
 
 

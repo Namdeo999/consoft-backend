@@ -8,10 +8,40 @@ const ChecklistController = {
     async index(req, res, next) {
         let documents;
         try {
-            documents = await Checklist.find().select('-createdAt -updatedAt -__v');
+            // documents = await Checklist.find().select('-createdAt -updatedAt -__v');
+            documents = await Checklist.aggregate([
+            
+                {
+
+                    $lookup: {
+                        from: "checklistItems",
+                        let: { "checklist_id": "$_id" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ["$checklist_id", "$$checklist_id"] }
+                                }
+                            },
+                            // {
+                            //     $project: {
+                            //         _id: 0,
+                            //         ref_id: 1,
+                            //         label: 1,
+                            //         value: 1
+                            //     }
+                            // }
+                        ],
+                        as: "list"
+                    },
+                    
+                }
+                
+            ])
+
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
+        // return res.json(documents);
         return res.json(documents);
     },
 
