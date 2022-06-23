@@ -10,9 +10,8 @@ const ChecklistController = {
         try {
             // documents = await Checklist.find().select('-createdAt -updatedAt -__v');
             documents = await Checklist.aggregate([
-            
+                
                 {
-
                     $lookup: {
                         from: "checklistItems",
                         let: { "checklist_id": "$_id" },
@@ -30,12 +29,30 @@ const ChecklistController = {
                             //         value: 1
                             //     }
                             // }
+
+                            //--------------------------
+                            
+                            {
+                                $lookup: {
+                                    from: "checklistOptionTypes",
+                                    localField: "checklist_option_type_id",
+                                    foreignField: "_id",
+                                    as: 'data'
+                                }
+                            },  
+                            // {
+                            //     $project:{
+                            //         option_type:1
+                            //     }
+                            // },
+                           
                         ],
                         as: "list"
                     },
                     
                 }
-                
+
+                 
             ])
 
         } catch (err) {
@@ -119,6 +136,9 @@ const ChecklistController = {
             const result = await checklist.save();
             if(result){
                 const checklist_id = result._id;
+
+                // console.log(checklist_id);
+                // console.log(checklist_item);
 
                 checklist_item.forEach(async function (item) {
                     const document = new ChecklistItem({
