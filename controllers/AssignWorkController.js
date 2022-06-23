@@ -62,17 +62,6 @@ const AssignWorkController = {
                 },
 
             ])
-
-            // .then((result) => {
-            //     console.log(result);
-            // })
-            // .catch((error) => {
-            //     console.log(error);
-            // });
-
-
-
-
         } catch (error) {
             return next(CustomErrorHandler.serverError());
         }
@@ -164,61 +153,6 @@ const AssignWorkController = {
                 status
             })
             const sub_assign_result = subwork_assign.save()
-            // documents = await AssignWork.findOneAndUpdate(
-            //     { _id: req.params.id },
-            //     {
-            //         $set: {
-            //             role_id: role_id,
-            //             user_id: user_id
-            //         }
-            //     },
-            //     { new: true }
-            // )
-
-            // if (documents) {
-            //     console.log(documents._id + '  ' + documents.user_id);
-            //     documents = await SubWorkAssign.updateMany(
-            //         { assign_work_id: req.params.id },
-            //         {
-            //             $set: {
-            //                 user_id: documents.user_id,
-            //                 // work: ["worktest1","worktest2"],
-            //                 // status: status
-            //             }
-            //         }
-            //     )
-
-            // } else {
-            //     console.log("not updated");
-            // }
-
-            // sub_update = await SubWorkAssign.updateMany(
-            //     { _id: req.params.id },
-            //     {
-            //         $set: {
-            //             user_id: user_id
-            //         }
-            //     },
-            //     { new: true }
-            // )
-            // if (sub_update) {
-            //     documents = await AssignWork.updateMany(
-            //         { user_id: req.params.id },
-            //         {
-            //             $set: {
-            //                 user_id: sub_update.user_id,
-            //                 // work: ["worktest1","worktest2"],
-            //                 // status: status
-            //             }
-            //         }
-            //     )
-
-            // } else {
-            //     console.log("No sub_update ");
-            // }
-
-
-       
         } catch (err) {
             return next(err);
         }
