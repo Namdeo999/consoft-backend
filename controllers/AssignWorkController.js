@@ -7,6 +7,7 @@ const AssignWorkController = {
 
     async index(req, res, next) {
         let documents;
+
         try {
 
             documents = await AssignWork.aggregate([
@@ -34,7 +35,23 @@ const AssignWorkController = {
                         as: 'users_collection',
                     }
                 },
-                
+
+
+                {
+                    $project: {
+                        role_id: 1,
+                        user_id: 1,
+                        subworkassign_colle: {
+                            _id: 1,
+                            assign_work_id: 1,
+                            work: 1,
+                            status: 1
+                        },
+                        userrole_collection: { user_role: 1 },
+                        users_collection: { name: 1 }
+                    }
+                },
+
                 {
                     $unwind: { path: "$subworkassign_colle", preserveNullAndEmptyArrays: true },
                 },
@@ -46,10 +63,6 @@ const AssignWorkController = {
                 },
 
             ])
-
-      
-
-
 
         } catch (error) {
             return next(CustomErrorHandler.serverError());
@@ -71,7 +84,9 @@ const AssignWorkController = {
 
         if (assign_result) {
 
+
             // const { work, status } = req.body
+
             const assign_work_id = assign_result._id;
             const assign_user_id = assign_result.user_id;
 
@@ -79,17 +94,14 @@ const AssignWorkController = {
                 const subwork_assign = new SubWorkAssign({
                     assign_work_id: assign_work_id,
                     user_id: assign_user_id,
-                    work:elements,
+                    work: elements,
                     status
                 })
                 const sub_assign_result = subwork_assign.save()
             })
 
 
-            // work.array.forEach(element => {
 
-
-            // });
 
 
             try {
