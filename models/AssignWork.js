@@ -2,9 +2,8 @@ import mongoose from "mongoose";
 import { ObjectId } from 'mongodb'
 
 const assignWork = mongoose.Schema({
-    role_id: { type: ObjectId, required: true },
-    user_id: { type: ObjectId, required: true },
-
+    role_id: { type: ObjectId },
+    user_id: { type: ObjectId }
 })
 
 export default mongoose.model('AssignWork', assignWork, 'assignWorks')
