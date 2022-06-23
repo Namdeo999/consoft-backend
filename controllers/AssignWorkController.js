@@ -35,6 +35,8 @@ const AssignWorkController = {
                         as: 'users_collection',
                     }
                 },
+
+
                 {
                     $project: {
                         role_id: 1,
@@ -61,22 +63,6 @@ const AssignWorkController = {
                 },
 
             ])
-
-            // .then((result) => {
-            //     console.log(result);
-            // })
-            //     .catch((error) => {
-            //         console.log(error);
-            //     });
-                // .then((result) => {
-                //     console.log(result);
-                // })
-                // .catch((error) => {
-                //     console.log(error);
-                // });
-
-
-
 
         } catch (error) {
             return next(CustomErrorHandler.serverError());
