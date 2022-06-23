@@ -49,7 +49,6 @@ const AssignWorkController = {
                         users_collection: { name: 1 }
                     }
                 },
-
                 {
                     $unwind: { path: "$subworkassign_colle", preserveNullAndEmptyArrays: true },
                 },
@@ -62,12 +61,12 @@ const AssignWorkController = {
 
             ])
 
-                // .then((result) => {
-                //     console.log(result);
-                // })
-                // .catch((error) => {
-                //     console.log(error);
-                // });
+            // .then((result) => {
+            //     console.log(result);
+            // })
+            // .catch((error) => {
+            //     console.log(error);
+            // });
 
 
 
@@ -105,10 +104,6 @@ const AssignWorkController = {
                 const sub_assign_result = subwork_assign.save()
             })
 
-
-
-
-
             try {
                 res.send(CustomSuccessHandler.success("Sub-assigned successfully!"))
             } catch (error) {
@@ -136,19 +131,48 @@ const AssignWorkController = {
 
     async update(req, res, next) {
 
-        let document;
-        const { user_id, role_id, work, assign_user_id } = req.body;
+        let documents;
+        const { user_id, role_id, work, assign_user_id, status } = req.body;
         try {
 
-            document = await AssignWork.findByIdAndUpdate(
-                { _id: req.params.id },
-                {
-                    user_id,
-                    role_id,
-                },
-                { new: true }
+            // document = await AssignWork.findByIdAndUpdate(
+            //     { _id: req.params.id },
+            //     {
+            //         user_id,
+            //         role_id,
+            //     },
+            //     { new: true }
 
-            ).select('-createdAt -updatedAt -__v');
+            // ).select('-createdAt -updatedAt -__v');
+            documents=await AssignWork.findOneAndUpdate(
+                {_id:req.params.id},
+                {
+                    $set:{
+                        role_id:role_id,
+                        user_id:user_id
+                    }
+                },
+                {new:true}
+            )
+       
+                console.log(documents);
+            if (documents) {
+                documents = await SubWorkAssign.updateMany(
+                    { _id: req.params.id },
+                    {
+                        $set: {
+                            assign_work_id: documents._id,
+                            user_id: documents.user_id,
+                            work: work,
+                            status: status
+                        }
+                    }
+                )
+
+            } else {
+                console.log("not updated");
+            }
+
             // console.log(mongoose.Types.ObjectId.isValid('62ad5db48966f5e867b8d58a'));
 
             // if (document) {
@@ -175,18 +199,10 @@ const AssignWorkController = {
             //     })
             // }
 
-            document = await SubWorkAssign.findByIdAndUpdate(
-                { _id: req.params.id },
-                {
-                    user_id,
-                    work
-                },
-                { new: true },
-            ).select('-createdAt -updatedAt -__v');
         } catch (err) {
             return next(err);
         }
-        res.status(201).json(document);
+        res.status(201).json(documents);
     },
 
     async destroy(req, res, next) {

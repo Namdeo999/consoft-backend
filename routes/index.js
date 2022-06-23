@@ -111,7 +111,7 @@ router.delete('/checklists/:id', ChecklistController.destroy);
 router.get('/assign-works',AssignWorkController.index);
 router.post('/assign-works',AssignWorkController.store);
 router.get('/assign-works/:id',AssignWorkController.edit);
-router.put('/assign-works/:id',AssignWorkController.update);
+router.put('/assign-works/update/:id',AssignWorkController.update);
 router.delete('/assign-works/:id',AssignWorkController.destroy);
 
 
