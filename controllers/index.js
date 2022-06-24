@@ -23,6 +23,9 @@ export { default as UnitController } from './stock/UnitController.js';
 export { default as ItemController } from './stock/ItemController.js';
 export { default as ManageStockController } from './stock/ManageStockController.js';
 
+//tools machinery
+export { default as ToolsMachineryController } from './tools-machinery/toolsMachineryController.js';
+
 //checklist
 export { default as ChecklistOptionTypeController } from './checklist/ChecklistOptionTypeController.js';
 export { default as ChecklistOptionController } from './checklist/ChecklistOptionController.js';

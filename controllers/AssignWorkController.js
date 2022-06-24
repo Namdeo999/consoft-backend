@@ -78,12 +78,9 @@ const AssignWorkController = {
             user_id
         });
 
-
         const assign_result = await assignWork.save();
 
         if (assign_result) {
-
-
 
             const assign_work_id = assign_result._id;
             const assign_user_id = assign_result.user_id;
@@ -107,7 +104,6 @@ const AssignWorkController = {
         } else {
             res.send("There is no work assigned")
         }
-
 
     },
 
@@ -159,8 +155,6 @@ const AssignWorkController = {
         }
         res.status(201).json(documents);
     },
-
-
 
     async destroy(req, res, next) {
         const document = await AssignWork.findOneAndRemove({ _id: req.params.id });
