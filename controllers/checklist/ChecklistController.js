@@ -3,7 +3,6 @@ import { Checklist, ChecklistItem } from "../../models/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 
-
 const ChecklistController = {
     async index(req, res, next) {
         let documents;

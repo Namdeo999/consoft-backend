@@ -34,11 +34,17 @@ router.post('/verify-product-key',  ProductKeyController.verifyProductKey);
 router.post('/register', registerController.register);
 router.get('/users', userController.index);
 
-router.get('/role', UserRoleController.index);
-router.post('/role', UserRoleController.store);
+router.get('/role-by-users/:role_id', userController.roleByUsers);
 
 router.post('/refresh', refreshController.refresh);
 router.post('/logout', auth, loginController.logout);
+
+//role
+router.get('/role', UserRoleController.index);
+router.post('/role', UserRoleController.store);
+router.get('/role/:id', UserRoleController.edit);
+router.put('/role/:id', UserRoleController.update);
+router.delete('/role/:id', UserRoleController.destroy);
 
 //project category
 router.get('/project-category', ProjectCategoryController.index);
@@ -111,7 +117,7 @@ router.delete('/checklists/:id', ChecklistController.destroy);
 router.get('/assign-works',AssignWorkController.index);
 router.post('/assign-works',AssignWorkController.store);
 router.get('/assign-works/:id',AssignWorkController.edit);
-router.put('/assign-works/update/:id',AssignWorkController.update);
+router.put('/assign-works/:id',AssignWorkController.update);
 router.delete('/assign-works/:id',AssignWorkController.destroy);
 
 
