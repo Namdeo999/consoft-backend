@@ -10,7 +10,7 @@ const registerController = {
     async register(req, res, next){
         //velidation
         const registerSchema = Joi.object({
-            role: Joi.string().required(),
+            role_id: Joi.string().required(),
             name: Joi.string().min(5).max(15).required(), 
             email: Joi.string().email().required(),
             mobile: Joi.number().min(10).required(),
@@ -35,7 +35,7 @@ const registerController = {
             return next(err);
         }
 
-        const { name, email, mobile, password, role } = req.body;
+        const { name, email, mobile, password, role_id } = req.body;
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -45,7 +45,7 @@ const registerController = {
             name,
             email,
             mobile,
-            role,
+            role_id,
             password: hashedPassword
         });
         let access_token;
@@ -56,7 +56,7 @@ const registerController = {
     
             // Token
             // access_token = JwtService.sign({ _id: result._id });
-            access_token = JwtService.sign({ _id: result._id, role: result.role });
+            access_token = JwtService.sign({ _id: result._id, role_id: result.role_id });
 
             // refresh_token = JwtService.sign({ _id: result._id, role: result.role }, '1y', REFRESH_SECRET);
             // // database whitelist

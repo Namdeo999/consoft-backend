@@ -16,11 +16,8 @@ export { default as ChecklistOption } from './checklist/ChecklistOption.js';
 export { default as Checklist } from './checklist/Checklist.js';
 export { default as ChecklistItem } from './checklist/ChecklistItem.js';
 
-
-
 export { default as AssignWork } from './AssignWork.js';
 export { default as SubWorkAssign } from './SubWorkAssign.js';
-
 
 
 //stock
@@ -28,4 +25,7 @@ export { default as Unit } from './Unit.js';
 export { default as Item } from './Item.js';
 export { default as ManageStock } from './ManageStock.js';
 
+//tools machinery
+
+export { default as ToolsMachinery } from './tools-machinery/ToolsMachinery.js';
 

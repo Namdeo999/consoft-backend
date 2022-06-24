@@ -47,42 +47,43 @@ const UserRoleController = {
 
     },
 
-    // async edit(req, res, next){
-    //     let document;
-    //     try {
-    //         document = await ProjectCategory.findOne({ _id:req.params.id }).select('-createdAt -updatedAt -__v');
-    //     } catch (err) {
-    //         return next(CustomErrorHandler.serverError());
-    //     }
+    async edit(req, res, next){
+        let document;
+        try {
+            document = await UserRole.findOne({ _id:req.params.id }).select('-createdAt -updatedAt -__v');
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
 
-    //     return res.json(document);
-    // },
+        return res.json(document);
+    },
 
-    // async update(req, res, next){
-    //     const projectCategorySchema = Joi.object({
-    //         category_name: Joi.string().required(),
-    //     });
-    //     const {error} = projectCategorySchema.validate(req.body);
-    //     if(error){
-    //         return next(error);
-    //     }
-    //     const {category_name} = req.body;
-    //     let document;
-    //     try {
-    //         document = await ProjectCategory.findOneAndUpdate({ _id: req.params.id},{category_name},{new: true});
-    //     } catch (err) {
-    //         return next(err);
-    //     }
-    //     res.status(201).json(document);
-    // },
+    async update(req, res, next){
+        const userRoleSchema = Joi.object({
+            user_role: Joi.string().required(),
+        });
+        const {error} = userRoleSchema.validate(req.body);
+        if(error){
+            return next(error);
+        }
 
-    // async destroy(req, res, next) {
-    //     const document = await ProjectCategory.findOneAndRemove({ _id: req.params.id });
-    //     if (!document) {
-    //         return next(new Error('Nothing to delete'));
-    //     }
-    //     return res.json(document);
-    // },
+        const {user_role} = req.body;
+        let document;
+        try {
+            document = await UserRole.findOneAndUpdate({ _id: req.params.id},{user_role},{new: true});
+        } catch (err) {
+            return next(err);
+        }
+        res.status(201).json(document);
+    },
+
+    async destroy(req, res, next) {
+        const document = await UserRole.findOneAndRemove({ _id: req.params.id });
+        if (!document) {
+            return next(new Error('Nothing to delete'));
+        }
+        return res.json(document);
+    }
     
 
 }
