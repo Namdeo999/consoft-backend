@@ -15,7 +15,7 @@ import {
     UnitController, ItemController, ManageStockController,
 
     //checklist
-    ChecklistOptionTypeController, ChecklistOptionController, ChecklistController
+    ChecklistOptionTypeController, ChecklistOptionController, ChecklistController,ToolsMachineryController
 
 } from '../controllers/index.js';
 
@@ -120,9 +120,17 @@ router.get('/assign-works/:id',AssignWorkController.edit);
 router.put('/assign-works/:id',AssignWorkController.update);
 router.delete('/assign-works/:id',AssignWorkController.destroy);
 
+//Tools And Machinery
+
+router.get('/tools-machinery',ToolsMachineryController.index);
+router.post('/tools-machinery',ToolsMachineryController.store);
+router.get('/tools-machinery/:id',ToolsMachineryController.edit);
+router.put('/tools-machinery/:id',ToolsMachineryController.update);
+router.delete('/tools-machinery/:id',ToolsMachineryController.destroy);
 
 
-//SubworkAssign 
+
+
 
 
 
