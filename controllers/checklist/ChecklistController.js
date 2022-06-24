@@ -203,6 +203,7 @@ const ChecklistController = {
     async update(req, res, next) {
 
 
+
         // const checklistSchema = Joi.object({
         //     title: Joi.string().required(),
         //     check_items: Joi.required(),
@@ -213,6 +214,7 @@ const ChecklistController = {
         // if (error) {
         //     return next(error);
         // }
+
 
         const { title, checklist_item, checklist_name, checklist_option_type_id, option_type } = req.body;
         let document;
@@ -242,9 +244,6 @@ const ChecklistController = {
                     option_type
                 })
                 const checklistitem_result = checklistitem.save()
-
-
-
 
 
         } catch (err) {
