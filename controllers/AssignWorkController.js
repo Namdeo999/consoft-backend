@@ -13,20 +13,15 @@ const AssignWorkController = {
             documents = await AssignWork.aggregate([
                 {
                     $lookup: {
-                        from: "subWorkAssigns",
-                        localField: "user_id",
-                        foreignField: "user_id",
-                        as: 'subworkassign_colle'
-                    }
-                },
-                {
-                    $lookup: {
                         from: "userRoles",
                         localField: "role_id",
                         foreignField: "_id",
                         as: 'userrole_collection'
                     }
                 },
+                {
+                    $unwind:"$userrole_collection"
+                },            
                 {
                     $lookup: {
                         from: "users",
@@ -35,32 +30,38 @@ const AssignWorkController = {
                         as: 'users_collection',
                     }
                 },
-
-
+                {
+                    $unwind:"$users_collection"
+                },         
+                {
+                    $lookup: {
+                        from: "subWorkAssigns",
+                        let: { "user_id": "$user_id" },
+                       pipeline:[
+                        {
+                            $match:{
+                                $expr:{$eq:["$user_id","$$user_id"]}
+                            }
+                        },
+                       ],
+                        as: 'assign_works'
+                    }
+                },        
                 {
                     $project: {
                         role_id: 1,
                         user_id: 1,
-                        subworkassign_colle: {
+                        user_role:"$userrole_collection.user_role",
+                        user_name:"$users_collection.name",
+                        // mobile:"$users_collection.mobile",
+                        assign_works: {
                             _id: 1,
                             assign_work_id: 1,
                             work: 1,
                             status: 1
-                        },
-                        userrole_collection: { user_role: 1 },
-                        users_collection: { name: 1 }
+                        }
                     }
-                },
-                {
-                    $unwind: { path: "$subworkassign_colle", preserveNullAndEmptyArrays: true },
-                },
-                {
-                    $unwind: { path: "$userrole_collection", preserveNullAndEmptyArrays: true },
-                },
-                {
-                    $unwind: { path: "$users_collection", preserveNullAndEmptyArrays: true },
-                },
-
+                }
             ])
         } catch (error) {
             return next(CustomErrorHandler.serverError());

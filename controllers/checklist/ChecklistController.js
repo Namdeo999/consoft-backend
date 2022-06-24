@@ -8,9 +8,7 @@ const ChecklistController = {
     async index(req, res, next) {
         let documents;
         try {
-            // documents = await Checklist.find().select('-createdAt -updatedAt -__v');
             documents = await Checklist.aggregate([
-                
                 {
                     $lookup: {
                         from: "checklistItems",
@@ -21,17 +19,6 @@ const ChecklistController = {
                                     $expr: { $eq: ["$checklist_id", "$$checklist_id"] }
                                 }
                             },
-                            // {
-                            //     $project: {
-                            //         _id: 0,
-                            //         ref_id: 1,
-                            //         label: 1,
-                            //         value: 1
-                            //     }
-                            // }
-
-                            //--------------------------
-                            
                             {
                                 $lookup: {
                                     from: "checklistOptionTypes",
@@ -39,28 +26,35 @@ const ChecklistController = {
                                     foreignField: "_id",
                                     as: 'data'
                                 }
-                            },  
-                            // {
-                            //     $project:{
-                            //         option_type:1
-                            //     }
-                            // },
+                            },
+                            {
+                                $unwind: "$data"
+                            },
+                            {
+                                $project: {
+                                    _id: 1,
+                                    checklist_id: 1,
+                                    checklist_option_type_id: 1,
+                                    checklist_item: 1,
+                                    option_type: "$data.option_type"
 
-                            
-                           
+                                }
+
+                            }
+
+
                         ],
-                        as: "list"
+                        as: "list",
                     },
-                    
-                }
 
-                 
+
+                },
+      
             ])
 
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
-        // return res.json(documents);
         return res.json(documents);
     },
 
@@ -106,7 +100,7 @@ const ChecklistController = {
 
         const checklistSchema = Joi.object({
             checklist_name: Joi.string().required(),
-            checklist_option_type_id:Joi.required(),
+            checklist_option_type_id: Joi.required(),
             checklist_item: Joi.required(),
 
         });
@@ -127,7 +121,6 @@ const ChecklistController = {
         }
 
         const { checklist_name, checklist_item, checklist_option_type_id } = req.body;
-        // const { checklist_name } = req.body;
         const checklist = new Checklist({
             checklist_name,
             // checklist_option_type_id,
@@ -136,13 +129,13 @@ const ChecklistController = {
 
         try {
             const result = await checklist.save();
-            if(result){
+            if (result) {
                 const checklist_id = result._id;
 
                 checklist_item.forEach(async function (item) {
                     const document = new ChecklistItem({
                         checklist_id: checklist_id,
-                        checklist_option_type_id:checklist_option_type_id,
+                        checklist_option_type_id: checklist_option_type_id,
                         checklist_item: item,
                     })
                     const checklistItem = document.save();
@@ -154,7 +147,7 @@ const ChecklistController = {
             return next(err);
         }
     },
-    
+
     async edit(req, res, next) {
         let document;
         try {
@@ -165,31 +158,31 @@ const ChecklistController = {
 
         return res.json(document);
     },
-    async update(req, res, next){
+    async update(req, res, next) {
         const checklistSchema = Joi.object({
             title: Joi.string().required(),
             check_items: Joi.required(),
-            checklist_option_type_id:Joi.required()
+            checklist_option_type_id: Joi.required()
         });
 
-        const {error} = checklistSchema.validate(req.body);
-        if(error){
+        const { error } = checklistSchema.validate(req.body);
+        if (error) {
             return next(error);
         }
 
-        const {title, check_items, checklist_option_type_id} = req.body;
-        let document ;
+        const { title, check_items, checklist_option_type_id } = req.body;
+        let document;
         try {
             document = await Checklist.findByIdAndUpdate(
-                {_id: req.params.id},
+                { _id: req.params.id },
                 {
                     title,
                     check_items,
-                    checklist_option_type_id                  
+                    checklist_option_type_id
                 },
-                {new : true},
+                { new: true },
             ).select('-createdAt -updatedAt -__v');
-        } catch (err) { 
+        } catch (err) {
             return next(err);
         }
         res.status(201).json(document);
