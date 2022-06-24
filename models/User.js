@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { ObjectId } from "mongodb";
 
 //define schema
 
@@ -16,8 +17,8 @@ const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     mobile: { type: Number, required: true, unique: true },
-    password: { type: String, required: true },
-    role: { type: String, required: true },
+    password: { type: String, required: true, select: false },
+    role_id: { type: ObjectId, required: true },
     // role: { type: String, default: 'editor' },
 }, { timestamps: true });
 

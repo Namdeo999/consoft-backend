@@ -4,7 +4,6 @@ import { Checklist, ChecklistItem } from "../../models/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 
-
 const ChecklistController = {
     async index(req, res, next) {
         let documents;
@@ -203,6 +202,7 @@ const ChecklistController = {
     },
     async update(req, res, next) {
 
+
         // const checklistSchema = Joi.object({
         //     title: Joi.string().required(),
         //     check_items: Joi.required(),
@@ -242,6 +242,7 @@ const ChecklistController = {
                     option_type
                 })
                 const checklistitem_result = checklistitem.save()
+
 
 
 
