@@ -6,4 +6,4 @@ const assignWork = mongoose.Schema({
     user_id: { type: ObjectId }
 })
 
-export default mongoose.model('AssignWork', assignWork, 'assignWorks')
+export default mongoose.model('AssignWork', assignWork, 'assignWorks') 
