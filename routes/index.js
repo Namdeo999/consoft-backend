@@ -9,7 +9,10 @@ import {
     CompanyController, ProductKeyController, UserRoleController,
 
     //project
-    ProjectCategoryController, ProjectTypeController, ProjectController, AssignWorkController,
+    ProjectCategoryController, ProjectTypeController, ProjectController, 
+
+    //Assignwork
+    AssignWorkController,UserAssignWorkController,
 
     //stock
     UnitController, ItemController, ManageStockController,
@@ -119,6 +122,11 @@ router.post('/assign-works',AssignWorkController.store);
 router.get('/assign-works/:id',AssignWorkController.edit);
 router.put('/assign-works/:id',AssignWorkController.update);
 router.delete('/assign-works/:id',AssignWorkController.destroy);
+
+
+//user-end assignwork
+router.get('/user-assign-works/:id',UserAssignWorkController.index)
+router.put('/user-assign-works/:id',UserAssignWorkController.update)
 
 //Tools And Machinery
 

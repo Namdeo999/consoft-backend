@@ -71,21 +71,9 @@ const AssignWorkController = {
     },
     async store(req, res, next) {
 
+        const exist = await AssignWork.exists({ user_id: req.params.user_id });
 
-        const exist = await AssignWork.exists({ user_id: req.body.user_id });
-        // const assign_work_id = AssignWork._id;
-        // const fetch_assign_work_id=await AssignWork.find({user})
-        // console.log(exist);
-        if (exist) {
-            const { work } = req.body;
-            const add_subwork_assign = new SubWorkAssign({
-                work,
-                user_id: req.body.user_id,
-                assign_work_id:exist
-            });
-            await add_subwork_assign.save();
-            res.json("work added successfully!")
-        } else {
+        if (exist == null) {
             const { role_id, user_id, work, status } = req.body;
             const assignWork = new AssignWork({
                 role_id,
@@ -119,9 +107,23 @@ const AssignWorkController = {
                 res.send("There is no work assigned")
             }
         }
+        else {
+            // const sub_work_data = await SubWorkAssign.findOne({ user_id: req.body.user_id },{user_id:1}).select('-createdAt -updatedAt -__v');
 
+            const { work,user_id } = req.body;
 
+            work.forEach(async function (elements) {
 
+                const add_subwork_assign = new SubWorkAssign({
+                    work: elements,
+                    user_id,
+                    assign_work_id: exist
+                });
+
+                await add_subwork_assign.save();
+            })
+            res.json("work added successfully!")
+        }
     },
 
     async edit(req, res, next) {
@@ -152,21 +154,28 @@ const AssignWorkController = {
                 { new: true }
 
             ).select('-createdAt -updatedAt -__v');
+
             if (assign_result) {
                 documents = await SubWorkAssign.deleteMany(
                     { assign_work_id: req.params.id }
                 )
             }
+
+            // console.log(assign_result);
+
             const assign_work_id = assign_result._id;
             const assign_user_id = assign_result.user_id;
 
-            const subwork_assign = new SubWorkAssign({
-                assign_work_id: assign_work_id,
-                user_id: assign_user_id,
-                work,
-                status
+            work.forEach(async function (elements) {
+
+                const subwork_assign = new SubWorkAssign({
+                    assign_work_id: assign_work_id,
+                    user_id: assign_user_id,
+                    work: elements,
+                    status
+                })
+                const sub_assign_result = subwork_assign.save()
             })
-            const sub_assign_result = subwork_assign.save()
         } catch (err) {
             return next(err);
         }
