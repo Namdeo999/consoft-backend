@@ -139,6 +139,7 @@ router.delete('/tools-machinery/:id',ToolsMachineryController.destroy);
 //Contractors
 
 router.post('/user-contractor',ContractorController.store);
+router.get('/user-contractor',ContractorController.index);
 
 
 
