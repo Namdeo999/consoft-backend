@@ -1,6 +1,7 @@
 
 import { ToolsMachinery } from '../../models/index.js'
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
+import ToolsMachinerySchema from '../../validators/checklist/ChecklistOptionValidator.js'
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 
 const ToolsMachineryController = {
