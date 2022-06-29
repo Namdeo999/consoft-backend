@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema({
     mobile: { type: Number, required: true, unique: true },
     password: { type: String, required: true, select: false },
     role_id: { type: ObjectId, required: true },
+    company_id: { type: ObjectId, required: true },
     // role: { type: String, default: 'editor' },
 }, { timestamps: true });
 

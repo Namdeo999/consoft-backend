@@ -3,7 +3,7 @@ const router = express.Router();
 
 import {  
     //auth
-    registerController, loginController, refreshController, userController, 
+    loginController, refreshController, userController, 
 
     //company
     CompanyController, ProductKeyController, UserRoleController,
@@ -26,12 +26,12 @@ import admin from '../middlewares/admin.js';
 router.post('/login', loginController.login);
 
 router.post('/company-login', CompanyController.companyLogin);
-router.get('/company',  CompanyController.index);
+router.get('/company', [auth, admin], CompanyController.index);
 router.post('/company',  CompanyController.store);
 
 router.post('/verify-product-key',  ProductKeyController.verifyProductKey);
 
-router.post('/register', registerController.register);
+router.post('/register', userController.register);
 router.get('/users', userController.index);
 
 router.get('/role-by-users/:role_id', userController.roleByUsers);

@@ -1,5 +1,5 @@
 import Joi from "joi";
-import Item from "../../models/Item.js";
+import {Item} from "../../models/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 
