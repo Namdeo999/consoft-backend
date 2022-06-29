@@ -32,13 +32,13 @@ const loginController = {
             }
 
             //generate token
-            const access_token = JwtService.sign({ _id: user._id, role: user.role });
-            const refresh_token = JwtService.sign({ _id: user._id, role: user.role }, '1y', REFRESH_SECRET);
+            const access_token = JwtService.sign({ _id: user._id, role_id: user.role_id });
+            const refresh_token = JwtService.sign({ _id: user._id, role_id: user.role_id }, '1y', REFRESH_SECRET);
 
             await RefreshToken.create({ token: refresh_token });
             // res.json({ access_token, id: user._id, role: user.role });
 
-            res.json({ access_token, refresh_token, id: user._id, role: user.role });
+            res.json({ access_token, refresh_token, _id: user._id, role_id: user.role_id });
 
         } catch (err) {
             return next(err);

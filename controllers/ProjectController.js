@@ -104,7 +104,7 @@ const ProjectController = {
         } catch (err) { 
             return next(err);
         }
-        res.status(201).json(document);
+        res.json({status:200, data:document});
     },
 
     async destroy(req, res, next) {

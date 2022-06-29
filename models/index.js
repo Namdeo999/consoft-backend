@@ -1,12 +1,12 @@
-export { default as User } from './User.js';
-export { default as UserRole } from './UserRole.js';
-export { default as RefreshToken } from './RefreshToken.js';
-export { default as Company } from './Company.js';
-export { default as ProductKey } from './ProductKey.js';
+export { default as User } from './auth/User.js';
+export { default as UserRole } from './company/UserRole.js';
+export { default as RefreshToken } from './auth/RefreshToken.js';
+export { default as ProductKey } from './auth/ProductKey.js';
+export { default as Company } from './company/Company.js';
 
-export { default as Project } from './Project.js';
-export { default as ProjectCategory } from './ProjectCategory.js';
-export { default as ProjectType } from './ProjectType.js';
+export { default as Project } from './project/Project.js';
+export { default as ProjectCategory } from './project/ProjectCategory.js';
+export { default as ProjectType } from './project/ProjectType.js';
 
 
 //checklist
@@ -21,9 +21,9 @@ export { default as SubWorkAssign } from './SubWorkAssign.js';
 
 
 //stock
-export { default as Unit } from './Unit.js';
-export { default as Item } from './Item.js';
-export { default as ManageStock } from './ManageStock.js';
+export { default as Unit } from './stock/Unit.js';
+export { default as Item } from './stock/Item.js';
+export { default as ManageStock } from './stock/ManageStock.js';
 
 //tools machinery
 
