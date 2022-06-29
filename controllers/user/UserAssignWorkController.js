@@ -4,7 +4,7 @@ import CustomSuccessHandler from '../../services/CustomSuccessHandler.js'
 import { ObjectId } from 'mongodb'
 import mongoose from "mongoose";
 
-const UserAssignWorkController={
+const UserAssignWorkController = {
     async index(req, res, next) {
 
         let documents;
@@ -25,17 +25,7 @@ const UserAssignWorkController={
                 {
                     $unwind: "$userrole_collection"
                 },
-                {
-                    $lookup: {
-                        from: "users",
-                        localField: "user_id",
-                        foreignField: "_id",
-                        as: 'users_collection',
-                    }
-                },
-                {
-                    $unwind: "$users_collection"
-                },
+
                 {
                     $lookup: {
                         from: "subWorkAssigns",
@@ -49,6 +39,17 @@ const UserAssignWorkController={
                         ],
                         as: 'assign_works'
                     }
+                },
+                {
+                    $lookup: {
+                        from: "users",
+                        localField: "user_id",
+                        foreignField: "_id",
+                        as: 'users_collection',
+                    }
+                },
+                {
+                    $unwind: "$users_collection"
                 },
                 {
                     $project: {
@@ -69,35 +70,36 @@ const UserAssignWorkController={
                     }
                 }
             ])
+            
         } catch (error) {
             return next(CustomErrorHandler.serverError());
         }
         return res.json(documents);
 
     },
-    async update(req,res,next){
+    async update(req, res, next) {
 
-        const {  exp_completion_time, comment } = req.body;
+        const { exp_completion_time, comment } = req.body;
         try {
-        const exist = await SubWorkAssign.exists({ _id: req.params.id });
-        
-            if(!exist) {
+            const exist = await SubWorkAssign.exists({ _id: req.params.id });
+
+            if (!exist) {
                 return next(CustomErrorHandler.notExist('Work not found!'))
             }
-            
-            const subwork_assign = await SubWorkAssign.findByIdAndUpdate(
-            { _id: req.params.id },
-            {
-                comment,
-                exp_completion_time
-       
-            },
-            { new: true }
 
-            ).select('-createdAt -updatedAt -__v');   
-          
+            const subwork_assign = await SubWorkAssign.findByIdAndUpdate(
+                { _id: req.params.id },
+                {
+                    comment,
+                    exp_completion_time
+
+                },
+                { new: true }
+
+            ).select('-createdAt -updatedAt -__v');
+
             res.send(CustomSuccessHandler.success("Data submitted to selected Work end successfully!"))
-            
+
         } catch (error) {
             res.send(error)
         }

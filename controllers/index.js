@@ -34,4 +34,6 @@ export { default as ChecklistController } from './checklist/ChecklistController.
 export { default as AssignWorkController} from './AssignWorkController.js';
 export { default as UserAssignWorkController} from '../controllers/user/UserAssignWorkController.js';
 
+//contractor controller
 
+export {default as ContractorController } from '../controllers/user/Contractors/ContractorController.js'

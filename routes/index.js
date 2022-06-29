@@ -15,7 +15,7 @@ import {
     AssignWorkController,UserAssignWorkController,
 
     //stock
-    UnitController, ItemController, ManageStockController,
+    UnitController, ItemController, ManageStockController,ContractorController,
 
     //checklist
     ChecklistOptionTypeController, ChecklistOptionController, ChecklistController,ToolsMachineryController
@@ -136,7 +136,9 @@ router.get('/tools-machinery/:id',ToolsMachineryController.edit);
 router.put('/tools-machinery/:id',ToolsMachineryController.update);
 router.delete('/tools-machinery/:id',ToolsMachineryController.destroy);
 
+//Contractors
 
+router.post('/user-contractor',ContractorController.store);
 
 
 
