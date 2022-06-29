@@ -20,8 +20,8 @@ const AssignWorkController = {
                     }
                 },
                 {
-                    $unwind:"$userrole_collection"
-                },            
+                    $unwind: "$userrole_collection"
+                },
                 {
                     $lookup: {
                         from: "users",
@@ -31,28 +31,28 @@ const AssignWorkController = {
                     }
                 },
                 {
-                    $unwind:"$users_collection"
-                },         
+                    $unwind: "$users_collection"
+                },
                 {
                     $lookup: {
                         from: "subWorkAssigns",
                         let: { "user_id": "$user_id" },
-                       pipeline:[
-                        {
-                            $match:{
-                                $expr:{$eq:["$user_id","$$user_id"]}
-                            }
-                        },
-                       ],
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ["$user_id", "$$user_id"] }
+                                }
+                            },
+                        ],
                         as: 'assign_works'
                     }
-                },        
+                },
                 {
                     $project: {
                         role_id: 1,
                         user_id: 1,
-                        user_role:"$userrole_collection.user_role",
-                        user_name:"$users_collection.name",
+                        user_role: "$userrole_collection.user_role",
+                        user_name: "$users_collection.name",
                         // mobile:"$users_collection.mobile",
                         assign_works: {
                             _id: 1,
@@ -71,40 +71,59 @@ const AssignWorkController = {
     },
     async store(req, res, next) {
 
-        const { role_id, user_id, work, status } = req.body;
+        const exist = await AssignWork.exists({ user_id: req.params.user_id });
 
-        const assignWork = new AssignWork({
-            role_id,
-            user_id
-        });
+        if (exist == null) {
+            const { role_id, user_id, work, status } = req.body;
+            const assignWork = new AssignWork({
+                role_id,
+                user_id
+            });
 
-        const assign_result = await assignWork.save();
+            const assign_result = await assignWork.save();
 
-        if (assign_result) {
+            if (assign_result) {
 
-            const assign_work_id = assign_result._id;
-            const assign_user_id = assign_result.user_id;
+                const assign_work_id = assign_result._id;
+                const assign_user_id = assign_result.user_id;
+
+                work.forEach(async function (elements) {
+                    const subwork_assign = new SubWorkAssign({
+                        assign_work_id: assign_work_id,
+                        user_id: assign_user_id,
+                        work: elements,
+                        status
+                    })
+                    const sub_assign_result = subwork_assign.save()
+                })
+
+                try {
+                    res.send(CustomSuccessHandler.success("Work submitted successfully!"))
+                } catch (error) {
+                    return next(error)
+                }
+
+            } else {
+                res.send("There is no work assigned")
+            }
+        }
+        else {
+            // const sub_work_data = await SubWorkAssign.findOne({ user_id: req.body.user_id },{user_id:1}).select('-createdAt -updatedAt -__v');
+
+            const { work,user_id } = req.body;
 
             work.forEach(async function (elements) {
-                const subwork_assign = new SubWorkAssign({
-                    assign_work_id: assign_work_id,
-                    user_id: assign_user_id,
+
+                const add_subwork_assign = new SubWorkAssign({
                     work: elements,
-                    status
-                })
-                const sub_assign_result = subwork_assign.save()
+                    user_id,
+                    assign_work_id: exist
+                });
+
+                await add_subwork_assign.save();
             })
-
-            try {
-                res.send(CustomSuccessHandler.success("Work submitted successfully!"))
-            } catch (error) {
-                return next(error)
-            }
-
-        } else {
-            res.send("There is no work assigned")
+            res.json("work added successfully!")
         }
-
     },
 
     async edit(req, res, next) {
@@ -135,21 +154,28 @@ const AssignWorkController = {
                 { new: true }
 
             ).select('-createdAt -updatedAt -__v');
+
             if (assign_result) {
                 documents = await SubWorkAssign.deleteMany(
                     { assign_work_id: req.params.id }
                 )
             }
+
+            // console.log(assign_result);
+
             const assign_work_id = assign_result._id;
             const assign_user_id = assign_result.user_id;
 
-            const subwork_assign = new SubWorkAssign({
-                assign_work_id: assign_work_id,
-                user_id: assign_user_id,
-                work,
-                status
+            work.forEach(async function (elements) {
+
+                const subwork_assign = new SubWorkAssign({
+                    assign_work_id: assign_work_id,
+                    user_id: assign_user_id,
+                    work: elements,
+                    status
+                })
+                const sub_assign_result = subwork_assign.save()
             })
-            const sub_assign_result = subwork_assign.save()
         } catch (err) {
             return next(err);
         }
