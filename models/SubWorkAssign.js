@@ -1,12 +1,14 @@
 import mongoose from "mongoose";
 import { ObjectId } from 'mongodb'
-// var Schema = mongoose.Schema,
-//     ObjectId = Schema.ObjectId;
 
 const SubWorkAssign = mongoose.Schema({
     assign_work_id: { type:ObjectId },  
     user_id: { type: ObjectId },
-    work: { type: String,required:true }, 
+    work: { type: String}, 
+    comment:{type:String},
+    exp_completion_time:{type:Date},
+    revert_comment:{type:String},
+    revert_status:{type:Boolean},
     status:{type:Boolean}
 })   
 

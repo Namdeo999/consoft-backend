@@ -9,10 +9,13 @@ import {
     CompanyController, ProductKeyController, UserRoleController,
 
     //project
-    ProjectCategoryController, ProjectTypeController, ProjectController, AssignWorkController,
+    ProjectCategoryController, ProjectTypeController, ProjectController, 
+
+    //Assignwork
+    AssignWorkController,UserAssignWorkController,
 
     //stock
-    UnitController, ItemController, ManageStockController,
+    UnitController, ItemController, ManageStockController,ContractorController,
 
     //checklist
     ChecklistOptionTypeController, ChecklistOptionController, ChecklistController,ToolsMachineryController
@@ -120,6 +123,11 @@ router.get('/assign-works/:id',AssignWorkController.edit);
 router.put('/assign-works/:id',AssignWorkController.update);
 router.delete('/assign-works/:id',AssignWorkController.destroy);
 
+
+//user-end assignwork
+router.get('/user-assign-works/:id',UserAssignWorkController.index)
+router.put('/user-assign-works/:id',UserAssignWorkController.update)
+
 //Tools And Machinery
 
 router.get('/tools-machinery',ToolsMachineryController.index);
@@ -128,7 +136,9 @@ router.get('/tools-machinery/:id',ToolsMachineryController.edit);
 router.put('/tools-machinery/:id',ToolsMachineryController.update);
 router.delete('/tools-machinery/:id',ToolsMachineryController.destroy);
 
+//Contractors
 
+router.post('/user-contractor',ContractorController.store);
 
 
 
