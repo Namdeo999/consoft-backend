@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { User } from "../../models/index.js";
+import { User, ProjectTeam } from "../../models/index.js";
 import { userSchema } from "../../validators/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import bcrypt from 'bcrypt';
@@ -8,6 +8,7 @@ import CustomFunction from "../../services/CustomFunction.js";
 
 import transporter from "../../config/emailConfig.js";
 import { EMAIL_FROM } from "../../config/index.js";
+
 // import jwt from 'jsonwebtoken';
 
 const userController ={
@@ -42,9 +43,9 @@ const userController ={
 
         const password = CustomFunction.stringPassword(6);
 
-        const { name, email, mobile, role_id, company_id } = req.body;
+        const { name, email, mobile, role_id, company_id, project_id } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
-
+        
         const user = new User({
             name,
             email,
@@ -58,6 +59,15 @@ const userController ={
         try {
             const result = await user.save();  
             if(result) {
+
+
+                const projectTeam = new ProjectTeam({
+                    project_id:project_id,
+                    user_id:result._id,
+                });
+
+                const data = await projectTeam.save();
+
                 let info = transporter.sendMail({
                     from: EMAIL_FROM, // sender address
                     to: email, // list of receivers

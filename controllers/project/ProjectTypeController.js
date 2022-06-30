@@ -1,7 +1,7 @@
-import Joi from "joi";
-import { ProjectType } from "../models/index.js";
-import CustomErrorHandler from "../services/CustomErrorHandler.js";
-import CustomSuccessHandler from "../services/CustomSuccessHandler.js";
+import { ProjectType } from "../../models/index.js";
+import { projectTypeSchema } from "../../validators/index.js";
+import CustomErrorHandler from "../../services/CustomErrorHandler.js";
+import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 
 const ProjectTypeController = {
 
@@ -17,11 +17,6 @@ const ProjectTypeController = {
 
     async store(req, res, next){
 
-        const projectTypeSchema = Joi.object({
-            category_id:Joi.string().required(),
-            project_type:Joi.string().required(),
-        });
-
         const {error} = projectTypeSchema.validate(req.body);
         if(error){
             return next(error);
@@ -36,8 +31,9 @@ const ProjectTypeController = {
             return next(err);
         }
 
-        const {category_id, project_type} = req.body;
+        const {company_id, category_id, project_type} = req.body;
         const projectType = new ProjectType({
+            company_id,
             category_id,
             project_type,
         });
@@ -63,22 +59,19 @@ const ProjectTypeController = {
     },
 
     async update(req, res, next){
-        const projectTypeSchema = Joi.object({
-            category_id:Joi.string().required(),
-            project_type:Joi.string().required(),
-        });
-
+        
         const {error} = projectTypeSchema.validate(req.body);
         if(error){
             return next(error);
         }
 
-        const {category_id, project_type} = req.body;
+        const {company_id, category_id, project_type} = req.body;
         let document;
         try {
             document = await ProjectType.findOneAndUpdate(
                 { _id: req.params.id},
                 {
+                    company_id,
                     category_id,
                     project_type,
                 },

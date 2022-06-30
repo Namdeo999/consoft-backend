@@ -9,7 +9,7 @@ import {
     CompanyController, ProductKeyController, UserRoleController,
 
     //project
-    ProjectCategoryController, ProjectTypeController, ProjectController, 
+    ProjectCategoryController, ProjectTypeController, ProjectController, ProjectTeamController, 
 
     //Assignwork
     AssignWorkController,UserAssignWorkController,
