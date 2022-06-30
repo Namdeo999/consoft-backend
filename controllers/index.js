@@ -2,7 +2,7 @@
 export { default as loginController } from '../controllers/auth/loginController.js';
 export { default as userController } from '../controllers/auth/userController.js';
 export { default as refreshController } from '../controllers/auth/refreshController.js';
-export { default as UserRoleController } from './UserRoleController.js';
+export { default as UserRoleController } from './company/UserRoleController.js';
 
 //mail
 // export { default as MailControllher } from './MailController.js';
@@ -13,10 +13,10 @@ export { default as ProductKeyController } from '../controllers/auth/ProductKeyC
 //company
 export { default as CompanyController } from '../controllers/company/CompanyController.js';
 
-export { default as ProjectController } from './ProjectController.js';
-export { default as ProjectCategoryController } from './ProjectCategoryController.js';
-export { default as ProjectTypeController } from './ProjectTypeController.js';
-export { default as TeamController } from './TeamController.js';
+export { default as ProjectController } from './project/ProjectController.js';
+export { default as ProjectCategoryController } from './project/ProjectCategoryController.js';
+export { default as ProjectTypeController } from './project/ProjectTypeController.js';
+export { default as ProjectTeamController } from './project/ProjectTeamController.js';
 
 //stock controller 
 export { default as UnitController } from './stock/UnitController.js';

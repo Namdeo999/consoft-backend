@@ -1,7 +1,7 @@
-import Joi from "joi";
-import { Project } from "../models/index.js";
-import CustomErrorHandler from "../services/CustomErrorHandler.js";
-import CustomSuccessHandler from "../services/CustomSuccessHandler.js";
+import { Project } from "../../models/index.js";
+import { projectSchema } from "../../validators/index.js";
+import CustomErrorHandler from "../../services/CustomErrorHandler.js";
+import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 
 
 const ProjectController = {
@@ -17,14 +17,6 @@ const ProjectController = {
     },
 
     async store(req, res, next){
-        const projectSchema = Joi.object({
-            project_name: Joi.string().min(5).max(50).required(),
-            project_location: Joi.string().required(),
-            project_category: Joi.string().required(),
-            project_type: Joi.string().required(),
-            project_area: Joi.number().required(),
-            project_measurement: Joi.string().required(),
-        });
 
         const {error} = projectSchema.validate(req.body);
 
@@ -41,8 +33,9 @@ const ProjectController = {
             return next(err);
         }
 
-        const {project_name, project_location,project_category,project_type,project_area,project_measurement} = req.body;
+        const {company_id, project_name, project_location,project_category,project_type,project_area,project_measurement} = req.body;
         const project = new Project({
+            company_id:company_id,
             project_name:project_name,
             project_location:project_location,
             project_category:project_category,
@@ -72,26 +65,19 @@ const ProjectController = {
     },
 
     async update(req, res, next){
-        const projectSchema = Joi.object({
-            project_name: Joi.string().min(5).max(50).required(),
-            project_location: Joi.string().required(),
-            project_category: Joi.string().required(),
-            project_type: Joi.string().required(),
-            project_area: Joi.number().required(),
-            project_measurement: Joi.string().required(),
-        });
-
+        
         const {error} = projectSchema.validate(req.body);
         if(error){
             return next(error);
         }
 
-        const {project_name, project_location,project_category,project_type,project_area,project_measurement} = req.body;
+        const {company_id, project_name, project_location,project_category,project_type,project_area,project_measurement} = req.body;
         let document ;
         try {
             document = await Project.findByIdAndUpdate(
                 {_id: req.params.id},
                 {
+                    company_id,
                     project_name,
                     project_location,
                     project_category,

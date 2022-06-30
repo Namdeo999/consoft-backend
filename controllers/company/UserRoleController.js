@@ -1,7 +1,7 @@
-import Joi from "joi";
-import { UserRole } from "../models/index.js";
-import CustomErrorHandler from "../services/CustomErrorHandler.js";
-import CustomSuccessHandler from "../services/CustomSuccessHandler.js";
+import { UserRole } from "../../models/index.js";
+import { userRoleSchema } from "../../validators/index.js";
+import CustomErrorHandler from "../../services/CustomErrorHandler.js";
+import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 
 const UserRoleController = {
 
@@ -16,9 +16,7 @@ const UserRoleController = {
     },
 
     async store(req, res, next){
-        const userRoleSchema = Joi.object({
-            user_role: Joi.string().required(),
-        });
+        
         const {error} = userRoleSchema.validate(req.body);
         if(error){
             return next(error);
@@ -33,8 +31,9 @@ const UserRoleController = {
             return next(err);
         }
 
-        const {user_role} = req.body;
+        const {company_id, user_role} = req.body;
         const role = new UserRole({
+            company_id,
             user_role,
         });
 
@@ -59,18 +58,16 @@ const UserRoleController = {
     },
 
     async update(req, res, next){
-        const userRoleSchema = Joi.object({
-            user_role: Joi.string().required(),
-        });
+        
         const {error} = userRoleSchema.validate(req.body);
         if(error){
             return next(error);
         }
 
-        const {user_role} = req.body;
+        const {company_id, user_role} = req.body;
         let document;
         try {
-            document = await UserRole.findOneAndUpdate({ _id: req.params.id},{user_role},{new: true});
+            document = await UserRole.findOneAndUpdate({ _id: req.params.id},{company_id, user_role},{new: true});
         } catch (err) {
             return next(err);
         }

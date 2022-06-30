@@ -11,7 +11,8 @@ const loginController = {
         const loginSchema = Joi.object({
             // email: Joi.string().email().required(),
             mobile:Joi.number().required(),
-            password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
+            // password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
+            password: Joi.string().required(),
         });
 
         const {error} = loginSchema.validate(req.body);
@@ -25,8 +26,10 @@ const loginController = {
             if(!user){
                 return next(CustomErrorHandler.wrongCredentials())
             }
+
+            // console.log(user)
             // compare the password
-            const match = await bcrypt.compare(req.body.password, user.password);
+            const match = await bcrypt.compare(req.body.password,user.password);
             if (!match) {
                 return next(CustomErrorHandler.wrongCredentials());
             }
@@ -36,9 +39,8 @@ const loginController = {
             const refresh_token = JwtService.sign({ _id: user._id, role_id: user.role_id }, '1y', REFRESH_SECRET);
 
             await RefreshToken.create({ token: refresh_token });
-            // res.json({ access_token, id: user._id, role: user.role });
 
-            res.json({ access_token, refresh_token, _id: user._id, role_id: user.role_id });
+            res.json({status:200, access_token, refresh_token, _id: user._id, role_id: user.role_id });
 
         } catch (err) {
             return next(err);
