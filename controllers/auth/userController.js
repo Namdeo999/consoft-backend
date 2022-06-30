@@ -42,7 +42,6 @@ const userController ={
 
         const password = CustomFunction.stringPassword(6);
 
-
         const { name, email, mobile, role_id, company_id } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -54,7 +53,7 @@ const userController ={
             password: hashedPassword,
             company_id,
         });
-        //let access_token;
+        // let access_token;
         // let refresh_token;
         try {
             const result = await user.save();  
@@ -78,7 +77,50 @@ const userController ={
         }
         // res.json({status:200, access_token:access_token });
         res.json({status:200 });
-    }, 
+    },
+    
+    async user(req, res, next){
+        let user;
+        try {
+            // const user = await User.findOne({_id: req.user._id}).select('-password -createdAt -updatedAt  -__v');
+            await User.aggregate([
+                {
+                    $match: {
+                        "_id": ObjectId(req.user._id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "userRoles",
+                        localField: "role_id",
+                        foreignField: "_id",
+                        as: 'data'
+                    }
+                },
+                {$unwind:"$data"}, 
+                {
+                    $project: {
+                        _id: 1,
+                        name: 1,
+                        email:1,
+                        mobile:1,
+                        role_id:1,
+                        role:"$data.user_role",
+                    }
+                } 
+
+            ]).then(function ([res]) {
+                user = res;
+            })
+            
+            if(!user){
+                return next(CustomErrorHandler.notFound());
+            }
+            res.json(user);
+        } catch (err) {
+            return next(err);
+        }
+    },
 
     async index(req, res, next){
         let users;

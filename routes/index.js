@@ -22,8 +22,12 @@ import {
 
 } from '../controllers/index.js';
 
+//company
 import auth from '../middlewares/auth.js';
 import admin from '../middlewares/admin.js';
+
+//user
+import user_auth from '../middlewares/user_auth.js';
 
 // router.get('/me', userController.me);
 router.post('/login', loginController.login);
@@ -35,6 +39,7 @@ router.post('/company',  CompanyController.store);
 router.post('/verify-product-key',  ProductKeyController.verifyProductKey);
 
 router.post('/register', userController.register);
+router.get('/user',user_auth, userController.user);
 router.get('/users', userController.index);
 
 router.get('/role-by-users/:role_id', userController.roleByUsers);

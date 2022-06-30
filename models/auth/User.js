@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     mobile: { type: Number, required: true, unique: true },
-    password: { type: String, required: true, select: false },
+    password: { type: String},
     role_id: { type: ObjectId, required: true },
     company_id: { type: ObjectId, required: true },
     // role: { type: String, default: 'editor' },
