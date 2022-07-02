@@ -31,4 +31,4 @@ export { default as ManageStock } from './stock/ManageStock.js';
 export { default as ToolsMachinery } from './tools-machinery/ToolsMachinery.js';
 
 //contractor
-export {default as Contractor} from './ContractorModel/ContractorModel.js'
+export {default as Contractor} from './contractor/contractor.js'
