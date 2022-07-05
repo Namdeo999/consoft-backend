@@ -1,4 +1,4 @@
-import { Project } from "../../models/index.js";
+import { Project, ProjectTeam } from "../../models/index.js";
 import { projectSchema } from "../../validators/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
@@ -100,6 +100,16 @@ const ProjectController = {
         }
         return res.json(document);
     },
+
+    async userByProjects(req, res, next){
+        let projects;
+        try {
+            projects = await ProjectTeam.find({"$users.user_id":req.params.user_id});
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+        return res.json(projects);
+    }
 
 
 }

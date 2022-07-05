@@ -74,6 +74,9 @@ router.get('/projects/:id', ProjectController.edit);
 router.put('/projects/:id', ProjectController.update);
 router.delete('/projects/:id', ProjectController.destroy);
 
+router.get('/user-by-projects/:user_id',  ProjectController.userByProjects);
+
+
 //project team
 router.get('/project-team/:id',  ProjectTeamController.index);
 router.post('/project-team',  ProjectTeamController.store);
@@ -131,7 +134,8 @@ router.get('/assign-works',AssignWorkController.index);
 router.post('/assign-works',AssignWorkController.store);
 router.get('/assign-works/:id',AssignWorkController.edit);
 router.put('/assign-works/:id',AssignWorkController.update);
-router.delete('/assign-works/:id',AssignWorkController.destroy);
+// router.delete('/assign-works/:id',AssignWorkController.destroy);
+router.delete('/sub-assign-work/:id',AssignWorkController.destroySubAssignWork);
 
 
 //user-end assignwork

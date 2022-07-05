@@ -58,6 +58,8 @@ const AssignWorkController = {
                             _id: 1,
                             assign_work_id: 1,
                             work: 1,
+                            work_code: 1,
+                            exp_completion_time: 1,
                             status: 1
                         }
                     }
@@ -169,10 +171,9 @@ const AssignWorkController = {
         res.status(201).json(documents);
     },
 
-    async destroy(req, res, next) {
-        const document = await AssignWork.findOneAndRemove({ _id: req.params.id });
-        const documents = await SubWorkAssign.findOneAndRemove({ _id: req.params.id });
-        if (!document && !documents) {
+    async destroySubAssignWork(req, res, next) {
+        const document = await SubWorkAssign.findOneAndRemove({ _id: req.params.id });
+        if (!document) {
             return next(new Error("Nothing to delete"))
         } else {
             return res.json(document)

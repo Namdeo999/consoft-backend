@@ -4,7 +4,6 @@ import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import { ObjectId } from "mongodb";
 
-
 const projectTeamController = {
 
     async index(req, res, next){
@@ -36,7 +35,6 @@ const projectTeamController = {
                         as: 'user_arr'
                     },
                 },
-                
                 {
                     $project: {
                             project_id:'$project_data._id',
@@ -97,61 +95,59 @@ const projectTeamController = {
     },
 
     async store(req, res, next){
-        // console.log(req.body.user_id);
         const {error} = projectTeamSchema.validate(req.body);
         if(error){
             return next(error);
         }
-        // check exist
+
         const {project_id, user_id} = req.body;
+        let project_exist_id
+        project_exist_id = await ProjectTeam.findOne({ project_id:ObjectId(project_id) });
 
-        
-
-        const project_exist = await ProjectTeam.exists({project_id:project_id});
-        if (project_exist) {
-
-            // const user_exist = await ProjectTeam.find({"users.user_id":{$exists:true, $eq:[user_id]}})
-            // if(user_exist){
-            //     return next(CustomErrorHandler.alreadyExist('This user is already exist on this project'));
-            // }
-            
-            const document = await ProjectTeam.findOneAndUpdate( 
-            // await ProjectTeam.findOneAndUpdate( 
-                {project_id:ObjectId(project_id)},
-                // { $push: { 
-                //     users: {
-                //         user_id : user_id,
-                //       }  
-                //     } 
-                // },
-
-                {
-                    $push: {
-                      'users': {
-                        $each:user_id.map((id) => {
-                          return { user_id: id };
-                        }),
-                      },
-                    },
-                },
-                {new:true} 
-            )
-        }else{
+        if (!project_exist_id) {
             const project_team = new ProjectTeam({
-                project_id,
-                users: {
-                    user_id : user_id,
-                }  
+                project_id
             });
             const result = await project_team.save();
-            // const result = await project_team.save().then( (res) => console.log(res));
+            project_exist_id = result._id;
         }
 
         try {
+
+            // user_id.forEach(element => {
+                
+            // });
+
+            const document = await ProjectTeam.findByIdAndUpdate( 
+                {_id: ObjectId(project_exist_id)},
+                // { $push: {users: {user_id : user_id,} } }, // single code insert
+
+                {
+                    
+
+                    $addToSet: {
+                        'users': {
+                            $each:user_id.map((id) => {
+                                return { user_id:id };
+                            })
+                        },
+                    },
+
+
+
+
+                    // $addToSet: { 
+                    //     users: {
+                    //         $each: users
+                    //     }
+                    // } 
+                },
+                {new:true} 
+            )
             res.send(CustomSuccessHandler.success('Project assign successfully'));
         } catch (err) {
             return next(err);
-        }
+        } 
 
     },
 
