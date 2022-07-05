@@ -2,6 +2,7 @@ import { Project, ProjectTeam } from "../../models/index.js";
 import { projectSchema } from "../../validators/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
+import { ObjectId } from "mongodb";
 
 
 const ProjectController = {
@@ -104,7 +105,36 @@ const ProjectController = {
     async userByProjects(req, res, next){
         let projects;
         try {
-            projects = await ProjectTeam.find({"$users.user_id":req.params.user_id});
+
+            // projects = await ProjectTeam.find({ users: {$elemMatch: {user_id: ObjectId(req.params.user_id)}}});
+
+            projects =  await ProjectTeam.aggregate([
+                {
+                    $match: {
+                        users: {$elemMatch: {user_id: ObjectId(req.params.user_id)}}
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'projects',
+                        localField: 'project_id',
+                        foreignField: '_id',
+                        as: 'project_data'
+                    },
+                },
+                { $unwind: "$project_data" },
+                
+                {
+                    $project: {
+                        _id:1,
+                        project_id:'$project_data._id',
+                        project_name:'$project_data.project_name',
+                    }
+            
+                } 
+                
+            ])
+
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }

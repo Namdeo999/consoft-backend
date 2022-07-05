@@ -124,8 +124,7 @@ const projectTeamController = {
 
                 {
                     
-
-                    $addToSet: {
+                    $push: {
                         'users': {
                             $each:user_id.map((id) => {
                                 return { user_id:id };
@@ -133,7 +132,14 @@ const projectTeamController = {
                         },
                     },
 
-
+                    // $addToSet: {
+                    //     users: {
+                    //        $each: [ 
+                    //         { user_id: ObjectId('62bc3d6fd368747a9fe3e99f') },
+                    //         { user_id: ObjectId('62c2affaa77f4f2ce4a10b3e') },
+                    //     ],
+                    //     }
+                    // }
 
 
                     // $addToSet: { 
