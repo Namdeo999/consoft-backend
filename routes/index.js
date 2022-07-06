@@ -3,13 +3,13 @@ const router = express.Router();
 
 import {  
     //auth
-    registerController, loginController, refreshController, userController, 
+    loginController, refreshController, userController, 
 
     //company
     CompanyController, ProductKeyController, UserRoleController,
 
     //project
-    ProjectCategoryController, ProjectTypeController, ProjectController, 
+    ProjectCategoryController, ProjectTypeController, ProjectController, ProjectTeamController, 
 
     //Assignwork
     AssignWorkController,UserAssignWorkController,
@@ -22,19 +22,24 @@ import {
 
 } from '../controllers/index.js';
 
+//company
 import auth from '../middlewares/auth.js';
 import admin from '../middlewares/admin.js';
+
+//user
+import user_auth from '../middlewares/user_auth.js';
 
 // router.get('/me', userController.me);
 router.post('/login', loginController.login);
 
 router.post('/company-login', CompanyController.companyLogin);
-router.get('/company',  CompanyController.index);
+router.get('/company', [auth, admin], CompanyController.index);
 router.post('/company',  CompanyController.store);
 
 router.post('/verify-product-key',  ProductKeyController.verifyProductKey);
 
-router.post('/register', registerController.register);
+router.post('/register', userController.register);
+router.get('/user',user_auth, userController.user);
 router.get('/users', userController.index);
 
 router.get('/role-by-users/:role_id', userController.roleByUsers);
@@ -62,6 +67,20 @@ router.get('/project-type/:id', ProjectTypeController.edit);
 router.put('/project-type/:id', ProjectTypeController.update);
 router.delete('/project-type/:id', ProjectTypeController.destroy);
 
+//project 
+router.get('/projects',  ProjectController.index);
+router.post('/projects',  ProjectController.store);
+router.get('/projects/:id', ProjectController.edit);
+router.put('/projects/:id', ProjectController.update);
+router.delete('/projects/:id', ProjectController.destroy);
+
+router.get('/user-by-projects/:user_id',  ProjectController.userByProjects);
+
+
+//project team
+router.get('/project-team/:id',  ProjectTeamController.index);
+router.post('/project-team',  ProjectTeamController.store);
+
 //stock
 router.get('/unit', UnitController.index);
 router.post('/unit', UnitController.store);
@@ -86,13 +105,7 @@ router.put('/stock-entry/:id', ManageStockController.update);
 // router.get('/products/:id', productController.show);
 
 
-//project rouSETDSFDSFS
 
-router.get('/projects',  ProjectController.index);
-router.post('/projects',  ProjectController.store);
-router.get('/projects/:id', ProjectController.edit);
-router.put('/projects/:id', ProjectController.update);
-router.delete('/projects/:id', ProjectController.destroy);
 
 //Checklist items
 
@@ -121,7 +134,8 @@ router.get('/assign-works',AssignWorkController.index);
 router.post('/assign-works',AssignWorkController.store);
 router.get('/assign-works/:id',AssignWorkController.edit);
 router.put('/assign-works/:id',AssignWorkController.update);
-router.delete('/assign-works/:id',AssignWorkController.destroy);
+// router.delete('/assign-works/:id',AssignWorkController.destroy);
+router.delete('/sub-assign-work/:id',AssignWorkController.destroySubAssignWork);
 
 
 //user-end assignwork
@@ -139,6 +153,7 @@ router.delete('/tools-machinery/:id',ToolsMachineryController.destroy);
 //Contractors
 
 router.post('/user-contractor',ContractorController.store);
+router.get('/user-contractor',ContractorController.index);
 
 
 

@@ -34,13 +34,12 @@ const CompanyController = {
                 return next(CustomErrorHandler.wrongCredentials());
             }
 
-            const access_token = JwtService.sign({ _id: company._id, role: company.role });
-            const refresh_token = JwtService.sign({ _id: company._id, role: company.role }, '1y', REFRESH_SECRET);
+            const access_token = JwtService.sign({ _id: company._id });
+            const refresh_token = JwtService.sign({ _id: company._id }, '1y', REFRESH_SECRET);
 
             await RefreshToken.create({ token: refresh_token });
-            // res.json({ access_token, id: user._id, role: user.role });
-
-            res.json({ access_token, refresh_token, id: company._id, role: company.role });
+            
+            res.json({status:200, access_token, refresh_token, company_id: company._id});
             
         } catch (err) {
             return next(err);
@@ -48,19 +47,19 @@ const CompanyController = {
     },
 
     async index(req, res, next){
-        let companies;
+        let ducument;
         try {
-            companies = await Company.find().select('-createdAt -updatedAt -__v');
+            ducument = await Company.findOne({_id:req.company._id}).select('-password -role -__v');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json(companies);
+        return res.json(ducument);
     },
 
     async store(req, res, next){
         const companySchema = Joi.object({
             company_name:Joi.string().required(),
-            pan:Joi.string().required(),
+            //pan:Joi.string().required(),
             mobile:Joi.number().required(),
             email:Joi.string().required(),
             // password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
@@ -95,22 +94,19 @@ const CompanyController = {
         // Hash password
         // const hashedPassword = await bcrypt.hash(data, 10);
         
-        const {company_name, pan, mobile, email} = req.body;
+        const {company_name, mobile, email} = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
         // const hashedPassword = await bcrypt.hash(pass.message, 10);
 
         const company = new Company({
             company_name,
-            pan,
             mobile,
             email,
             password: hashedPassword,
         });
 
         try {
-
             const result = await company.save();
-            
             if (result) {
                 
                 const product_key = new ProductKey({
@@ -130,10 +126,14 @@ const CompanyController = {
                 from: EMAIL_FROM, // sender address
                 to: email, // list of receivers
                 subject: "Login Password and Product Key", // Subject line
-                text: result._id + " / " + password, // plain text body
+                text: " Password and product key " + password, // plain text body
             });
 
-            res.send(CustomSuccessHandler.success('Company created successfully'));
+            // res.json({ access_token:access_token });
+
+            // res.send(CustomSuccessHandler.success('Company created successfully'));
+
+            res.json({status:200, company_id:result._id, message:'Company created successfully'});
         } catch (err) {
             return next(err);
         }

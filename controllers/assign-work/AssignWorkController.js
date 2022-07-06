@@ -1,15 +1,15 @@
-import { AssignWork, SubWorkAssign, UserRole, User } from './../models/index.js'
-import CustomErrorHandler from '../services/CustomErrorHandler.js'
-import CustomSuccessHandler from '../services/CustomSuccessHandler.js'
+import { AssignWork, SubWorkAssign, UserRole, User } from '../../models/index.js'
+import CustomErrorHandler from '../../services/CustomErrorHandler.js'
+import CustomSuccessHandler from '../../services/CustomSuccessHandler.js'
 import { ObjectId } from 'mongodb'
 import mongoose from "mongoose";
+import CustomFunction from '../../services/CustomFunction.js';
 const AssignWorkController = {
 
     async index(req, res, next) {
         let documents;
 
         try {
-
             documents = await AssignWork.aggregate([
                 {
                     $lookup: {
@@ -20,8 +20,8 @@ const AssignWorkController = {
                     }
                 },
                 {
-                    $unwind: "$userrole_collection"
-                },
+                    $unwind:"$userrole_collection"
+                },            
                 {
                     $lookup: {
                         from: "users",
@@ -31,35 +31,39 @@ const AssignWorkController = {
                     }
                 },
                 {
-                    $unwind: "$users_collection"
-                },
+                    $unwind:"$users_collection"
+                },         
                 {
                     $lookup: {
                         from: "subWorkAssigns",
                         let: { "user_id": "$user_id" },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: { $eq: ["$user_id", "$$user_id"] }
-                                }
-                            },
-                        ],
+                       pipeline:[
+                        {
+                            $match:{
+                                $expr:{$eq:["$user_id","$$user_id"]}
+                            }
+                        },
+                       ],
                         as: 'assign_works'
                     }
-                },
+                },        
                 {
                     $project: {
                         role_id: 1,
                         user_id: 1,
-                        user_role: "$userrole_collection.user_role",
-                        user_name: "$users_collection.name",
+                        user_role:"$userrole_collection.user_role",
+                        user_name:"$users_collection.name",
                         // mobile:"$users_collection.mobile",
                         assign_works: {
                             _id: 1,
                             assign_work_id: 1,
                             work: 1,
+                            work_code: 1,
+                            exp_completion_time:1, 
                             status: 1
-                        }
+                        },
+                        // formattedDate: {$dateToString: { format: "%Y-%m-%d", date: "$exp_completion_time" } }, 
+                        
                     }
                 }
             ])
@@ -71,59 +75,53 @@ const AssignWorkController = {
     },
     async store(req, res, next) {
 
-        const exist = await AssignWork.exists({ user_id: req.params.user_id });
-
-        if (exist == null) {
-            const { role_id, user_id, work, status } = req.body;
-            const assignWork = new AssignWork({
-                role_id,
-                user_id
-            });
-
-            const assign_result = await assignWork.save();
-
-            if (assign_result) {
-
-                const assign_work_id = assign_result._id;
-                const assign_user_id = assign_result.user_id;
-
-                work.forEach(async function (elements) {
-                    const subwork_assign = new SubWorkAssign({
-                        assign_work_id: assign_work_id,
-                        user_id: assign_user_id,
-                        work: elements,
-                        status
-                    })
-                    const sub_assign_result = subwork_assign.save()
-                })
-
-                try {
-                    res.send(CustomSuccessHandler.success("Work submitted successfully!"))
-                } catch (error) {
-                    return next(error)
-                }
-
-            } else {
-                res.send("There is no work assigned")
+        const { role_id, user_id, work, status, exp_completion_time } = req.body;
+        let assign_result;
+        try {
+            const exist = await AssignWork.exists({user_id:req.body.user_id});
+            if (exist) {
+                assign_result = await AssignWork.findOne({ user_id:req.body.user_id }).select('-createdAt -updatedAt -__v');
+                
+            }else{
+                const assignWork = new AssignWork({
+                    role_id,
+                    user_id
+                });
+    
+                assign_result = await assignWork.save();
             }
+        } catch (err) {
+            return next(err);
         }
-        else {
-            // const sub_work_data = await SubWorkAssign.findOne({ user_id: req.body.user_id },{user_id:1}).select('-createdAt -updatedAt -__v');
+        
+        if (assign_result) {
 
-            const { work,user_id } = req.body;
+            const assign_work_id = assign_result._id;
+            const assign_user_id = assign_result.user_id;
 
             work.forEach(async function (elements) {
-
-                const add_subwork_assign = new SubWorkAssign({
+                const work_code = CustomFunction.randomNumber();
+                const subwork_assign = new SubWorkAssign({
+                    assign_work_id: assign_work_id,
+                    user_id: assign_user_id,
+                    work_code:work_code,
                     work: elements,
-                    user_id,
-                    assign_work_id: exist
-                });
-
-                await add_subwork_assign.save();
+                    exp_completion_time,
+                    status:false
+                })
+                const sub_assign_result = subwork_assign.save()
             })
-            res.json("work added successfully!")
+
+            try {
+                res.send(CustomSuccessHandler.success("Work submitted successfully!"))
+            } catch (error) {
+                return next(error)
+            }
+
+        } else {
+            res.send("There is no work assigned")
         }
+
     },
 
     async edit(req, res, next) {
@@ -154,38 +152,30 @@ const AssignWorkController = {
                 { new: true }
 
             ).select('-createdAt -updatedAt -__v');
-
             if (assign_result) {
                 documents = await SubWorkAssign.deleteMany(
                     { assign_work_id: req.params.id }
                 )
             }
-
-            // console.log(assign_result);
-
             const assign_work_id = assign_result._id;
             const assign_user_id = assign_result.user_id;
 
-            work.forEach(async function (elements) {
-
-                const subwork_assign = new SubWorkAssign({
-                    assign_work_id: assign_work_id,
-                    user_id: assign_user_id,
-                    work: elements,
-                    status
-                })
-                const sub_assign_result = subwork_assign.save()
+            const subwork_assign = new SubWorkAssign({
+                assign_work_id: assign_work_id,
+                user_id: assign_user_id,
+                work,
+                status
             })
+            const sub_assign_result = subwork_assign.save()
         } catch (err) {
             return next(err);
         }
         res.status(201).json(documents);
     },
 
-    async destroy(req, res, next) {
-        const document = await AssignWork.findOneAndRemove({ _id: req.params.id });
-        const documents = await SubWorkAssign.findOneAndRemove({ _id: req.params.id });
-        if (!document && !documents) {
+    async destroySubAssignWork(req, res, next) {
+        const document = await SubWorkAssign.findOneAndRemove({ _id: req.params.id });
+        if (!document) {
             return next(new Error("Nothing to delete"))
         } else {
             return res.json(document)
@@ -193,6 +183,5 @@ const AssignWorkController = {
     }
 
 }
-// SDFLSDKF
 
 export default AssignWorkController;

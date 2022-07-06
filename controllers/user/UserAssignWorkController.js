@@ -60,6 +60,7 @@ const UserAssignWorkController = {
                         assign_works: {
                             _id: 1,
                             assign_work_id: 1,
+                            work_code: 1,
                             work: 1,
                             comment:1,
                             exp_completion_time:1,

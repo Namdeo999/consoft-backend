@@ -1,7 +1,8 @@
 import Joi from "joi";
-import { ProjectCategory } from "../models/index.js";
-import CustomErrorHandler from "../services/CustomErrorHandler.js";
-import CustomSuccessHandler from "../services/CustomSuccessHandler.js";
+import { ProjectCategory } from "../../models/index.js";
+import { projectCategorySchema } from "../../validators/index.js";
+import CustomErrorHandler from "../../services/CustomErrorHandler.js";
+import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 
 const ProjectCategoryController = {
 
@@ -16,9 +17,7 @@ const ProjectCategoryController = {
     },
 
     async store(req, res, next){
-        const projectCategorySchema = Joi.object({
-            category_name: Joi.string().required(),
-        });
+        
         const {error} = projectCategorySchema.validate(req.body);
         if(error){
             return next(error);
@@ -33,8 +32,9 @@ const ProjectCategoryController = {
             return next(err);
         }
 
-        const {category_name} = req.body;
+        const {company_id, category_name} = req.body;
         const project_category = new ProjectCategory({
+            company_id,
             category_name,
         });
 
@@ -59,17 +59,15 @@ const ProjectCategoryController = {
     },
 
     async update(req, res, next){
-        const projectCategorySchema = Joi.object({
-            category_name: Joi.string().required(),
-        });
+        
         const {error} = projectCategorySchema.validate(req.body);
         if(error){
             return next(error);
         }
-        const {category_name} = req.body;
+        const {company_id, category_name} = req.body;
         let document;
         try {
-            document = await ProjectCategory.findOneAndUpdate({ _id: req.params.id},{category_name},{new: true});
+            document = await ProjectCategory.findOneAndUpdate({ _id: req.params.id},{company_id, category_name},{new: true});
         } catch (err) {
             return next(err);
         }

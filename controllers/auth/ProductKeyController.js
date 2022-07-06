@@ -1,7 +1,9 @@
 import Joi from "joi";
-import { ProductKey } from "../../models/index.js";
+import { ProductKey, RefreshToken } from "../../models/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
+import JwtService from "../../services/JwtService.js";
+import { REFRESH_SECRET } from "../../config/index.js";
 
 const ProductKeyController = {
 
@@ -28,7 +30,21 @@ const ProductKeyController = {
                 return next(CustomErrorHandler.inValid('Product key invalid enter correct key'));
             }
 
-            res.send(CustomSuccessHandler.success('Product key verified'));
+            const access_token = JwtService.sign({ _id: data.company_id });
+            const refresh_token = JwtService.sign({ _id: data.company_id }, '1y', REFRESH_SECRET);
+
+            await RefreshToken.create({ token: refresh_token });
+            // res.json({ access_token, refresh_token, id: user._id, role: user.role });
+
+            res.json({
+                status:200,
+                company_id:data._id,
+                access_token,
+                refresh_token,
+                message:'Product key verified'
+            });
+
+            // res.send(CustomSuccessHandler.success('Product key verified'));
            
         } catch (err) {
             return next(err);
