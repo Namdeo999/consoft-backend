@@ -1,7 +1,8 @@
-import Joi from "joi";
-import { Project } from "../models/index.js";
-import CustomErrorHandler from "../services/CustomErrorHandler.js";
-import CustomSuccessHandler from "../services/CustomSuccessHandler.js";
+import { Project, ProjectTeam } from "../../models/index.js";
+import { projectSchema } from "../../validators/index.js";
+import CustomErrorHandler from "../../services/CustomErrorHandler.js";
+import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
+import { ObjectId } from "mongodb";
 
 
 const ProjectController = {
@@ -17,14 +18,6 @@ const ProjectController = {
     },
 
     async store(req, res, next){
-        const projectSchema = Joi.object({
-            project_name: Joi.string().min(5).max(50).required(),
-            project_location: Joi.string().required(),
-            project_category: Joi.string().required(),
-            project_type: Joi.string().required(),
-            project_area: Joi.number().required(),
-            project_measurement: Joi.string().required(),
-        });
 
         const {error} = projectSchema.validate(req.body);
 
@@ -41,8 +34,9 @@ const ProjectController = {
             return next(err);
         }
 
-        const {project_name, project_location,project_category,project_type,project_area,project_measurement} = req.body;
+        const {company_id, project_name, project_location,project_category,project_type,project_area,project_measurement} = req.body;
         const project = new Project({
+            company_id:company_id,
             project_name:project_name,
             project_location:project_location,
             project_category:project_category,
@@ -72,26 +66,19 @@ const ProjectController = {
     },
 
     async update(req, res, next){
-        const projectSchema = Joi.object({
-            project_name: Joi.string().min(5).max(50).required(),
-            project_location: Joi.string().required(),
-            project_category: Joi.string().required(),
-            project_type: Joi.string().required(),
-            project_area: Joi.number().required(),
-            project_measurement: Joi.string().required(),
-        });
-
+        
         const {error} = projectSchema.validate(req.body);
         if(error){
             return next(error);
         }
 
-        const {project_name, project_location,project_category,project_type,project_area,project_measurement} = req.body;
+        const {company_id, project_name, project_location,project_category,project_type,project_area,project_measurement} = req.body;
         let document ;
         try {
             document = await Project.findByIdAndUpdate(
                 {_id: req.params.id},
                 {
+                    company_id,
                     project_name,
                     project_location,
                     project_category,
@@ -104,7 +91,7 @@ const ProjectController = {
         } catch (err) { 
             return next(err);
         }
-        res.status(201).json(document);
+        res.json({status:200, data:document});
     },
 
     async destroy(req, res, next) {
@@ -114,6 +101,45 @@ const ProjectController = {
         }
         return res.json(document);
     },
+
+    async userByProjects(req, res, next){
+        let projects;
+        try {
+
+            // projects = await ProjectTeam.find({ users: {$elemMatch: {user_id: ObjectId(req.params.user_id)}}});
+
+            projects =  await ProjectTeam.aggregate([
+                {
+                    $match: {
+                        users: {$elemMatch: {user_id: ObjectId(req.params.user_id)}}
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'projects',
+                        localField: 'project_id',
+                        foreignField: '_id',
+                        as: 'project_data'
+                    },
+                },
+                { $unwind: "$project_data" },
+                
+                {
+                    $project: {
+                        _id:1,
+                        project_id:'$project_data._id',
+                        project_name:'$project_data.project_name',
+                    }
+            
+                } 
+                
+            ])
+
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+        return res.json(projects);
+    }
 
 
 }
