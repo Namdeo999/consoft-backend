@@ -8,7 +8,28 @@ const ItemController = {
     async index(req, res, next){
         let documents
         try {
-            documents = await Item.find().select('-createdAt -updatedAt -__v');
+            // documents = await Item.find().select('-createdAt -updatedAt -__v');
+
+            documents =  await Item.aggregate([
+                {
+                    $lookup: {
+                        from: 'units',
+                        localField: 'unit_id',
+                        foreignField: '_id',
+                        as: 'items'
+                    },
+                },
+                { $unwind: "$items" },
+                
+                {
+                    $project: {
+                        _id:1,
+                        unit_id:1,
+                        item_name:1,
+                        unit_name:'$items.unit_name',
+                    }
+                } 
+            ])
         } catch (error) {
             return next(CustomErrorHandler.serverError());
         }
