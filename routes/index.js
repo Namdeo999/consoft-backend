@@ -67,6 +67,20 @@ router.get('/project-type/:id', ProjectTypeController.edit);
 router.put('/project-type/:id', ProjectTypeController.update);
 router.delete('/project-type/:id', ProjectTypeController.destroy);
 
+//project 
+router.get('/projects',  ProjectController.index);
+router.post('/projects',  ProjectController.store);
+router.get('/projects/:id', ProjectController.edit);
+router.put('/projects/:id', ProjectController.update);
+router.delete('/projects/:id', ProjectController.destroy);
+
+router.get('/user-by-projects/:user_id',  ProjectController.userByProjects);
+
+
+//project team
+router.get('/project-team/:id',  ProjectTeamController.index);
+router.post('/project-team',  ProjectTeamController.store);
+
 //stock
 router.get('/unit', UnitController.index);
 router.post('/unit', UnitController.store);
@@ -91,13 +105,7 @@ router.put('/stock-entry/:id', ManageStockController.update);
 // router.get('/products/:id', productController.show);
 
 
-//project rouSETDSFDSFS
 
-router.get('/projects',  ProjectController.index);
-router.post('/projects',  ProjectController.store);
-router.get('/projects/:id', ProjectController.edit);
-router.put('/projects/:id', ProjectController.update);
-router.delete('/projects/:id', ProjectController.destroy);
 
 //Checklist items
 
@@ -126,7 +134,8 @@ router.get('/assign-works',AssignWorkController.index);
 router.post('/assign-works',AssignWorkController.store);
 router.get('/assign-works/:id',AssignWorkController.edit);
 router.put('/assign-works/:id',AssignWorkController.update);
-router.delete('/assign-works/:id',AssignWorkController.destroy);
+// router.delete('/assign-works/:id',AssignWorkController.destroy);
+router.delete('/sub-assign-work/:id',AssignWorkController.destroySubAssignWork);
 
 
 //user-end assignwork

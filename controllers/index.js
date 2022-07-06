@@ -31,7 +31,7 @@ export { default as ChecklistOptionTypeController } from './checklist/ChecklistO
 export { default as ChecklistOptionController } from './checklist/ChecklistOptionController.js';
 export { default as ChecklistController } from './checklist/ChecklistController.js'
 
-export { default as AssignWorkController} from './AssignWorkController.js';
+export { default as AssignWorkController} from './assign-work/AssignWorkController.js';
 export { default as UserAssignWorkController} from '../controllers/user/UserAssignWorkController.js';
 
 //contractor controller

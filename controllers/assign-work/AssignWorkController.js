@@ -1,8 +1,9 @@
-import { AssignWork, SubWorkAssign, UserRole, User } from './../models/index.js'
-import CustomErrorHandler from '../services/CustomErrorHandler.js'
-import CustomSuccessHandler from '../services/CustomSuccessHandler.js'
+import { AssignWork, SubWorkAssign, UserRole, User } from '../../models/index.js'
+import CustomErrorHandler from '../../services/CustomErrorHandler.js'
+import CustomSuccessHandler from '../../services/CustomSuccessHandler.js'
 import { ObjectId } from 'mongodb'
 import mongoose from "mongoose";
+import CustomFunction from '../../services/CustomFunction.js';
 const AssignWorkController = {
 
     async index(req, res, next) {
@@ -57,8 +58,12 @@ const AssignWorkController = {
                             _id: 1,
                             assign_work_id: 1,
                             work: 1,
+                            work_code: 1,
+                            exp_completion_time:1, 
                             status: 1
-                        }
+                        },
+                        // formattedDate: {$dateToString: { format: "%Y-%m-%d", date: "$exp_completion_time" } }, 
+                        
                     }
                 }
             ])
@@ -70,26 +75,39 @@ const AssignWorkController = {
     },
     async store(req, res, next) {
 
-        const { role_id, user_id, work, status } = req.body;
-
-        const assignWork = new AssignWork({
-            role_id,
-            user_id
-        });
-
-        const assign_result = await assignWork.save();
-
+        const { role_id, user_id, work, status, exp_completion_time } = req.body;
+        let assign_result;
+        try {
+            const exist = await AssignWork.exists({user_id:req.body.user_id});
+            if (exist) {
+                assign_result = await AssignWork.findOne({ user_id:req.body.user_id }).select('-createdAt -updatedAt -__v');
+                
+            }else{
+                const assignWork = new AssignWork({
+                    role_id,
+                    user_id
+                });
+    
+                assign_result = await assignWork.save();
+            }
+        } catch (err) {
+            return next(err);
+        }
+        
         if (assign_result) {
 
             const assign_work_id = assign_result._id;
             const assign_user_id = assign_result.user_id;
 
             work.forEach(async function (elements) {
+                const work_code = CustomFunction.randomNumber();
                 const subwork_assign = new SubWorkAssign({
                     assign_work_id: assign_work_id,
                     user_id: assign_user_id,
+                    work_code:work_code,
                     work: elements,
-                    status
+                    exp_completion_time,
+                    status:false
                 })
                 const sub_assign_result = subwork_assign.save()
             })
@@ -155,10 +173,9 @@ const AssignWorkController = {
         res.status(201).json(documents);
     },
 
-    async destroy(req, res, next) {
-        const document = await AssignWork.findOneAndRemove({ _id: req.params.id });
-        const documents = await SubWorkAssign.findOneAndRemove({ _id: req.params.id });
-        if (!document && !documents) {
+    async destroySubAssignWork(req, res, next) {
+        const document = await SubWorkAssign.findOneAndRemove({ _id: req.params.id });
+        if (!document) {
             return next(new Error("Nothing to delete"))
         } else {
             return res.json(document)
