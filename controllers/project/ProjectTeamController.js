@@ -6,13 +6,13 @@ import { ObjectId } from "mongodb";
 
 const projectTeamController = {
 
-    async index(req, res, next){
+    async index(req, res, next) {
         let documents;
-       
+
         try {
             // documents = await ProjectTeam.find({project_id:req.params.id}).select('-createdAt -updatedAt -__v');
 
-            documents =  await ProjectTeam.aggregate([
+            documents = await ProjectTeam.aggregate([
                 {
                     $match: {
                         "project_id": ObjectId(req.params.id)
@@ -37,30 +37,30 @@ const projectTeamController = {
                 },
                 {
                     $project: {
-                            project_id:'$project_data._id',
-                            project_name:'$project_data.project_name',
-                            project_team: {
+                        project_id: '$project_data._id',
+                        project_name: '$project_data.project_name',
+                        project_team: {
                             $map: {
                                 input: '$user_arr',
                                 as: 'users_data',
                                 in: {
-                                $mergeObjects: [
-                                    {
-                                        user_id: '$$users_data._id',
-                                        user_name: '$$users_data.name',
-                                    },
-                                    // {$indexOfArray: ['$my_array.user_id', '$$users_data._id']},
-                                ],
-                            }
-                        
+                                    $mergeObjects: [
+                                        {
+                                            user_id: '$$users_data._id',
+                                            user_name: '$$users_data.name',
+                                        },
+                                        // {$indexOfArray: ['$my_array.user_id', '$$users_data._id']},
+                                    ],
+                                }
+
                             }
                         }
                     }
-            
-                } 
-                
+
+                }
+
             ])
-          
+
             // documents =  await ProjectTeam.aggregate([
             //     {
             //         $match: {
@@ -94,43 +94,62 @@ const projectTeamController = {
         return res.json(documents);
     },
 
-    async store(req, res, next){
-        const {error} = projectTeamSchema.validate(req.body);
-        if(error){
+    async store(req, res, next) {
+        const user_arr = [];
+        const { error } = projectTeamSchema.validate(req.body);
+        if (error) {
             return next(error);
         }
 
-        const {project_id, user_id} = req.body;
+        const { project_id, user_id } = req.body;
         let project_exist_id
-        project_exist_id = await ProjectTeam.findOne({ project_id:ObjectId(project_id) });
+        const project_exist = await ProjectTeam.findOne({ project_id: ObjectId(project_id) }).select('_id');
+        // project_exist_id = await ProjectTeam.exists({ project_id: ObjectId(project_id) });
 
-        if (!project_exist_id) {
+        if (!project_exist) {
             const project_team = new ProjectTeam({
                 project_id
             });
             const result = await project_team.save();
             project_exist_id = result._id;
+        }else{
+            project_exist_id = project_exist._id;
         }
-
+        // console.log(project_exist_id);
         try {
+            let project;
+            user_id.forEach( async (element) => {
+                project = await ProjectTeam.find({
+                    $and: [
+                        { project_id: { $eq: ObjectId(project_id) }, users: { $elemMatch: { user_id: ObjectId(element) } } }
+                    ]
+                })
+    
+                if (project.length === 0) {
+                    await ProjectTeam.findByIdAndUpdate(
+                        { _id: ObjectId(project_exist_id) },
+                        // { $push: {users: {user_id : user_id,} } }, // single code insert
+                        {
+                            $push: {users: {user_id : ObjectId(element)} } 
+                        },
+                        { new: true }
+                    )
+                }
+            });
 
-            // user_id.forEach(element => {
-                
-            // });
-
-            const document = await ProjectTeam.findByIdAndUpdate( 
-                {_id: ObjectId(project_exist_id)},
+            //const document = await ProjectTeam.findByIdAndUpdate(
+                //{ _id: ObjectId(project_exist_id) },
                 // { $push: {users: {user_id : user_id,} } }, // single code insert
 
-                {
-                    
-                    $push: {
-                        'users': {
-                            $each:user_id.map((id) => {
-                                return { user_id:id };
-                            })
-                        },
-                    },
+                //{
+
+                    // $push: {
+                    //     'users': {
+                    //         $each: user_id.map((id) => {
+                    //             return { user_id: id };
+                    //         })
+                    //     },
+                    // },
 
                     // $addToSet: {
                     //     users: {
@@ -147,14 +166,14 @@ const projectTeamController = {
                     //         $each: users
                     //     }
                     // } 
-                },
-                {new:true} 
-            )
+                //},
+                //{ new: true }
+            //)
+
             res.send(CustomSuccessHandler.success('Project assign successfully'));
         } catch (err) {
             return next(err);
-        } 
-
+        }
     },
 
 }

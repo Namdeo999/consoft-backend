@@ -59,9 +59,11 @@ const AssignWorkController = {
                             assign_work_id: 1,
                             work: 1,
                             work_code: 1,
-                            exp_completion_time: 1,
+                            exp_completion_time:1, 
                             status: 1
-                        }
+                        },
+                        // formattedDate: {$dateToString: { format: "%Y-%m-%d", date: "$exp_completion_time" } }, 
+                        
                     }
                 }
             ])
