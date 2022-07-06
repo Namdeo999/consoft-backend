@@ -179,14 +179,23 @@ const projectTeamController = {
     },
 
     async destroy(req, res, next) {
-        //  console.log(req.params.project_id)
-         console.log(req.params.user_id)
+        const {project_id, user_id} = req.params;
+        const document = await ProjectTeam.findOneAndUpdate(
+            { project_id: ObjectId(project_id) },
+            // { $push: {users: {user_id : user_id,} } }, // single code insert
+            {
+                $pull: {users: {user_id : ObjectId(user_id)} } 
+            },
+            { new: true }
+            // false, // Upsert
+            // true, // Multi
+        )
 
-        // const document = await ProjectTeam.findOneAndRemove({ _id: req.params.id });
-        // if (!document) {
-        //     return next(new Error('Nothing to delete'));
-        // }
-        return res.json("document");
+
+        if (!document) {
+            return next(new Error('Nothing to delete'));
+        }
+        return res.json(document);
     },
 
 }

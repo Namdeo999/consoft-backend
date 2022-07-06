@@ -107,6 +107,7 @@ const AssignWorkController = {
                     work_code:work_code,
                     work: elements,
                     exp_completion_time,
+                    // exp_completion_time: {$dateToString: { format: "%Y-%m-%d", date: "$exp_completion_time" } },
                     status:false
                 })
                 const sub_assign_result = subwork_assign.save()
@@ -174,13 +175,13 @@ const AssignWorkController = {
     },
 
     async destroySubAssignWork(req, res, next) {
-        const document = await SubWorkAssign.findOneAndRemove({ _id: req.params.id });
+
+        const document = await SubWorkAssign.findByIdAndRemove({ _id: req.params.id });
         if (!document) {
             return next(new Error("Nothing to delete"))
-        } else {
-            return res.json(document)
-        }
-    }
+        } 
+        return res.json({status:200})
+    },
 
 }
 
