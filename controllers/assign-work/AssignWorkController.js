@@ -106,7 +106,7 @@ const AssignWorkController = {
                     user_id: assign_user_id,
                     work_code:work_code,
                     work: elements,
-                    exp_completion_date,
+                    exp_completion_date:CustomFunction.dateFormat(exp_completion_date),
                     exp_completion_time,
                     // exp_completion_time: {$dateToString: { format: "%Y-%m-%d", date: "$exp_completion_time" } },
                     status:false
