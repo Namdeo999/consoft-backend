@@ -21,7 +21,7 @@ import {
     ChecklistOptionTypeController, ChecklistOptionController, ChecklistController,ToolsMachineryController,
 
     //report 
-    QuantityReportController
+    QuantityReportController, QuantityReportItemController
 
 } from '../controllers/index.js';
 
@@ -110,7 +110,6 @@ router.put('/stock-entry/:id', ManageStockController.update);
 
 
 
-
 //Checklist items
 
 router.get('/checklist-option-type', ChecklistOptionTypeController.index);
@@ -132,15 +131,12 @@ router.put('/checklists/:id', ChecklistController.update);
 router.delete('/checklists/:id', ChecklistController.destroy);
 
 //AssignWork
-
-
 router.get('/assign-works',AssignWorkController.index);
 router.post('/assign-works',AssignWorkController.store);
 router.get('/assign-works/:id',AssignWorkController.edit);
 router.put('/assign-works/:id',AssignWorkController.update);
 // router.delete('/assign-works/:id',AssignWorkController.destroy);
 router.delete('/sub-assign-work/:id',AssignWorkController.destroySubAssignWork);
-
 
 //user-end assignwork
 router.get('/user-assign-works/:id',UserAssignWorkController.index)
@@ -154,19 +150,17 @@ router.get('/tools-machinery/:id',ToolsMachineryController.edit);
 router.put('/tools-machinery/:id',ToolsMachineryController.update);
 router.delete('/tools-machinery/:id',ToolsMachineryController.destroy);
 
-//Contractors
+//contractors
 router.post('/user-contractor',ContractorController.store);
 router.get('/user-contractor',ContractorController.index);
 
 //report
-
+router.get('/quantity-report',QuantityReportController.index);
 router.post('/quantity-report',QuantityReportController.store);
 
-
-
-
-
-
+    // report item
+    router.get('/quantity-report-item', QuantityReportItemController.index);
+    router.post('/quantity-report-item', QuantityReportItemController.store);
 
 
 

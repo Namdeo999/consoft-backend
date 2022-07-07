@@ -191,7 +191,6 @@ const projectTeamController = {
             // true, // Multi
         )
 
-
         if (!document) {
             return next(new Error('Nothing to delete'));
         }

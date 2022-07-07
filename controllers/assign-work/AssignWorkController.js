@@ -75,7 +75,7 @@ const AssignWorkController = {
     },
     async store(req, res, next) {
 
-        const { role_id, user_id, work, status, exp_completion_time } = req.body;
+        const { role_id, user_id, work, status, exp_completion_date, exp_completion_time } = req.body;
         let assign_result;
         try {
             const exist = await AssignWork.exists({user_id:req.body.user_id});
@@ -106,6 +106,7 @@ const AssignWorkController = {
                     user_id: assign_user_id,
                     work_code:work_code,
                     work: elements,
+                    exp_completion_date,
                     exp_completion_time,
                     // exp_completion_time: {$dateToString: { format: "%Y-%m-%d", date: "$exp_completion_time" } },
                     status:false

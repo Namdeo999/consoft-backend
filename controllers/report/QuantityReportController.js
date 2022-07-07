@@ -1,12 +1,17 @@
 import { QuantityReport } from "../../models/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
+import CustomFunction from "../../services/CustomFunction.js";
 
 const QuantityReportController = {
 
+    async index(req, res, next){
+
+
+    },
+
     async store(req, res, next){
         //validation
-
         const { report_id, particular, length, width, height, qty, item_id } = req.body;
         const quantity_report = new QuantityReport({
             report_id,
