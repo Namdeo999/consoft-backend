@@ -9,34 +9,37 @@ const ReportController = {
     async saveReport(req, res, next){
 
         const {error} = reportSchema.validate(req.body);
-
         if(error){
             return next(error);
         }
 
         try {
+            const {project_id, user_id} = req.body;
             const exist = await Report.exists({project_id:req.body.project_id});
-            console.log(exist)
-            if (exist) {
-                return next(CustomErrorHandler.alreadyExist('This Project is already exist'));
+            if (!exist) {
+                const report = new Report({
+                    project_id:project_id,
+                    user_id:user_id,
+                }) ;
+                const result = await report.save();
             }
+            // use another controller function here
+
+            
+
         } catch (err) {
             return next(err);
         }
 
-        const {project_id, user_id} = req.body;
-        const report = new Report({
-            project_id:project_id,
-            user_id:user_id,
-        }) ;
+        
+        
 
-        try {
-            const result = await report.save();
-            // res.status(200).send({ "status": "success", "message": "Project created" })
-            res.send(CustomSuccessHandler.success('Report created successfully'));
-        } catch (err) {
-            return next(err);
-        }
+        // try {
+        //     // res.status(200).send({ "status": "success", "message": "Project created" })
+        //     res.send(CustomSuccessHandler.success('Report created successfully'));
+        // } catch (err) {
+        //     return next(err);
+        // }
 
         // const data = QuantityReportController.index(); //final call
         // console.log(data);

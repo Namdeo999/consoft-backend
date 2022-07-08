@@ -22,7 +22,12 @@ const ContractorController = {
         } 
 
         try {
-            const exist = await Contractor.exists({project_id: req.body.project_id});
+            const exist = await Contractor.exists({project_id: req.body.project_id , contractor_name: req.body.contractor_name});
+            // project = await ProjectTeam.find({
+            //     $and: [
+            //         { project_id: { $eq: ObjectId(project_id) }, users: { $elemMatch: { user_id: ObjectId(element) } } }
+            //     ]
+            // })
             if(exist){
                 return next(CustomErrorHandler.alreadyExist('Contractor already exist in this project'));
             }
@@ -43,7 +48,18 @@ const ContractorController = {
         } catch (error) {
             return next(error)
         }
-    }
+    },
+
+    async projectByContractor(req, res, next) {
+        let documents;
+        try {
+            documents = await Contractor.find({project_id:req.params.project_id}).select('-createdAt -updatedAt -__v');
+        } catch (error) {
+            return next(CustomErrorHandler.serverError())
+        }
+        return res.json(documents);
+    },
+
 }
 
 export default ContractorController;
