@@ -35,6 +35,7 @@ export {default as Contractor} from './contractor/contractor.js';
 
 
 //reports
+export { default as Report } from './report/Report.js';
 export { default as QuantityReport } from './report/QuantityReport.js';
 
 export { default as QuantityReportItem } from './report/quantity-report-item/QuantityReportItem.js';

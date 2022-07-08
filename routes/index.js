@@ -21,7 +21,7 @@ import {
     ChecklistOptionTypeController, ChecklistOptionController, ChecklistController,ToolsMachineryController,
 
     //report 
-    QuantityReportController, QuantityReportItemController
+    ReportController, QuantityReportController, QuantityReportItemController
 
 } from '../controllers/index.js';
 
@@ -112,7 +112,8 @@ router.put('/stock-entry/:id', ManageStockController.update);
 
 //Checklist items
 
-router.get('/checklist-option-type', ChecklistOptionTypeController.index);
+router.get('/checklist-option-type',[auth, admin], ChecklistOptionTypeController.index);
+// router.get('/checklist-option-type/:company_id', ChecklistOptionTypeController.index);
 router.post('/checklist-option-type', ChecklistOptionTypeController.store);
 router.get('/checklist-option-type/:id', ChecklistOptionTypeController.edit);
 router.put('/checklist-option-type/:id', ChecklistOptionTypeController.update);
@@ -151,16 +152,18 @@ router.put('/tools-machinery/:id',ToolsMachineryController.update);
 router.delete('/tools-machinery/:id',ToolsMachineryController.destroy);
 
 //contractors
-router.post('/user-contractor',ContractorController.store);
-router.get('/user-contractor',ContractorController.index);
+router.get('/contractor',ContractorController.index);
+router.post('/contractor',ContractorController.store);
 
 //report
-router.get('/quantity-report',QuantityReportController.index);
-router.post('/quantity-report',QuantityReportController.store);
+router.post('/report', ReportController.saveReport);
 
-    // report item
-    router.get('/quantity-report-item', QuantityReportItemController.index);
-    router.post('/quantity-report-item', QuantityReportItemController.store);
+    router.get('/quantity-report',QuantityReportController.index);
+    router.post('/quantity-report',QuantityReportController.store);
+
+        // report item
+        router.get('/quantity-report-item', QuantityReportItemController.index);
+        router.post('/quantity-report-item', QuantityReportItemController.store);
 
 
 

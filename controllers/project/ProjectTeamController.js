@@ -48,6 +48,7 @@ const projectTeamController = {
                                         {
                                             user_id: '$$users_data._id',
                                             user_name: '$$users_data.name',
+                                            role_id: '$$users_data.role_id',
                                             mobile: '$$users_data.mobile',
                                             email: '$$users_data.email',
                                         },

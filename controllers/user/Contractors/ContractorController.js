@@ -1,20 +1,38 @@
-import { Contractor, UserRole, User } from '../../../models/index.js'
+import { Contractor } from '../../../models/index.js'
 import CustomErrorHandler from '../../../services/CustomErrorHandler.js';
 import CustomSuccessHandler from '../../../services/CustomSuccessHandler.js'
+import { contractorSchema } from '../../../validators/index.js';
+
 const ContractorController = {
 
     async index(req, res, next) {
         let documents;
         try {
-            documents = await Contractor.find().select('-createdAt -updatedat -__v');
+            documents = await Contractor.find().select('-createdAt -updatedAt -__v');
         } catch (error) {
             return next(CustomErrorHandler.serverError())
         }
         return res.json(documents);
     },
     async store(req, res, next) {
-        const { contractor_name, phone_no } = req.body;
+
+        const {error} = contractorSchema.validate(req.body);
+        if(error){
+            return next(error);
+        } 
+
+        try {
+            const exist = await Contractor.exists({project_id: req.body.project_id});
+            if(exist){
+                return next(CustomErrorHandler.alreadyExist('Contractor already exist in this project'));
+            }
+        } catch (err) {
+            return next(err);
+        }
+        
+        const { project_id, contractor_name, phone_no } = req.body;
         const contractor = new Contractor({
+            project_id,
             contractor_name,
             phone_no
         });

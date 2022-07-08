@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 import { ObjectId } from 'mongodb'
 
 const contractor = mongoose.Schema({
-    contractor_name: { type: String },
-    phone_no:{type:Number},
-    date: { type: Date } 
+    project_id: { type: ObjectId, required:true }, 
+    contractor_name: { type: String, required:true },
+    phone_no:{type:Number, required:true},
 
 },{ timestamps: true })
 
