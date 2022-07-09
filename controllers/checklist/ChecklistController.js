@@ -235,8 +235,6 @@ const ChecklistController = {
             }
             const checklistdocument_id = checklistdocument._id
 
-
-
                 const checklistitem = new ChecklistItem({
                     checklist_id: checklistdocument_id,
                     checklist_option_type_id,

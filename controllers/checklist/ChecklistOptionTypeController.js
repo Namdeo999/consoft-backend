@@ -7,7 +7,7 @@ const ChecklistOptionTypeController = {
     async index(req, res, next){
         let documents;
         try {
-            documents = await ChecklistOptionType.find().select('-createdAt -updatedAt -__v');
+            documents = await ChecklistOptionType.find({company_id:req.company._id}).select('-createdAt -updatedAt -__v');
         } catch (err) { 
             return next(CustomErrorHandler.serverError());
         }
@@ -29,8 +29,9 @@ const ChecklistOptionTypeController = {
             return next(err);
         }
 
-        const {option_type} = req.body;
+        const {company_id, option_type} = req.body;
         const document = new ChecklistOptionType({
+            company_id,
             option_type,
         });
 
@@ -59,12 +60,12 @@ const ChecklistOptionTypeController = {
             return next(error);
         }
 
-        const {option_type} = req.body;
+        const {company_id, option_type} = req.body;
         let document;
         try {
             document = await ChecklistOptionType.findByIdAndUpdate(
                 { _id:req.params.id },
-                { option_type },
+                { company_id, option_type },
                 { new : true },
             ).select('-createdAt -updatedAt -__v');
         } catch (err) {
