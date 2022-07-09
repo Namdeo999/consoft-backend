@@ -36,4 +36,8 @@ export { default as UserAssignWorkController} from '../controllers/user/UserAssi
 
 //contractor controller
 
-export {default as ContractorController } from '../controllers/user/Contractors/ContractorController.js'
+export {default as ContractorController } from '../controllers/user/Contractors/ContractorController.js';
+
+//report
+
+export { default as QuantityReportController } from './report/QuantityReportController.js';

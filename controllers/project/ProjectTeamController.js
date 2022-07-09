@@ -48,6 +48,8 @@ const projectTeamController = {
                                         {
                                             user_id: '$$users_data._id',
                                             user_name: '$$users_data.name',
+                                            mobile: '$$users_data.mobile',
+                                            email: '$$users_data.email',
                                         },
                                         // {$indexOfArray: ['$my_array.user_id', '$$users_data._id']},
                                     ],
@@ -95,7 +97,7 @@ const projectTeamController = {
     },
 
     async store(req, res, next) {
-        const user_arr = [];
+       
         const { error } = projectTeamSchema.validate(req.body);
         if (error) {
             return next(error);
@@ -174,6 +176,17 @@ const projectTeamController = {
         } catch (err) {
             return next(err);
         }
+    },
+
+    async destroy(req, res, next) {
+        //  console.log(req.params.project_id)
+         console.log(req.params.user_id)
+
+        // const document = await ProjectTeam.findOneAndRemove({ _id: req.params.id });
+        // if (!document) {
+        //     return next(new Error('Nothing to delete'));
+        // }
+        return res.json("document");
     },
 
 }
