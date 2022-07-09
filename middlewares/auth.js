@@ -1,5 +1,9 @@
 import CustomErrorHandler from "../services/CustomErrorHandler.js";
 import JwtService from "../services/JwtService.js";
+//import { Company } from "../models/index.js";
+import { JWT_SECRET } from "../config/index.js";
+
+
 const auth = async (req, res, next) => {
     let authHeader = req.headers.authorization;
 
@@ -7,24 +11,18 @@ const auth = async (req, res, next) => {
         return next(CustomErrorHandler.unAuthorized())
     }
 
-    const token = authHeader.split(' ')[1];
-    
     try {
-        const { _id, role } = await JwtService.verify(token);
-        //here
-        const user = {
-            _id,
-            role
+        const token = authHeader.split(' ')[1];
+        if (token !== 'undefined') {
+
+            const { _id } = JwtService.verify(token, JWT_SECRET);
+            // req.company = await Company.findById(_id).select('-password')
+            const company = {
+                _id
+            }
+            req.company = company;
+            next()
         }
-        req.user = user;
-
-        //or
-
-        // req.user = {};
-        // req.user._id = _id;
-        // req.user.role = role;
-
-        next();
 
     } catch (err) {
         return next(CustomErrorHandler.unAuthorized())

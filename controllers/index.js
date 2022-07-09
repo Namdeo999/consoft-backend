@@ -1,8 +1,8 @@
-export { default as registerController } from '../controllers/auth/registerController.js';
+// export { default as registerController } from './auth/demoregisterController.js';
 export { default as loginController } from '../controllers/auth/loginController.js';
 export { default as userController } from '../controllers/auth/userController.js';
 export { default as refreshController } from '../controllers/auth/refreshController.js';
-export { default as UserRoleController } from './UserRoleController.js';
+export { default as UserRoleController } from './company/UserRoleController.js';
 
 //mail
 // export { default as MailControllher } from './MailController.js';
@@ -13,10 +13,10 @@ export { default as ProductKeyController } from '../controllers/auth/ProductKeyC
 //company
 export { default as CompanyController } from '../controllers/company/CompanyController.js';
 
-export { default as ProjectController } from './ProjectController.js';
-export { default as ProjectCategoryController } from './ProjectCategoryController.js';
-export { default as ProjectTypeController } from './ProjectTypeController.js';
-export { default as TeamController } from './TeamController.js';
+export { default as ProjectController } from './project/ProjectController.js';
+export { default as ProjectCategoryController } from './project/ProjectCategoryController.js';
+export { default as ProjectTypeController } from './project/ProjectTypeController.js';
+export { default as ProjectTeamController } from './project/ProjectTeamController.js';
 
 //stock controller 
 export { default as UnitController } from './stock/UnitController.js';
@@ -31,9 +31,18 @@ export { default as ChecklistOptionTypeController } from './checklist/ChecklistO
 export { default as ChecklistOptionController } from './checklist/ChecklistOptionController.js';
 export { default as ChecklistController } from './checklist/ChecklistController.js'
 
-export { default as AssignWorkController} from './AssignWorkController.js';
+export { default as AssignWorkController} from './assign-work/AssignWorkController.js';
 export { default as UserAssignWorkController} from '../controllers/user/UserAssignWorkController.js';
 
 //contractor controller
 
-export {default as ContractorController } from '../controllers/user/Contractors/ContractorController.js'
+export {default as ContractorController } from '../controllers/user/Contractors/ContractorController.js';
+
+//report
+
+export { default as ReportController } from './report/ReportController.js'
+
+export { default as QuantityReportController } from './report/QuantityReportController.js';
+
+export { default as QuantityReportItemController } from './report/quantity-report-item/QuantityReportItemController.js';
+

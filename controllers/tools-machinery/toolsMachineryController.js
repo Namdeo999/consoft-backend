@@ -17,10 +17,11 @@ const ToolsMachineryController = {
 
     async store(req, res, next) {
 
-        const { tools_machinery_name } = req.body;
+        const { tools_machinery_name, qty } = req.body;
 
         const ToolsMachine = new ToolsMachinery({
-            tools_machinery_name
+            tools_machinery_name,
+            qty
         });
 
         const ToolsMachinery_result = await ToolsMachine.save();
@@ -44,14 +45,15 @@ const ToolsMachineryController = {
         return res.json(document);
     },
     async update(req, res, next) {
-        const { tools_machinery_name } = req.body;
+        const { tools_machinery_name, qty } = req.body;
 
         let document;
         try {
             document = await ToolsMachinery.findByIdAndUpdate(
                 { _id: req.params.id },
                 {
-                    tools_machinery_name
+                    tools_machinery_name,
+                    qty
                 },
                 { new: true },
             ).select('-createdAt -updatedAt -__v');
