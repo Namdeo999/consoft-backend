@@ -7,3 +7,9 @@ export { default as projectCategorySchema } from './project/ProjectCategoryValid
 export { default as projectTypeSchema } from './project/ProjectTypeValidator.js';
 
 export { default as projectTeamSchema } from './project/ProjectTeamValidator.js';
+
+//contractor
+export { default as contractorSchema } from './contractor/ContractorValidator.js';
+
+//report
+export { default as reportSchema } from './report/ReportValidator.js';

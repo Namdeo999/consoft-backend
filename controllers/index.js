@@ -40,4 +40,9 @@ export {default as ContractorController } from '../controllers/user/Contractors/
 
 //report
 
+export { default as ReportController } from './report/ReportController.js'
+
 export { default as QuantityReportController } from './report/QuantityReportController.js';
+
+export { default as QuantityReportItemController } from './report/quantity-report-item/QuantityReportItemController.js';
+
