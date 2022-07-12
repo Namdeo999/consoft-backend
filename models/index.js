@@ -17,8 +17,9 @@ export { default as ChecklistOption } from './checklist/ChecklistOption.js';
 export { default as Checklist } from './checklist/Checklist.js';
 export { default as ChecklistItem } from './checklist/ChecklistItem.js';
 
-export { default as AssignWork } from './AssignWork.js';
-export { default as SubWorkAssign } from './SubWorkAssign.js';
+//assign work
+export { default as AssignWork } from './assign-work/AssignWork.js';
+export { default as SubWorkAssign } from './assign-work/SubWorkAssign.js';
 
 
 //stock
@@ -31,7 +32,7 @@ export { default as ManageStock } from './stock/ManageStock.js';
 export { default as ToolsMachinery } from './tools-machinery/ToolsMachinery.js';
 
 //contractor
-export {default as Contractor} from './contractor/contractor.js';
+export {default as Contractor} from './contractor/Contractor.js';
 
 
 //reports
@@ -39,4 +40,8 @@ export { default as Report } from './report/Report.js';
 export { default as QuantityReport } from './report/QuantityReport.js';
 
 export { default as QuantityReportItem } from './report/quantity-report-item/QuantityReportItem.js';
+
+//supplier
+
+export {default as Supplier } from './supplier/Supplier.js';
  

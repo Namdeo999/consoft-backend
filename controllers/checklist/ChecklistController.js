@@ -42,11 +42,9 @@ const ChecklistController = {
 
                             }
 
-
                         ],
                         as: "list",
                     },
-
 
                 },
 
@@ -200,6 +198,7 @@ const ChecklistController = {
 
         return res.json(document);
     },
+
     async update(req, res, next) {
 
 
@@ -216,7 +215,7 @@ const ChecklistController = {
         // }
 
 
-        const { title, checklist_item, checklist_name, checklist_option_type_id, option_type } = req.body;
+        const { checklist_item, checklist_name, checklist_option_type_id, option_type } = req.body;
         let document;
         let checklistdocument;
         try {
@@ -233,15 +232,16 @@ const ChecklistController = {
                     { checklist_id: req.params.id }
                 )
             }
-            const checklistdocument_id = checklistdocument._id
 
-                const checklistitem = new ChecklistItem({
-                    checklist_id: checklistdocument_id,
-                    checklist_option_type_id,
-                    checklist_item,
-                    option_type
-                })
-                const checklistitem_result = checklistitem.save()
+            // const checklistdocument_id = checklistdocument._id
+
+            //     const checklistitem = new ChecklistItem({
+            //         checklist_id: checklistdocument_id,
+            //         checklist_option_type_id,
+            //         checklist_item,
+            //         option_type
+            //     })
+            // const checklistitem_result = checklistitem.save()
 
 
         } catch (err) {

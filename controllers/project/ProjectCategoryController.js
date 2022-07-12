@@ -55,7 +55,7 @@ const ProjectCategoryController = {
             return next(CustomErrorHandler.serverError());
         }
 
-        return res.json(document);
+        return res.json({"status":200, document});
     },
 
     async update(req, res, next){
@@ -71,7 +71,8 @@ const ProjectCategoryController = {
         } catch (err) {
             return next(err);
         }
-        res.status(201).json(document);
+        // res.status(201).json(document);
+        return res.send(CustomSuccessHandler.success("Category updated successfully"))
     },
 
     async destroy(req, res, next) {
@@ -79,7 +80,8 @@ const ProjectCategoryController = {
         if (!document) {
             return next(new Error('Nothing to delete'));
         }
-        return res.json(document);
+        // return res.send({"status":200,"message": "Category deleted successfully" })
+        return res.send(CustomSuccessHandler.success("Category deleted successfully"))
     },
     
 

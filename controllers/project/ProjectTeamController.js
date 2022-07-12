@@ -35,6 +35,7 @@ const projectTeamController = {
                         as: 'user_arr'
                     },
                 },
+                
                 {
                     $project: {
                         project_id: '$project_data._id',
@@ -196,6 +197,38 @@ const projectTeamController = {
             return next(new Error('Nothing to delete'));
         }
         return res.json(document);
+    },
+
+    async projectTeamRoleWise(req, res, next){
+        let documents;
+
+        try {
+            // documents = await ProjectTeam.find({project_id:req.params.id}).select('-createdAt -updatedAt -__v');
+
+
+
+            documents = await ProjectTeam.aggregate([
+                {
+                    $match: {
+                        "project_id": ObjectId(req.params.project_id)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'projects',
+                        localField: 'project_id',
+                        foreignField: '_id',
+                        as: 'project_data'
+                    },
+                },
+               
+                
+            ])
+
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+        return res.json(documents);
     },
 
 }

@@ -1,7 +1,7 @@
 
 import { ToolsMachinery } from '../../models/index.js'
+import { toolsMachinerySchema } from '../../validators/index.js';
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
-import ToolsMachinerySchema from '../../validators/checklist/ChecklistOptionValidator.js'
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 
 const ToolsMachineryController = {
@@ -17,18 +17,34 @@ const ToolsMachineryController = {
 
     async store(req, res, next) {
 
-        const { tools_machinery_name, qty } = req.body;
+        const {error} = toolsMachinerySchema.validate(req.body)
+        if (error) {
+            return next(error);
+        }
+
+        try {
+            const company_exist = await ToolsMachinery.exists({company_id:req.body.company_id});
+            if (company_exist) {
+                const machinery_name_exist = await ToolsMachinery.exists({tools_machinery_name:req.body.tools_machinery_name});
+                if (machinery_name_exist) {
+                    return next(CustomErrorHandler.alreadyExist('This machinery is already exist'));
+                }
+            }
+        } catch (err) {
+            return next(err);
+        }
+
+        const { company_id, tools_machinery_name, qty } = req.body;
 
         const ToolsMachine = new ToolsMachinery({
+            company_id,
             tools_machinery_name,
             qty
         });
 
-        const ToolsMachinery_result = await ToolsMachine.save();
-
-
+        const result = await ToolsMachine.save();
         try {
-            res.send(CustomSuccessHandler.success("submitted successfully!"))
+            res.send(CustomSuccessHandler.success("Tools and machinery created successfully!"))
         } catch (error) {
             return next(error)
         }
@@ -45,13 +61,18 @@ const ToolsMachineryController = {
         return res.json(document);
     },
     async update(req, res, next) {
-        const { tools_machinery_name, qty } = req.body;
+        const {error} = toolsMachinerySchema.validate(req.body)
+        if (error) {
+            return next(error);
+        }
+        const { company_id, tools_machinery_name, qty } = req.body;
 
         let document;
         try {
             document = await ToolsMachinery.findByIdAndUpdate(
                 { _id: req.params.id },
                 {
+                    company_id,
                     tools_machinery_name,
                     qty
                 },
@@ -60,7 +81,8 @@ const ToolsMachineryController = {
         } catch (err) {
             return next(err);
         }
-        res.status(201).json(document);
+        // res.status(201).json(document);
+        return res.send(CustomSuccessHandler.success("Tools and machinery updated successfully"))
     },
 
     async destroy(req, res, next) {

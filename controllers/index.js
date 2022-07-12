@@ -24,25 +24,28 @@ export { default as ItemController } from './stock/ItemController.js';
 export { default as ManageStockController } from './stock/ManageStockController.js';
 
 //tools machinery
-export { default as ToolsMachineryController } from './tools-machinery/toolsMachineryController.js';
+export { default as ToolsMachineryController } from './tools-machinery/ToolsMachineryController.js';
 
 //checklist
 export { default as ChecklistOptionTypeController } from './checklist/ChecklistOptionTypeController.js';
 export { default as ChecklistOptionController } from './checklist/ChecklistOptionController.js';
 export { default as ChecklistController } from './checklist/ChecklistController.js'
 
+//assign work
 export { default as AssignWorkController} from './assign-work/AssignWorkController.js';
-export { default as UserAssignWorkController} from '../controllers/user/UserAssignWorkController.js';
+export { default as UserAssignWorkController} from './assign-work/UserAssignWorkController.js';
 
 //contractor controller
 
-export {default as ContractorController } from '../controllers/user/Contractors/ContractorController.js';
+export {default as ContractorController } from './contractor/ContractorController.js';
 
 //report
 
 export { default as ReportController } from './report/ReportController.js'
-
 export { default as QuantityReportController } from './report/QuantityReportController.js';
-
 export { default as QuantityReportItemController } from './report/quantity-report-item/QuantityReportItemController.js';
+
+//supplier
+export { default as SupplierController } from './supplier/SupplierController.js';
+
 
