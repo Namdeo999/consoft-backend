@@ -136,7 +136,7 @@ router.get('/checklist-option/:id', ChecklistOptionController.edit);
 router.put('/checklist-option/:id', ChecklistOptionController.update);
 router.delete('/checklist-option/:id', ChecklistOptionController.destroy);
 
-router.get('/checklists',ChecklistController.index);
+router.get('/checklists/:company_id',ChecklistController.index);
 router.post('/checklists',ChecklistController.store);
 router.get('/checklists/:id',ChecklistController.edit);
 router.put('/checklists/:id', ChecklistController.update);
@@ -191,5 +191,9 @@ router.post('/revert-submit-work/:work_id', RevertController.revertSubmitWork);
 
 //verify
 router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
+
+
+
+
 
 export default router;

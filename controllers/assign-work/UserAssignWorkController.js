@@ -87,7 +87,6 @@ const UserAssignWorkController = {
             return next(CustomErrorHandler.serverError());
         }
         return res.json(documents);
-
     },
 
     async userSubmitWork(req, res, next){
