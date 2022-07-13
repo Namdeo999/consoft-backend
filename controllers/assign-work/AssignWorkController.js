@@ -6,7 +6,7 @@ import { ObjectId } from 'mongodb'
 import CustomFunction from '../../services/CustomFunction.js';
 const AssignWorkController = {
 
-    async index(req, res, next) {
+    async assignWork(req, res, next) {
         let documents;
 
         try {
@@ -76,6 +76,70 @@ const AssignWorkController = {
         return res.json(documents);
 
     },
+
+    async submitWork(req, res, next){
+        let documents;
+        try {
+            documents = await SubWorkAssign.aggregate([
+                {
+                    $match:{
+                        $and:[
+                            {
+                                "company_id": ObjectId(req.params.company_id),
+                            },
+                            {"work_status":true},
+                        ]
+                    }
+                },
+
+                {
+                    $lookup:{
+                        from:"users",
+                        localField:"user_id",
+                        foreignField:"_id",
+                        as:"userData"
+                    }
+                },
+                {
+                    $unwind:"$userData"
+                },
+
+                {
+                    $lookup: {
+                        from: "userRoles",
+                        let: { "role_id": "$userData.role_id" },
+                        pipeline:[
+                        {
+                            $match:{
+                                $expr:{$eq:["$_id","$$role_id"]}
+                            }
+                        },
+                        ],
+                        as: 'userRole'
+                    }
+                }, 
+                {
+                    $unwind:"$userRole"
+                },
+                {
+                    $project:{
+                        _id:1,
+                        user_name:"$userData.name",
+                        user_role:"$userRole.user_role",
+                        work_code:1,
+                        work:1,
+                        submit_work_text:1,
+                        submit_work_date:1,
+                        submit_work_time:1,
+                    }
+                },
+            ])
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+        return res.json(documents);
+    },
+
     async store(req, res, next) {
 
         const {error} = assignWorkSchema.validate(req.body);
@@ -108,17 +172,19 @@ const AssignWorkController = {
 
             const assign_work_id = assign_result._id;
             const assign_user_id = assign_result.user_id;
-            // const exp_date = CustomFunction.dateFormat(exp_completion_date);
+            const exp_date = CustomFunction.dateFormat(exp_completion_date);
             // const exp_time = CustomFunction.timeFormat(exp_completion_time);
             
             work.forEach(async function (elements) {
                 const work_code = CustomFunction.randomNumber();
                 const subwork_assign = new SubWorkAssign({
                     assign_work_id: assign_work_id,
+                    company_id:company_id,
+                    project_id:project_id,
                     user_id: assign_user_id,
                     work_code:work_code,
                     work: elements,
-                    exp_completion_date,
+                    exp_completion_date:exp_date,
                     exp_completion_time,
                     // exp_completion_time: {$dateToString: { format: "%Y-%m-%d", date: "$exp_completion_time" } },
                     status:false

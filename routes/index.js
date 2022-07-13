@@ -140,10 +140,11 @@ router.put('/checklists/:id', ChecklistController.update);
 router.delete('/checklists/:id', ChecklistController.destroy);
 
 //AssignWork
-router.get('/assign-works',AssignWorkController.index);
-router.post('/assign-works',AssignWorkController.store);
-router.get('/assign-works/:id',AssignWorkController.edit);
-router.put('/assign-works/:id',AssignWorkController.update);
+router.get('/assign-works', AssignWorkController.assignWork);
+router.get('/submit-works/:company_id', AssignWorkController.submitWork);
+router.post('/assign-works', AssignWorkController.store);
+router.get('/assign-works/:id', AssignWorkController.edit);
+router.put('/assign-works/:id', AssignWorkController.update);
 // router.delete('/assign-works/:id',AssignWorkController.destroy);
 router.delete('/sub-assign-work/:id',AssignWorkController.destroySubAssignWork);
 

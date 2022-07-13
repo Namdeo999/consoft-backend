@@ -251,6 +251,7 @@ const ChecklistController = {
     },
 
     async destroy(req, res, next) {
+        
         const document = await Checklist.findOneAndRemove({ _id: req.params.id });
         if (!document) {
             return next(new Error('Nothing to delete'));

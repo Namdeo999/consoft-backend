@@ -3,6 +3,8 @@ import { ObjectId } from 'mongodb'
 
 const SubWorkAssign = mongoose.Schema({
     assign_work_id: { type:ObjectId },  
+    company_id: { type:ObjectId },  
+    project_id: { type:ObjectId },  
     user_id: { type: ObjectId },
     work_code: { type: Number}, 
     work: { type: String}, 
