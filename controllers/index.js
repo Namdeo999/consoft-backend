@@ -48,4 +48,9 @@ export { default as QuantityReportItemController } from './report/quantity-repor
 //supplier
 export { default as SupplierController } from './supplier/SupplierController.js';
 
+//revert
+export { default as RevertController } from './revert/RevertController.js';
+
+//verify
+export { default as VerifyController } from './verify/VerifyController.js';
 

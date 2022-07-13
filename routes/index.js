@@ -24,7 +24,10 @@ import {
     ReportController, QuantityReportController, QuantityReportItemController,
 
     //supplier
-    SupplierController
+    SupplierController,
+
+    //revert
+    RevertController, VerifyController
 
 } from '../controllers/index.js';
 
@@ -155,7 +158,6 @@ router.get('/user-completed-works/:user_id',UserAssignWorkController.userComplet
 // router.put('/user-assign-works/:id',UserAssignWorkController.update)
 
 //Tools And Machinery
-
 router.get('/tools-machinery',ToolsMachineryController.index);
 router.post('/tools-machinery',ToolsMachineryController.store);
 router.get('/tools-machinery/:id',ToolsMachineryController.edit);
@@ -184,6 +186,10 @@ router.get('/supplier/:supplier_id', SupplierController.edit);
 router.put('/supplier/:supplier_id', SupplierController.update);
 router.delete('/supplier/:supplier_id', SupplierController.destroy);
 
+//revert
+router.post('/revert-submit-work/:work_id', RevertController.revertSubmitWork);
 
+//verify
+router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
 
 export default router;
