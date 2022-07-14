@@ -4,9 +4,9 @@ import date from 'date-and-time';
 const CustomFunction  = {
 
     currentDate(){
-        const now = new Date('07/07/2022');
+        const now = new Date();
         const current_date = date.format(now, 'YYYY/MM/DD') // => '2015/01/02 23:14:05'
-        return now;
+        return current_date;
     },
 
     currentTime(){
@@ -15,15 +15,28 @@ const CustomFunction  = {
         return current_time;
     },
 
-    dateFormat(value){
-        const pattern = date.compile('YYYY/MM/DD');
-        const formated_date = date.format(new Date(value), pattern);
+    dateFormat(inputDate){
 
-        return formated_date;
+        let day, month, year;
+        var new_date = new Date(inputDate);
+
+        day = new_date.getDate();
+        month = new_date.getMonth() + 1;
+        year = new_date.getFullYear();
+
+        if(day < 10) {
+            day = '0'+day;
+        } 
+
+        if(month < 10) {
+            month='0'+month;
+        }
+
+        return `${year}/${month}/${day}`; 
     },
 
     timeFormat(value){
-        const pattern = date.compile('HH:MM');
+        const pattern = date.compile('hh:mm');
         const formated_time = date.format(new Date(value), pattern);
 
         return formated_time;

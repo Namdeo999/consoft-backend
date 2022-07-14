@@ -1,7 +1,7 @@
-import { Contractor } from '../../../models/index.js'
-import CustomErrorHandler from '../../../services/CustomErrorHandler.js';
-import CustomSuccessHandler from '../../../services/CustomSuccessHandler.js'
-import { contractorSchema } from '../../../validators/index.js';
+import { Contractor } from '../../models/index.js';
+import CustomErrorHandler from '../../services/CustomErrorHandler.js';
+import CustomSuccessHandler from '../../services/CustomSuccessHandler.js'
+import { contractorSchema } from '../../validators/index.js';
 
 const ContractorController = {
 
