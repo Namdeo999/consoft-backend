@@ -40,8 +40,15 @@ const UserAssignWorkController = {
                                         {
                                             $expr: { $eq: ["$user_id", "$$user_id"] },
                                         },
-                                        {"work_status":false},
-                                        {"verify":false}
+                                        // {"work_status":false},
+                                        // {"verify":false},
+
+                                        {
+                                            $or: [
+                                                { "verify":false },
+                                                { "work_status":true },
+                                            ]
+                                        },
                                         // {"exam":"annual_T","marks.p":{"$gte":"35"}}
                                     ]
                                 }
@@ -78,6 +85,7 @@ const UserAssignWorkController = {
                             revert_msg:1,
                             revert_status:1,
                             work_status:1,
+                            verify:1,
                         }
                     }
                 }
