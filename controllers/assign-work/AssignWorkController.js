@@ -261,13 +261,16 @@ const AssignWorkController = {
             documents = await SubWorkAssign.aggregate([
                 {
                     $match:{
-                        $and:[
+                        $and: [
                             {
                                 "company_id": ObjectId(req.params.company_id),
                             },
-                            { "work_status":false },
-                            { "revert_status":true },
-                            { "verify":true },
+                            {
+                                $or: [
+                                    { "verify":true },
+                                    { "revert_status":true },
+                                ]
+                            },
                         ]
                     }
                 },
@@ -311,6 +314,8 @@ const AssignWorkController = {
                         submit_work_text:1,
                         submit_work_date:1,
                         submit_work_time:1,
+                        revert_status:1,
+                        verify:1,
                     }
                 },
             ])

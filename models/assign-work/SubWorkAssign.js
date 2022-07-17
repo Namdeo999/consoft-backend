@@ -17,6 +17,8 @@ const SubWorkAssign = mongoose.Schema({
     submit_work_date:{ type: String, default:null },
     submit_work_time:{ type: String, default:null },
     work_status:{ type: Boolean, default:false },
+    verify_date: { type: String, default:null },
+    verify_time: { type: String, default:null },
     verify: { type: Boolean, default:false },
     status:{ type:Boolean, default:false }
 })   
