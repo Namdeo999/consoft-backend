@@ -9,6 +9,10 @@ class CustomSuccessHandler {
         return new CustomSuccessHandler(200, message)
     }
 
+    static dataNotFound(message){
+        return new CustomSuccessHandler(200, message)
+    }
+
 }
 
 export default CustomSuccessHandler;
