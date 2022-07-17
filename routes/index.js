@@ -21,7 +21,13 @@ import {
     ChecklistOptionTypeController, ChecklistOptionController, ChecklistController,ToolsMachineryController,
 
     //report 
-    ReportController, QuantityReportController, QuantityReportItemController
+    ReportController, QuantityReportController, QuantityReportItemController,
+
+    //supplier
+    SupplierController,
+
+    //revert
+    RevertController, VerifyController
 
 } from '../controllers/index.js';
 
@@ -87,6 +93,8 @@ router.get('/project-team/:id',  ProjectTeamController.index);
 router.post('/project-team',  ProjectTeamController.store);
 router.delete('/project-team/:project_id/:user_id',  ProjectTeamController.destroy);
 
+router.get('/project-team-role-wise/:project_id',  ProjectTeamController.projectTeamRoleWise);//pending
+
 //stock
 router.get('/unit', UnitController.index);
 router.post('/unit', UnitController.store);
@@ -115,6 +123,7 @@ router.put('/stock-entry/:id', ManageStockController.update);
 //Checklist items
 
 router.get('/checklist-option-type',[auth, adminEditor], ChecklistOptionTypeController.index);
+// router.get('/checklist-option-type', ChecklistOptionTypeController.index);
 // router.get('/checklist-option-type/:company_id', ChecklistOptionTypeController.index);
 router.post('/checklist-option-type', ChecklistOptionTypeController.store);
 router.get('/checklist-option-type/:id', ChecklistOptionTypeController.edit);
@@ -127,26 +136,30 @@ router.get('/checklist-option/:id', ChecklistOptionController.edit);
 router.put('/checklist-option/:id', ChecklistOptionController.update);
 router.delete('/checklist-option/:id', ChecklistOptionController.destroy);
 
-router.get('/checklists',ChecklistController.index);
+router.get('/checklists/:company_id',ChecklistController.index);
 router.post('/checklists',ChecklistController.store);
 router.get('/checklists/:id',ChecklistController.edit);
 router.put('/checklists/:id', ChecklistController.update);
 router.delete('/checklists/:id', ChecklistController.destroy);
 
 //AssignWork
-router.get('/assign-works',AssignWorkController.index);
-router.post('/assign-works',AssignWorkController.store);
-router.get('/assign-works/:id',AssignWorkController.edit);
-router.put('/assign-works/:id',AssignWorkController.update);
+router.get('/assign-works', AssignWorkController.assignWork);
+router.get('/submit-works/:company_id', AssignWorkController.submitWork);
+router.post('/assign-works', AssignWorkController.store);
+router.get('/assign-works/:id', AssignWorkController.edit);
+router.put('/assign-works/:id', AssignWorkController.update);
 // router.delete('/assign-works/:id',AssignWorkController.destroy);
+router.get('/verify-revert-works/:company_id',AssignWorkController.verifyRevertWorks);
 router.delete('/sub-assign-work/:id',AssignWorkController.destroySubAssignWork);
 
 //user-end assignwork
-router.get('/user-assign-works/:id',UserAssignWorkController.index)
-router.put('/user-assign-works/:id',UserAssignWorkController.update)
+router.get('/user-assign-works/:user_id',UserAssignWorkController.index)
+router.put('/user-submit-work/:work_id',UserAssignWorkController.userSubmitWork)
+router.get('/user-completed-works/:user_id',UserAssignWorkController.userCompletedWork)
+// router.put('/user-assign-works/:id',UserAssignWorkController.update)
+router.put('/user-work-comment/:work_id', UserAssignWorkController.userWorkComment)
 
 //Tools And Machinery
-
 router.get('/tools-machinery',ToolsMachineryController.index);
 router.post('/tools-machinery',ToolsMachineryController.store);
 router.get('/tools-machinery/:id',ToolsMachineryController.edit);
@@ -159,7 +172,7 @@ router.get('/project-by-contractor/:project_id',ContractorController.projectByCo
 router.post('/contractor',ContractorController.store);
 
 //report
-router.post('/report', ReportController.saveReport);
+router.post('/report/:type', ReportController.saveReport);
 
     router.get('/quantity-report',QuantityReportController.index);
     router.post('/quantity-report',QuantityReportController.store);
@@ -167,6 +180,21 @@ router.post('/report', ReportController.saveReport);
         // report item
         router.get('/quantity-report-item', QuantityReportItemController.index);
         router.post('/quantity-report-item', QuantityReportItemController.store);
+
+
+router.get('/supplier', SupplierController.index);
+router.post('/supplier', SupplierController.store);
+router.get('/supplier/:supplier_id', SupplierController.edit);
+router.put('/supplier/:supplier_id', SupplierController.update);
+router.delete('/supplier/:supplier_id', SupplierController.destroy);
+
+//revert
+router.post('/revert-submit-work/:work_id', RevertController.revertSubmitWork);
+
+//verify
+router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
+
+
 
 
 
