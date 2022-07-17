@@ -22,6 +22,7 @@ const QuantityReportItemController = {
                 {
                     $project: {
                         _id:1,
+                        company_id:1,
                         unit_id:1,
                         item_name:1,
                         unit_name:'$items.unit_name',
@@ -37,6 +38,7 @@ const QuantityReportItemController = {
     async store(req, res, next){
         
         const quantityReportItemSchema = Joi.object({
+            company_id: Joi.string().required(),
             item_name: Joi.string().required(),
             unit_id: Joi.string().required(),
         });
@@ -55,8 +57,9 @@ const QuantityReportItemController = {
             return next(err);
         }
 
-        const {  item_name, unit_id } = req.body;
+        const {  company_id, item_name, unit_id } = req.body;
         const quantity_report_item = new QuantityReportItem({
+            company_id,
             item_name,
             unit_id,
         });

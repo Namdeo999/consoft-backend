@@ -87,7 +87,9 @@ const AssignWorkController = {
                             {
                                 "company_id": ObjectId(req.params.company_id),
                             },
-                            {"work_status":true},
+                            { "work_status":true },
+                            { "revert_status":false },
+                            { "verify":false },
                         ]
                     }
                 },
@@ -251,6 +253,71 @@ const AssignWorkController = {
             return next(err);
         }
         res.status(201).json(documents);
+    },
+
+    async verifyRevertWorks(req, res, next){
+        let documents;
+        try {
+            documents = await SubWorkAssign.aggregate([
+                {
+                    $match:{
+                        $and:[
+                            {
+                                "company_id": ObjectId(req.params.company_id),
+                            },
+                            { "work_status":false },
+                            { "revert_status":true },
+                            { "verify":true },
+                        ]
+                    }
+                },
+
+                {
+                    $lookup:{
+                        from:"users",
+                        localField:"user_id",
+                        foreignField:"_id",
+                        as:"userData"
+                    }
+                },
+                {
+                    $unwind:"$userData"
+                },
+
+                {
+                    $lookup: {
+                        from: "userRoles",
+                        let: { "role_id": "$userData.role_id" },
+                        pipeline:[
+                        {
+                            $match:{
+                                $expr:{$eq:["$_id","$$role_id"]}
+                            }
+                        },
+                        ],
+                        as: 'userRole'
+                    }
+                }, 
+                {
+                    $unwind:"$userRole"
+                },
+                {
+                    $project:{
+                        _id:1,
+                        user_name:"$userData.name",
+                        user_role:"$userRole.user_role",
+                        work_code:1,
+                        work:1,
+                        submit_work_text:1,
+                        submit_work_date:1,
+                        submit_work_time:1,
+                    }
+                },
+            ])
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+        return res.json(documents);
     },
 
     async destroySubAssignWork(req, res, next) {

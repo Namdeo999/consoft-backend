@@ -149,6 +149,7 @@ router.post('/assign-works', AssignWorkController.store);
 router.get('/assign-works/:id', AssignWorkController.edit);
 router.put('/assign-works/:id', AssignWorkController.update);
 // router.delete('/assign-works/:id',AssignWorkController.destroy);
+router.get('/verify-revert-works/:company_id',AssignWorkController.verifyRevertWorks);
 router.delete('/sub-assign-work/:id',AssignWorkController.destroySubAssignWork);
 
 //user-end assignwork
@@ -156,6 +157,7 @@ router.get('/user-assign-works/:user_id',UserAssignWorkController.index)
 router.put('/user-submit-work/:work_id',UserAssignWorkController.userSubmitWork)
 router.get('/user-completed-works/:user_id',UserAssignWorkController.userCompletedWork)
 // router.put('/user-assign-works/:id',UserAssignWorkController.update)
+router.put('/user-work-comment/:work_id', UserAssignWorkController.userWorkComment)
 
 //Tools And Machinery
 router.get('/tools-machinery',ToolsMachineryController.index);

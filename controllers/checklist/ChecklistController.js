@@ -15,7 +15,6 @@ const ChecklistController = {
                         "company_id": ObjectId(req.params.company_id)
                     }
                 },
-
                 {
                     $lookup:{
                         from:"checklistOptionTypes",
@@ -65,7 +64,6 @@ const ChecklistController = {
                     }
                 }
             ])
-
 
             // documents = await Checklist.aggregate([
             //     {
@@ -211,7 +209,6 @@ const ChecklistController = {
                     )
                 }
             });
-
             res.send(CustomSuccessHandler.success('Checklist created successfully'));
         } catch (error) {
             return next(err); 
@@ -256,7 +253,6 @@ const ChecklistController = {
         //                 ],
         //                 as: 'data'
         //             },
-
         //         },
         //     ])
 

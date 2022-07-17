@@ -6,7 +6,6 @@ import CustomFunction from '../../services/CustomFunction.js';
 
 const UserAssignWorkController = {
     async index(req, res, next) {
-
         let documents;
         try {
 
@@ -41,7 +40,8 @@ const UserAssignWorkController = {
                                         {
                                             $expr: { $eq: ["$user_id", "$$user_id"] },
                                         },
-                                        {"work_status":false}
+                                        {"work_status":false},
+                                        {"verify":false}
                                         // {"exam":"annual_T","marks.p":{"$gte":"35"}}
                                     ]
                                 }
@@ -89,24 +89,41 @@ const UserAssignWorkController = {
         return res.json(documents);
     },
 
+    async userWorkComment(req, res, next){
+        try {
+            const { comment } = req.body;
+            const work_comment = await SubWorkAssign.findByIdAndUpdate(
+                { _id: req.params.work_id },
+                {
+                    comment:comment,
+                },
+                { new: true }
+
+            ).select('-__v');
+        } catch (error) {
+            return next(CustomErrorHandler.serverError());
+        }
+        res.send(CustomSuccessHandler.success("Comment submit successfully!"))
+    },
+
     async userSubmitWork(req, res, next){
-
-        const { submit_work_text } = req.body;
-        const submit_date = CustomFunction.currentDate();
-        const submit_time = CustomFunction.currentTime();
-        const subwork_assign = await SubWorkAssign.findByIdAndUpdate(
-            { _id: req.params.work_id },
-            {
-                submit_work_text,
-                submit_work_date:submit_date,
-                submit_work_time:submit_time,
-                work_status:true,
-
-            },
-            { new: true }
-
-        ).select('-__v');
-
+        try {
+            const { submit_work_text } = req.body;
+            const submit_date = CustomFunction.currentDate();
+            const submit_time = CustomFunction.currentTime();
+            const subwork_assign = await SubWorkAssign.findByIdAndUpdate(
+                { _id: req.params.work_id },
+                {
+                    submit_work_text,
+                    submit_work_date:submit_date,
+                    submit_work_time:submit_time,
+                    work_status:true,
+                },
+                { new: true }
+            ).select('-__v');
+        } catch (error) {
+            return next(CustomErrorHandler.serverError());
+        }
         res.send(CustomSuccessHandler.success("Selected work submit successfully!"))
     },
 

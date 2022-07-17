@@ -24,16 +24,22 @@ const ReportController = {
         // return;
 
         try {
-            const {project_id, user_id} = req.body;
-            const exist = await Report.exists({project_id:req.body.project_id});
+            const {company_id, project_id, user_id, item_id, length, width, height, qty, remark } = req.body;
+            const exist = await Report.exists({company_id:company_id});
+            let report_id ;
+            
             if (!exist) {
                 const report = new Report({
-                    project_id:project_id,
-                    user_id:user_id,
+                    company_id:company_id,
+                    // project_id:project_id,
+                    // user_id:user_id,
                 }) ;
                 const result = await report.save();
+                report_id = result._id;
+            }else{
+                report_id = exist._id;
             }
-
+            
             switch (req.params.type) {
 
                 case Constants.MANPOWER:
@@ -45,17 +51,20 @@ const ReportController = {
                 case Constants.QUANTITY:
 
                     const bodyData = {
-                        particular:req.body.particular,
-                        length:req.body.length,
-                        width:req.body.width,
-                        height:req.body.height,
-                        qty:req.body.qty,
-                        item_id:req.body.item_id,
+                        report_id:report_id,
+                        project_id:project_id,
+                        user_id:user_id,
+                        item_id:item_id,
+                        length:length,
+                        width:width,
+                        height:height,
+                        qty:qty,
+                        remark:remark,
                     }
                     const data = QuantityReportController.nextTesting(bodyData);
                     
                     // const data = QuantityReportController.store(); //final call
-                    console.log(data)
+                    console.log(data);
                     break;
                 case Constants.QUALITY:
                     console.log("Quality")
