@@ -40,7 +40,8 @@ const UserAssignWorkController = {
                                         {
                                             $expr: { $eq: ["$user_id", "$$user_id"] },
                                         },
-                                        {"work_status":false}
+                                        {"work_status":false},
+                                        {"verify":false}
                                         // {"exam":"annual_T","marks.p":{"$gte":"35"}}
                                     ]
                                 }
