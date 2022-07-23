@@ -48,6 +48,9 @@ const AssignWorkController = {
                                 
                             }
                         },
+                        {
+                            $sort: { exp_completion_time: 1, exp_completion_time: 1 }
+                        }
                        ],
                         as: 'assign_works'
                     }
@@ -89,9 +92,12 @@ const AssignWorkController = {
                             },
                             { "work_status":true },
                             { "revert_status":false },
-                            { "verify":false },
+                            { "verify":false }
                         ]
-                    }
+                    },
+                },
+                {
+                    $sort: { submit_work_date: -1, submit_work_time: -1 }
                 },
 
                 {
@@ -133,6 +139,7 @@ const AssignWorkController = {
                         submit_work_text:1,
                         submit_work_date:1,
                         submit_work_time:1,
+                        work_status:1
                     }
                 },
             ])
@@ -260,6 +267,7 @@ const AssignWorkController = {
         try {
             documents = await SubWorkAssign.aggregate([
                 {
+                    // { $sort: { score: { $meta: "textScore" }, posts: -1 } }
                     $match:{
                         $and: [
                             {
@@ -272,9 +280,11 @@ const AssignWorkController = {
                                 ]
                             },
                         ]
-                    }
+                    },
                 },
-
+                {
+                    $sort: { submit_work_date: -1, submit_work_time: -1 }
+                },
                 {
                     $lookup:{
                         from:"users",
@@ -315,6 +325,8 @@ const AssignWorkController = {
                         submit_work_date:1,
                         submit_work_time:1,
                         revert_status:1,
+                        verify_date:1,
+                        verify_time:1,
                         verify:1,
                     }
                 },

@@ -79,7 +79,7 @@ router.put('/project-type/:id', ProjectTypeController.update);
 router.delete('/project-type/:id', ProjectTypeController.destroy);
 
 //project 
-router.get('/projects',  ProjectController.index);
+router.get('/projects/:company_id',  ProjectController.index);
 router.post('/projects',  ProjectController.store);
 router.get('/projects/:id', ProjectController.edit);
 router.put('/projects/:id', ProjectController.update);
@@ -170,6 +170,7 @@ router.delete('/tools-machinery/:id',ToolsMachineryController.destroy);
 router.get('/contractor',ContractorController.index);
 router.get('/project-by-contractor/:project_id',ContractorController.projectByContractor);
 router.post('/contractor',ContractorController.store);
+router.delete('/contractor/:contractor_id',ContractorController.destroy);
 
 //report
 router.post('/report/:type', ReportController.saveReport);
@@ -189,7 +190,7 @@ router.put('/supplier/:supplier_id', SupplierController.update);
 router.delete('/supplier/:supplier_id', SupplierController.destroy);
 
 //revert
-router.post('/revert-submit-work/:work_id', RevertController.revertSubmitWork);
+router.put('/revert-submit-work/:work_id', RevertController.revertSubmitWork);
 
 //verify
 router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
