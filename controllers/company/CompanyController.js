@@ -39,7 +39,7 @@ const CompanyController = {
 
             await RefreshToken.create({ token: refresh_token });
             
-            res.json({status:200, access_token, refresh_token, company_id: company._id});
+            res.json({status:200, access_token, refresh_token, _id: company._id, company_name: company.company_name, mobile:company.mobile, email:company.email});
             
         } catch (err) {
             return next(err);
@@ -133,7 +133,14 @@ const CompanyController = {
 
             // res.send(CustomSuccessHandler.success('Company created successfully'));
 
-            res.json({status:200, company_id:result._id, message:'Company created successfully'});
+            res.json({
+                status:200, 
+                _id:result._id, 
+                company_name:result.company_name, 
+                mobile:result.mobile, 
+                email:result.email, 
+                message:'Company created successfully'
+            });
         } catch (err) {
             return next(err);
         }
