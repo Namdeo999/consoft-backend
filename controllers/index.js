@@ -22,6 +22,7 @@ export { default as ProjectTeamController } from './project/ProjectTeamControlle
 export { default as UnitController } from './stock/UnitController.js';
 export { default as ItemController } from './stock/ItemController.js';
 export { default as ManageStockController } from './stock/ManageStockController.js';
+export { default as ManageBoqController } from './stock/boq/ManageBoqController.js';
 
 //tools machinery
 export { default as ToolsMachineryController } from './tools-machinery/ToolsMachineryController.js';

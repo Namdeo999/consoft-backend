@@ -25,13 +25,13 @@ const ReportController = {
 
         try {
             const {company_id, project_id, user_id, item_id, length, width, height, qty, remark } = req.body;
-            const exist = await Report.exists({company_id:company_id});
+            const exist = await Report.exists({company_id:company_id, project_id:project_id});
             let report_id ;
             
             if (!exist) {
                 const report = new Report({
                     company_id:company_id,
-                    // project_id:project_id,
+                    project_id:project_id,
                     // user_id:user_id,
                 }) ;
                 const result = await report.save();
@@ -52,7 +52,6 @@ const ReportController = {
 
                     const bodyData = {
                         report_id:report_id,
-                        project_id:project_id,
                         user_id:user_id,
                         item_id:item_id,
                         length:length,

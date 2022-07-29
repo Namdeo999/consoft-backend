@@ -15,7 +15,7 @@ import {
     AssignWorkController,UserAssignWorkController,
 
     //stock
-    UnitController, ItemController, ManageStockController,ContractorController,
+    UnitController, ItemController, ManageStockController,ContractorController, ManageBoqController,
 
     //checklist
     ChecklistOptionTypeController, ChecklistOptionController, ChecklistController,ToolsMachineryController,
@@ -112,6 +112,10 @@ router.get('/stock-entry', ManageStockController.index);
 router.post('/stock-entry', ManageStockController.store);
 router.get('/stock-entry/:id', ManageStockController.edit);
 router.put('/stock-entry/:id', ManageStockController.update);
+
+//boq
+router.get('/manage-boq/:company_id/:project_id?', ManageBoqController.index);
+router.post('/manage-boq', ManageBoqController.store);
 
 // router.put('/products/:id', [auth, admin], productController.update);
 // router.delete('/products/:id', [auth, admin], productController.destroy);
