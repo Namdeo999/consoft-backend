@@ -60,6 +60,16 @@ const ContractorController = {
         return res.json(documents);
     },
 
+    async destroy(req, res, next) {
+        let document;
+        document = await Contractor.findOneAndRemove({ _id: req.params.contractor_id });
+        if (!document) {
+            return next(new Error('Nothing to delete'));
+        }
+        // return res.send({"status":200,"message": "Category deleted successfully" })
+        return res.send(CustomSuccessHandler.success("Contractor deleted successfully"))
+    },
+
 }
 
 export default ContractorController;
