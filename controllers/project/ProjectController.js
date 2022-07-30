@@ -10,7 +10,7 @@ const ProjectController = {
     async index(req, res, next){
         let Projects;
         try {
-            Projects = await Project.find().select('-createdAt -updatedAt -__v');
+            Projects = await Project.find({company_id:req.params.company_id}).select('-createdAt -updatedAt -__v');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
@@ -99,7 +99,7 @@ const ProjectController = {
         if (!document) {
             return next(new Error('Nothing to delete'));
         }
-        return res.json(document);
+        return res.json({status:200});
     },
 
     async userByProjects(req, res, next){

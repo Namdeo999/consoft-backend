@@ -1,7 +1,7 @@
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import { reportSchema } from "../../validators/index.js";
-import { Report, QuantityReport } from "../../models/index.js";
+import { Report } from "../../models/index.js";
 import Constants from "../../constants/index.js";
 import QuantityReportController from './QuantityReportController.js';
 
@@ -25,14 +25,13 @@ const ReportController = {
 
         try {
             const {company_id, project_id, user_id, item_id, length, width, height, qty, remark } = req.body;
-            const exist = await Report.exists({company_id:company_id});
+            const exist = await Report.exists({company_id:company_id, project_id:project_id});
             let report_id ;
             
             if (!exist) {
                 const report = new Report({
                     company_id:company_id,
-                    // project_id:project_id,
-                    // user_id:user_id,
+                    project_id:project_id,
                 }) ;
                 const result = await report.save();
                 report_id = result._id;
@@ -52,7 +51,6 @@ const ReportController = {
 
                     const bodyData = {
                         report_id:report_id,
-                        project_id:project_id,
                         user_id:user_id,
                         item_id:item_id,
                         length:length,
@@ -61,10 +59,12 @@ const ReportController = {
                         qty:qty,
                         remark:remark,
                     }
-                    const data = QuantityReportController.nextTesting(bodyData);
                     
-                    // const data = QuantityReportController.store(); //final call
-                    console.log(data);
+                    QuantityReportController.nextTesting(bodyData).then((result)=>{
+                        if (result.status === Constants.RES_SUCCESS) {
+                            res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
+                        }
+                    });
                     break;
                 case Constants.QUALITY:
                     console.log("Quality")

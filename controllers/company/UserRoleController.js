@@ -12,7 +12,7 @@ const UserRoleController = {
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json(documents);
+        return res.json({status:200, data:documents});
     },
 
     async store(req, res, next){

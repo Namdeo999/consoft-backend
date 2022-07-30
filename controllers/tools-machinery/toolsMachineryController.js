@@ -90,7 +90,7 @@ const ToolsMachineryController = {
         if (!document) {
             return next(new Error('Nothing to delete'));
         }
-        return res.json(document);
+        return res.json(CustomSuccessHandler.success("Tools and machinery deleted successfully"));
     },
 }
 

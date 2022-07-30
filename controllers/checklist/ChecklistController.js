@@ -45,7 +45,6 @@ const ChecklistController = {
                             _id:1,
                             checklist_item:1
                         },
-                        // options:"$checklistOptionData",
                         options: {
                             $map: {
                                 input: '$checklistOptionData',
@@ -210,7 +209,7 @@ const ChecklistController = {
                 }
             });
             res.send(CustomSuccessHandler.success('Checklist created successfully'));
-        } catch (error) {
+        } catch (err) {
             return next(err); 
         }
     },

@@ -82,6 +82,7 @@ const UserAssignWorkController = {
                             comment:1,
                             exp_completion_date:1,
                             exp_completion_time:1,
+                            submit_work_text:1,
                             revert_msg:1,
                             revert_status:1,
                             work_status:1,
@@ -126,6 +127,7 @@ const UserAssignWorkController = {
                     submit_work_date:submit_date,
                     submit_work_time:submit_time,
                     work_status:true,
+                    revert_status:false,
                 },
                 { new: true }
             ).select('-__v');

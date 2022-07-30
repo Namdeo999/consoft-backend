@@ -38,7 +38,7 @@ const ProductKeyController = {
 
             res.json({
                 status:200,
-                company_id:data._id,
+                _id:data._id,
                 access_token,
                 refresh_token,
                 message:'Product key verified'
