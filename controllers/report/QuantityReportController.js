@@ -64,27 +64,29 @@ const QuantityReportController = {
     async nextTesting(req, res, next){
 
         const { report_id, user_id, item_id, length, width, height, qty, remark } = req;
-
         // const project_exist = await ProjectTeam.findOne({ project_id: ObjectId(project_id) }).select('_id');
         const report_exist = await QuantityReport.exists({report_id: ObjectId(report_id), user_id: ObjectId(user_id)});
 
         let quantity_report_id
-        if (!report_exist) {
-            const quantity_report = new QuantityReport({
-                report_id,
-                user_id
-            });
-            const result = await quantity_report.save();
-            quantity_report_id = result._id;
-        }else{
-            quantity_report_id = report_exist._id;
+        try {
+            if (!report_exist) {
+                const quantity_report = new QuantityReport({
+                    report_id,
+                    user_id
+                });
+                const result = await quantity_report.save();
+                quantity_report_id = result._id;
+            }else{
+                quantity_report_id = report_exist._id;
+            }
+        } catch (err) {
+            return next(err);
         }
 
-        try {
-            // const report_exist = await QuantityReport.exists({_id: ObjectId(quantity_report_id), project_id: ObjectId(project_id)});
-            let current_date = CustomFunction.currentDate();
-            let current_time = CustomFunction.currentTime();
+        let current_date = CustomFunction.currentDate();
+        let current_time = CustomFunction.currentTime();
 
+        try {
             const date_report = await QuantityReport.findOne({
                 $and: [
                     {
@@ -96,12 +98,9 @@ const QuantityReportController = {
                 ]
             })
 
-            let quantityReportDate;
-
             if (!date_report) {
-                quantityReportDate = await QuantityReport.findByIdAndUpdate(
+                await QuantityReport.findByIdAndUpdate(
                     { _id: ObjectId(quantity_report_id) },
-                    // { $push: {users: {user_id : user_id,} } }, // single code insert
                     {
                         $push:{
                             dates: {
@@ -113,73 +112,65 @@ const QuantityReportController = {
                     { new: true }
                 )
             }
-            
-            // console.log(quantityReportDate);
-            
-            
-            let quantity_reports;
-            item_id.forEach( async (element, key) => {
 
-                quantity_reports = await QuantityReport.findOne({
+        } catch (err) {
+            return next(err);
+        }
+
+        let quantity_reports;
+        try {
+            // const report_exist = await QuantityReport.exists({_id: ObjectId(quantity_report_id), project_id: ObjectId(project_id)});
+            item_id.forEach( async (element, key) => {
+                quantity_reports = await QuantityReport.find({
                     $and: [
                         {
                             _id: { $eq: ObjectId(quantity_report_id) },
                             dates: { 
+                                $elemMatch: { quantity_report_date: current_date}, 
+                            },
+                            dates: { 
                                 quantityitems: { $elemMatch: { item_id: ObjectId(element) } }
                             }
-                        }
+                        } 
                     ]
                 })
-                // .then( (res) => {
-                //          console.log(res);
-                //     })
-
-                //final
-                console.log(quantity_reports);
-
+                
                 // if (quantity_reports.length > 0) {
                 //     return next(CustomErrorHandler.alreadyExist('This Item name is already exist'));
                 // }
-
-                await QuantityReport.findByIdAndUpdate(
-                    { _id: ObjectId(quantity_report_id) },
-                    // { $push: {users: {user_id : user_id,} } }, // single code insert
+                await QuantityReport.findOneAndUpdate(
+                    {
+                        $and: [
+                            {
+                                _id: { $eq: ObjectId(quantity_report_id) },
+                                dates: { $elemMatch: { quantity_report_date: current_date}, }
+                            }
+                        ]
+                    },
+                    
                     {
                         $push:{
-                            quantityitems: {
+                            "dates.$.quantityitems": {
                                 item_id : ObjectId(element),
-                                length : length[key]
-                            } 
-                        } 
+                                length : length[key],
+                                width : width[key],
+                                height : height[key],
+                                qty : qty[key],
+                                remark : remark[key]
+                            }
+                        }
                     },
+
                     { new: true }
                 )
-    
-                // if (quantity_reports.length === 0) {
-                //     await QuantityReport.findByIdAndUpdate(
-                //         { _id: ObjectId(quantity_report_id) },
-                //         // { $push: {users: {user_id : user_id,} } }, // single code insert
-                //         {
-                //             $push:{
-                //                 quantity_report: {
-                //                     user_id : ObjectId(user_id),
-                //                     item_id : ObjectId(element),
-                //                 } 
-                //             } 
-                //         },
-                //         { new: true }
-                //     )
-                // }
-                // console.log(element);
-                // console.log(key);
+
             });
 
+            return ({ status:200 });
         } catch (err) {
-            
+            return err;
         }
-
-        return;
-
+        // res.send(CustomSuccessHandler.success('Quantity item report created successfully'));
     }
 
 }

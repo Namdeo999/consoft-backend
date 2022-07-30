@@ -8,4 +8,5 @@ export default{
     QUANTITY:'Quantity',
     QUALITY:'Quality',
     TANDP:'Tandp',
+    RES_SUCCESS:200,
 }

@@ -209,7 +209,7 @@ const ChecklistController = {
                 }
             });
             res.send(CustomSuccessHandler.success('Checklist created successfully'));
-        } catch (error) {
+        } catch (err) {
             return next(err); 
         }
     },
