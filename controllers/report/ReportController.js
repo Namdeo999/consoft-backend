@@ -24,7 +24,7 @@ const ReportController = {
         // return;
 
         try {
-            const {company_id, project_id, user_id, item_id, length, width, height, qty, remark } = req.body;
+            const {company_id, project_id, user_id, item_id, length, width, height, total, remark, sub_length, sub_width, sub_height, sub_total, sub_remark } = req.body;
             const exist = await Report.exists({company_id:company_id, project_id:project_id});
             let report_id ;
             
@@ -56,11 +56,16 @@ const ReportController = {
                         length:length,
                         width:width,
                         height:height,
-                        qty:qty,
+                        total:total,
                         remark:remark,
+                        sub_length:sub_length,
+                        sub_width:sub_width,
+                        sub_height:sub_height,
+                        sub_total:sub_total,
+                        sub_remark:sub_remark,
                     }
                     
-                    QuantityReportController.nextTesting(bodyData).then((result)=>{
+                    QuantityReportController.store(bodyData).then((result)=>{
                         if (result.status === Constants.RES_SUCCESS) {
                             res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
                         }

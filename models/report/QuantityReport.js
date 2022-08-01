@@ -18,15 +18,15 @@ const quantityReportSchema = mongoose.Schema({
             length: { type: Number }, 
             width: { type: Number }, 
             height: { type: Number }, 
-            qty: { type: Number }, 
+            total: { type: Number }, 
             remark: { type: String },
-            // subitems:[{
-            //     length: { type: Number }, 
-            //     width: { type: Number }, 
-            //     height: { type: Number }, 
-            //     qty: { type: Number }, 
-            //     remark: { type: String },
-            // }]
+            subquantityitems:[{
+                sub_length: { type: Number }, 
+                sub_width: { type: Number }, 
+                sub_height: { type: Number }, 
+                sub_total: { type: Number }, 
+                sub_remark: { type: String },
+            }]
         }]   
     }]
 
@@ -46,17 +46,7 @@ const quantityReportSchema = mongoose.Schema({
     //     }]
     // }]
 
-    // quantity_report: [{
-    //     user_id:{ type: ObjectId },
-    //     item_id: { type: ObjectId }, 
-    //     length: { type: Number }, 
-    //     width: { type: Number }, 
-    //     height: { type: Number }, 
-    //     qty: { type: Number }, 
-    //     remark: { type: String },
-    //     quantity_report_date:{ type:String, default:date },
-    //     quantity_report_time:{ type:String, default:time },
-    // }]
+    
 
 });
 

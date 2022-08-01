@@ -26,44 +26,8 @@ const QuantityReportController = {
     },
 
     async store(req, res, next){
-        //validation
 
-        // const data = ReportController.saveReport(); //final call
-        // console.log(data)
-        // return ;
-        const { project_id, user_id, item_id, length, width, height, qty, remark } = req;
-        const quantity_report = new QuantityReport({
-            report_id,
-            project_id,
-            quantity_report:{
-                user_id,
-                item_id,
-                length,
-                width,
-                height,
-                qty,
-                remark,
-            }
-        }) ;
-
-        try {
-            const result = await quantity_report.save();
-            // res.status(200).send({ "status": "success", "message": "Project created" })
-            // const doc = ({
-            //     status:200,
-            //     msg:"Project created successfully"
-            // });
-            // return doc;
-            res.send(CustomSuccessHandler.success('Project created successfully'));
-        } catch (err) {
-            return next(err);
-        }
-
-    },
-
-    async nextTesting(req, res, next){
-
-        const { report_id, user_id, item_id, length, width, height, qty, remark } = req;
+        const { report_id, user_id, item_id, length, width, height, total, remark, sub_length, sub_width, sub_height, sub_total, sub_remark } = req;
         // const project_exist = await ProjectTeam.findOne({ project_id: ObjectId(project_id) }).select('_id');
         const report_exist = await QuantityReport.exists({report_id: ObjectId(report_id), user_id: ObjectId(user_id)});
 
@@ -138,7 +102,7 @@ const QuantityReportController = {
                 // if (quantity_reports.length > 0) {
                 //     return next(CustomErrorHandler.alreadyExist('This Item name is already exist'));
                 // }
-                await QuantityReport.findOneAndUpdate(
+                const quantityitemData = await QuantityReport.findOneAndUpdate(
                     {
                         $and: [
                             {
@@ -147,7 +111,6 @@ const QuantityReportController = {
                             }
                         ]
                     },
-                    
                     {
                         $push:{
                             "dates.$.quantityitems": {
@@ -155,15 +118,51 @@ const QuantityReportController = {
                                 length : length[key],
                                 width : width[key],
                                 height : height[key],
-                                qty : qty[key],
-                                remark : remark[key]
+                                total : total[key],
+                                remark : remark[key],
                             }
                         }
                     },
-
                     { new: true }
-                )
 
+                );
+                
+                sub_length[key].forEach( async (sub_length_ele, key1) => {
+                    // console.log(key1)
+                    await QuantityReport.updateOne(
+                        {
+                            $and: [
+                                {
+                                    _id: { $eq: ObjectId(quantity_report_id) },
+                                    dates: { $elemMatch: { quantity_report_date: current_date}, },
+                                    "dates.quantityitems.item_id": item_id[key]
+                                    // quantityitems: { $elemMatch: { item_id: item_id[key]}, }
+                                }
+                            ]
+                        },
+                        {
+                            $push: {
+                                "dates.$.quantityitems.$[qitem].subquantityitems": {
+                                    sub_length: sub_length_ele,
+                                    sub_width: sub_width[key][key1],
+                                    sub_height: sub_height[key][key1],
+                                    sub_total: sub_total[key][key1],
+                                    sub_remark: sub_remark[key][key1],
+                                }
+                            }
+                        },
+                        {
+                            arrayFilters: [
+                                {
+                                    "qitem.item_id": element
+                                }
+                            ]
+                        }
+                        
+                    )
+                });
+
+                
             });
 
             return ({ status:200 });

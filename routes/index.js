@@ -116,16 +116,18 @@ router.put('/stock-entry/:id', ManageStockController.update);
 //boq
 router.get('/manage-boq/:company_id/:project_id?', ManageBoqController.index);
 router.post('/manage-boq', ManageBoqController.store);
+router.get('/edit-manage-boq/:id/:item_id', ManageBoqController.edit);//pending
+router.put('/manage-boq/:id/:item_id', ManageBoqController.update);
 
 // router.put('/products/:id', [auth, admin], productController.update);
 // router.delete('/products/:id', [auth, admin], productController.destroy);
 // router.get('/products', productController.index);
 // router.get('/products/:id', productController.show);
 
-
+//const BASE_IMG_URL = "http://sdplaccount.sdplweb.com/storage/app/public/";
+//const BASE_IMG_URL = "http://192.168.1.98:99/sdpl-account/storage/app/public/";
 
 //Checklist items
-
 router.get('/checklist-option-type',[auth, adminEditor], ChecklistOptionTypeController.index);
 // router.get('/checklist-option-type', ChecklistOptionTypeController.index);
 // router.get('/checklist-option-type/:company_id', ChecklistOptionTypeController.index);
