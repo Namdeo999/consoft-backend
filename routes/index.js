@@ -27,7 +27,8 @@ import {
     SupplierController,
 
     //revert
-    RevertController, VerifyController
+    RevertController, VerifyController, AttendanceController
+    
 
 } from '../controllers/index.js';
 
@@ -50,7 +51,7 @@ router.post('/company',  CompanyController.store);
 router.post('/verify-product-key',  ProductKeyController.verifyProductKey);
 
 router.post('/register', userController.register);
-router.get('/user',user_auth, userController.user);
+router.get('/user', user_auth, userController.user);
 router.get('/users', userController.index);
 
 router.get('/role-by-users/:role_id', userController.roleByUsers);
@@ -181,8 +182,8 @@ router.delete('/contractor/:contractor_id',ContractorController.destroy);
 //report
 router.post('/report/:type', ReportController.saveReport);
 
-    router.get('/quantity-report',QuantityReportController.index);
-    router.post('/quantity-report',QuantityReportController.store);
+    router.get('/quantity-report', QuantityReportController.index);
+    // router.post('/quantity-report',QuantityReportController.store);
 
         // report item
         router.get('/quantity-report-item', QuantityReportItemController.index);
@@ -200,6 +201,9 @@ router.put('/revert-submit-work/:work_id', RevertController.revertSubmitWork);
 
 //verify
 router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
+
+//user profile
+router.post('/attendance', AttendanceController.store);
 
 
 

@@ -24,7 +24,7 @@ const ReportController = {
         // return;
 
         try {
-            const {company_id, project_id, user_id, item_id, length, width, height, total, remark, sub_length, sub_width, sub_height, sub_total, sub_remark } = req.body;
+            const {company_id, project_id, user_id, inputs, item_id, unit_name, num_length, num_width, num_height, num_total, remark, sub_num_length, sub_num_width, sub_num_height, sub_num_total, sub_remark } = req.body;
             const exist = await Report.exists({company_id:company_id, project_id:project_id});
             let report_id ;
             
@@ -52,16 +52,18 @@ const ReportController = {
                     const bodyData = {
                         report_id:report_id,
                         user_id:user_id,
+                        inputs:inputs,
                         item_id:item_id,
-                        length:length,
-                        width:width,
-                        height:height,
-                        total:total,
+                        unit_name:unit_name,
+                        num_length:num_length,
+                        num_width:num_width,
+                        num_height:num_height,
+                        num_total:num_total,
                         remark:remark,
-                        sub_length:sub_length,
-                        sub_width:sub_width,
-                        sub_height:sub_height,
-                        sub_total:sub_total,
+                        sub_num_length:sub_num_length,
+                        sub_num_width:sub_num_width,
+                        sub_num_height:sub_num_height,
+                        sub_num_total:sub_num_total,
                         sub_remark:sub_remark,
                     }
                     

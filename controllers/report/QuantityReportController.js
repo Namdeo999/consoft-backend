@@ -14,20 +14,21 @@ const QuantityReportController = {
 
         // console.log(CustomFunction.dateFormat(new Date('2022-07-12')));
         // console.log(CustomFunction.dateFormat('2022-07-12'));
-
+        
+        
         let documents; 
         try {
             documents = await QuantityReport.find();
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json(documents);
+        return res.json({ "status":200, data:documents });
 
     },
 
     async store(req, res, next){
 
-        const { report_id, user_id, item_id, length, width, height, total, remark, sub_length, sub_width, sub_height, sub_total, sub_remark } = req;
+        const { report_id, user_id, inputs, item_id, unit_name, num_length, num_width, num_height, num_total, remark, sub_num_length, sub_num_width, sub_num_height, sub_num_total, sub_remark } = req;
         // const project_exist = await ProjectTeam.findOne({ project_id: ObjectId(project_id) }).select('_id');
         const report_exist = await QuantityReport.exists({report_id: ObjectId(report_id), user_id: ObjectId(user_id)});
 
@@ -84,24 +85,39 @@ const QuantityReportController = {
         let quantity_reports;
         try {
             // const report_exist = await QuantityReport.exists({_id: ObjectId(quantity_report_id), project_id: ObjectId(project_id)});
+            console.log(inputs)
+
+            inputs.forEach( async (list, key3) => {
+                    // console.log(key3 )
+                    console.log(list.item_id)
+                    return;
+                }
+            )
+
+            // console.log(item_id)
             item_id.forEach( async (element, key) => {
+
+                console.log("element")
+                console.log(element)
                 quantity_reports = await QuantityReport.find({
-                    $and: [
-                        {
-                            _id: { $eq: ObjectId(quantity_report_id) },
-                            dates: { 
-                                $elemMatch: { quantity_report_date: current_date}, 
-                            },
-                            dates: { 
-                                quantityitems: { $elemMatch: { item_id: ObjectId(element) } }
-                            }
-                        } 
-                    ]
+                    _id: { $eq: ObjectId(quantity_report_id) },
+                    dates: { 
+                        $elemMatch: { quantity_report_date: current_date}, 
+                    },
+                    "dates.quantityitems.item_id": ObjectId(element)
                 })
+
+                // subquantityitems[key].forEach( async (sub_num_length_ele, key1) => {
+                //         console.log(sub_num_length_ele);
+                //     }
+                // )
+                // return ;
+               
                 
                 // if (quantity_reports.length > 0) {
-                //     return next(CustomErrorHandler.alreadyExist('This Item name is already exist'));
+                //     return;
                 // }
+                
                 const quantityitemData = await QuantityReport.findOneAndUpdate(
                     {
                         $and: [
@@ -115,54 +131,55 @@ const QuantityReportController = {
                         $push:{
                             "dates.$.quantityitems": {
                                 item_id : ObjectId(element),
-                                length : length[key],
-                                width : width[key],
-                                height : height[key],
-                                total : total[key],
+                                unit_name: unit_name[key],
+                                num_length : num_length[key],
+                                num_width : num_width[key],
+                                num_height : num_height[key],
+                                num_total : num_total[key],
                                 remark : remark[key],
                             }
                         }
                     },
                     { new: true }
-
                 );
-                
-                sub_length[key].forEach( async (sub_length_ele, key1) => {
-                    // console.log(key1)
-                    await QuantityReport.updateOne(
-                        {
-                            $and: [
-                                {
-                                    _id: { $eq: ObjectId(quantity_report_id) },
-                                    dates: { $elemMatch: { quantity_report_date: current_date}, },
-                                    "dates.quantityitems.item_id": item_id[key]
-                                    // quantityitems: { $elemMatch: { item_id: item_id[key]}, }
-                                }
-                            ]
-                        },
-                        {
-                            $push: {
-                                "dates.$.quantityitems.$[qitem].subquantityitems": {
-                                    sub_length: sub_length_ele,
-                                    sub_width: sub_width[key][key1],
-                                    sub_height: sub_height[key][key1],
-                                    sub_total: sub_total[key][key1],
-                                    sub_remark: sub_remark[key][key1],
-                                }
-                            }
-                        },
-                        {
-                            arrayFilters: [
-                                {
-                                    "qitem.item_id": element
-                                }
-                            ]
-                        }
-                        
-                    )
-                });
 
                 
+                // if (sub_num_length[key].length > 0) {
+                //     sub_num_length[key].forEach( async (sub_num_length_ele, key1) => {
+                //         await QuantityReport.updateOne(
+                //             {
+                //                 $and: [
+                //                     {
+                //                         _id: { $eq: ObjectId(quantity_report_id) },
+                //                         dates: { $elemMatch: { quantity_report_date: current_date}, },
+                //                         "dates.quantityitems.item_id": item_id[key]
+                //                         // quantityitems: { $elemMatch: { item_id: item_id[key]}, }
+                //                     }
+                //                 ]
+                //             },
+                //             {
+                //                 $push: {
+                //                     "dates.$.quantityitems.$[qitem].subquantityitems": {
+                //                         sub_num_length: sub_num_length_ele,
+                //                         sub_num_width: sub_num_width[key][key1],
+                //                         sub_num_height: sub_num_height[key][key1],
+                //                         sub_num_total: sub_num_total[key][key1],
+                //                         sub_remark: sub_remark[key][key1],
+                //                     }
+                //                 }
+                //             },
+                //             {
+                //                 arrayFilters: [
+                //                     {
+                //                         "qitem.item_id": element
+                //                     }
+                //                 ]
+                //             }
+                            
+                //         )
+                //     });
+                // }
+
             });
 
             return ({ status:200 });

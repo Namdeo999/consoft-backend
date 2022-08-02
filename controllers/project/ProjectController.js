@@ -8,13 +8,13 @@ import { ObjectId } from "mongodb";
 const ProjectController = {
 
     async index(req, res, next){
-        let Projects;
+        let projects;
         try {
-            Projects = await Project.find({company_id:req.params.company_id}).select('-createdAt -updatedAt -__v');
+            projects = await Project.find({company_id:req.params.company_id}).select('-createdAt -updatedAt -__v');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json(Projects);
+        return res.json({"status":200, data:projects});
     },
 
     async store(req, res, next){
