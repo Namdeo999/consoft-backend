@@ -55,3 +55,6 @@ export { default as RevertController } from './revert/RevertController.js';
 //verify
 export { default as VerifyController } from './verify/VerifyController.js';
 
+//user profile
+export { default as AttendanceController } from './user-profile/AttendanceController.js';
+

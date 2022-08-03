@@ -8,11 +8,32 @@ const ManageStockController = {
     async index(req, res, next){
         let documents;
         try {
-            documents = await ManageStock.find().select('-createdAt -updatedAt -__v');
+            documents =  await ManageStock.aggregate([
+                {
+                    $lookup: {
+                        from: 'items',
+                        localField: 'item_id',
+                        foreignField: '_id',
+                        as: 'itemData'
+                    },
+                },
+                { $unwind: "$itemData" },
+                
+                {
+                    $project: {
+                        _id:1,
+                        item_id:1,
+                        item_name:'$itemData.item_name',
+                        qty:1,
+                        location:1,
+                        vehicle_no:1,
+                    }
+                } 
+            ])
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json(documents);
+        return res.json({"status":200, data:documents});
     },
 
     async store(req, res, next){
