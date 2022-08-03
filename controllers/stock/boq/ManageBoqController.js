@@ -208,7 +208,13 @@ const ManageBoqController = {
             return next(error);
         }
         const { company_id, project_id, item_id, unit_id, qty } = req.body;
-        try {            
+        try { 
+            
+            const item_exist = await ManageBoq.exists({ _id: ObjectId(req.params.id), boqitems: { $elemMatch: { item_id: ObjectId(item_id) } } });
+            if (item_exist) {
+                return next(CustomErrorHandler.alreadyExist('This item is already exist'));
+            }
+            
             await ManageBoq.findOneAndUpdate(
                 {
                     _id: { $eq: ObjectId(req.params.id) },"boqitems.item_id": ObjectId(req.params.item_id)

@@ -40,7 +40,7 @@ const loginController = {
 
             await RefreshToken.create({ token: refresh_token });
 
-            res.json({status:200, access_token, refresh_token, _id: user._id, role_id: user.role_id });
+            res.json({status:200, access_token, refresh_token, _id: user._id, company_id:user.company_id, role_id: user.role_id });
 
         } catch (err) {
             return next(err);

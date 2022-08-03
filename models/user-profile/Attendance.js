@@ -1,14 +1,19 @@
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
+import CustomFunction from "../../services/CustomFunction.js";
+
+const date = CustomFunction.currentDate();
+const time = CustomFunction.currentTime();
 
 const attendanceSchema = mongoose.Schema({
     user_id:{ type: ObjectId },
     year: { type:String},
     months:[{
-        month: { type: String },
+        month: { type: Number },
+        month_name: { type: String },
         presentdays:[{
-            present_date:{type:String},
-            in_time:{ type:String},
+            present_date:{type:String, default:date},
+            in_time:{ type:String, default:time},
             out_time:{ type:String}
         }],
         leavedays:[{
@@ -17,7 +22,7 @@ const attendanceSchema = mongoose.Schema({
             approved:{type:Boolean, default:false},
         }]
     }]
-   
+    
 });
 
 export default mongoose.model('Attendance', attendanceSchema, 'attendances');

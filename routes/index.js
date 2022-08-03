@@ -186,7 +186,7 @@ router.post('/report/:type', ReportController.saveReport);
     // router.post('/quantity-report',QuantityReportController.store);
 
         // report item
-        router.get('/quantity-report-item', QuantityReportItemController.index);
+        router.get('/quantity-report-item/:company_id', QuantityReportItemController.index);
         router.post('/quantity-report-item', QuantityReportItemController.store);
 
 
@@ -203,6 +203,7 @@ router.put('/revert-submit-work/:work_id', RevertController.revertSubmitWork);
 router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
 
 //user profile
+router.get('/attendance/:user_id', AttendanceController.index);
 router.post('/attendance', AttendanceController.store);
 
 

@@ -21,10 +21,10 @@ const quantityReportSchema = mongoose.Schema({
             num_total: { type: Number }, 
             remark: { type: String },
             subquantityitems:[{
-                sub_num_length: { type: Number }, 
-                sub_num_width: { type: Number }, 
-                sub_num_height: { type: Number }, 
-                sub_num_total: { type: Number }, 
+                sub_length: { type: Number }, 
+                sub_width: { type: Number }, 
+                sub_height: { type: Number }, 
+                sub_total: { type: Number }, 
                 sub_remark: { type: String },
             }]
         }]   
