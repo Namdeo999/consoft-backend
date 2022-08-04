@@ -69,6 +69,10 @@ const CustomFunction  = {
         return Math.floor(Math.random() * (maxm - minm + 1)) + minm;
     }
 
+    // #!/bin/sh
+    // git --work-tree=/var/www/intolo/consoftpro --git-dir=/var/repo/consoftpro.git checkout -f
+    // git remote add production ssh://ubuntu@107.20.37.104/var/repo/consoftpro.git
+
 }
 
 export default CustomFunction;
