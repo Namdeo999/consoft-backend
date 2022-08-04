@@ -5,7 +5,7 @@ export const {
     PORT ,
     DATABASE_URL,
     DEBUG_MODE,
-    JWT_SECRET,
+    JWT_SECRET,  
     REFRESH_SECRET,
     APP_URL,
     EMAIL_HOST,

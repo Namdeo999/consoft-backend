@@ -40,7 +40,7 @@ const QuantityReportItemController = {
         } catch (error) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json(documents);
+        return res.json({"status":200, data:documents});
     },
     
     async store(req, res, next){
