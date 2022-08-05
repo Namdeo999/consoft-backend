@@ -147,30 +147,6 @@ const ManageBoqController = {
         }
 
         const { company_id, project_id, item_id, unit_id, qty } = req.body;
-
-        // try {
-        //     const exist = await ManageBoq.exists({ project_id: ObjectId(project_id), item_id: ObjectId(item_id) });
-        //     if (exist) {
-        //         return next(CustomErrorHandler.alreadyExist('This item is already exist in this project'));
-        //     }
-        // } catch (err) {
-        //     return next(err);
-        // }
-
-        // const manageBoq = new ManageBoq({
-        //     company_id,
-        //     project_id,
-        //     item_id,
-        //     unit_id,
-        //     qty,
-        // });
-        // try {
-        //     const result = await manageBoq.save();
-        //     res.send(CustomSuccessHandler.success('BOQ created successfully'));
-        // } catch (err) {
-        //     return next(err);
-        // }
-
         try {
 
             let project_exist_id;
@@ -211,6 +187,51 @@ const ManageBoqController = {
         }
 
     },
+
+    async edit(req, res, next){
+        let document;
+        
+        try {
+            // document = await ManageBoq.findOne({ _id:req.params.id, boqitems: { $elemMatch: { item_id: ObjectId(req.params.item_id) } } }).select('-__v');
+           
+            
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+        
+        return res.json(document);
+    },
+
+    async update(req, res, next){
+        const { error } = manageBoqSchema.validate(req.body);
+        if ( error ) {
+            return next(error);
+        }
+        const { company_id, project_id, item_id, unit_id, qty } = req.body;
+        try { 
+            
+            const item_exist = await ManageBoq.exists({ _id: ObjectId(req.params.id), boqitems: { $elemMatch: { item_id: ObjectId(item_id) } } });
+            if (item_exist) {
+                return next(CustomErrorHandler.alreadyExist('This item is already exist'));
+            }
+            
+            await ManageBoq.findOneAndUpdate(
+                {
+                    _id: { $eq: ObjectId(req.params.id) },"boqitems.item_id": ObjectId(req.params.item_id)
+                },
+                { $set: 
+                    { 
+                        "boqitems.$.item_id" : item_id, 
+                        "boqitems.$.unit_id" : unit_id, 
+                        "boqitems.$.qty" : qty 
+                    }
+                }
+            )
+            res.send(CustomSuccessHandler.success('Boq updated successfull'));
+        } catch (err) {
+            return next(err);
+        }
+    }
 
 }
 
