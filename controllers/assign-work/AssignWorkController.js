@@ -11,9 +11,7 @@ const AssignWorkController = {
 
         try {
             documents = await AssignWork.aggregate([
-
                 // { "$match" : { "assign_works.user_id" : { "$exists" : false } } },
-
                 {
                     $lookup: {
                         from: "userRoles",
