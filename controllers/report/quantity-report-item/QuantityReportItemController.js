@@ -1,4 +1,5 @@
 import Joi from "joi";
+import { ObjectId } from "mongodb";
 import { QuantityReportItem } from "../../../models/index.js";
 import CustomErrorHandler from "../../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../../services/CustomSuccessHandler.js";
@@ -9,6 +10,13 @@ const QuantityReportItemController = {
         let documents
         try {
             documents =  await QuantityReportItem.aggregate([
+                {
+                    $match: { 
+                        // $and:[
+                            "company_id": ObjectId(req.params.company_id)
+                        // ]
+                    }
+                },
                 {
                     $lookup: {
                         from: 'units',
@@ -32,7 +40,7 @@ const QuantityReportItemController = {
         } catch (error) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json(documents);
+        return res.json({"status":200, data:documents});
     },
     
     async store(req, res, next){

@@ -45,4 +45,7 @@ export { default as QuantityReportItem } from './report/quantity-report-item/Qua
 //supplier
 
 export {default as Supplier } from './supplier/Supplier.js';
+
+//user profile
+export { default as Attendance } from './user-profile/Attendance.js';
  

@@ -27,7 +27,8 @@ import {
     SupplierController,
 
     //revert
-    RevertController, VerifyController
+    RevertController, VerifyController, AttendanceController
+    
 
 } from '../controllers/index.js';
 
@@ -50,7 +51,7 @@ router.post('/company',  CompanyController.store);
 router.post('/verify-product-key',  ProductKeyController.verifyProductKey);
 
 router.post('/register', userController.register);
-router.get('/user',user_auth, userController.user);
+router.get('/user', user_auth, userController.user);
 router.get('/users', userController.index);
 
 router.get('/role-by-users/:role_id', userController.roleByUsers);
@@ -116,16 +117,18 @@ router.put('/stock-entry/:id', ManageStockController.update);
 //boq
 router.get('/manage-boq/:company_id/:project_id?', ManageBoqController.index);
 router.post('/manage-boq', ManageBoqController.store);
+router.get('/edit-manage-boq/:id/:item_id', ManageBoqController.edit);//pending
+router.put('/manage-boq/:id/:item_id', ManageBoqController.update);
 
 // router.put('/products/:id', [auth, admin], productController.update);
 // router.delete('/products/:id', [auth, admin], productController.destroy);
 // router.get('/products', productController.index);
 // router.get('/products/:id', productController.show);
 
-
+//const BASE_IMG_URL = "http://sdplaccount.sdplweb.com/storage/app/public/";
+//const BASE_IMG_URL = "http://192.168.1.98:99/sdpl-account/storage/app/public/";
 
 //Checklist items
-
 router.get('/checklist-option-type',[auth, adminEditor], ChecklistOptionTypeController.index);
 // router.get('/checklist-option-type', ChecklistOptionTypeController.index);
 // router.get('/checklist-option-type/:company_id', ChecklistOptionTypeController.index);
@@ -179,11 +182,11 @@ router.delete('/contractor/:contractor_id',ContractorController.destroy);
 //report
 router.post('/report/:type', ReportController.saveReport);
 
-    router.get('/quantity-report',QuantityReportController.index);
-    router.post('/quantity-report',QuantityReportController.store);
+    router.get('/quantity-report', QuantityReportController.index);
+    // router.post('/quantity-report',QuantityReportController.store);
 
         // report item
-        router.get('/quantity-report-item', QuantityReportItemController.index);
+        router.get('/quantity-report-item/:company_id', QuantityReportItemController.index);
         router.post('/quantity-report-item', QuantityReportItemController.store);
 
 
@@ -198,6 +201,10 @@ router.put('/revert-submit-work/:work_id', RevertController.revertSubmitWork);
 
 //verify
 router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
+
+//user profile
+router.get('/attendance/:user_id', AttendanceController.index);
+router.post('/attendance', AttendanceController.store);
 
 
 
