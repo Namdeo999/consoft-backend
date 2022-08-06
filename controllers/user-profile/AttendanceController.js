@@ -17,6 +17,67 @@ const AttendanceController = {
         return res.json({ "status":200, data:documents });
     },
 
+    async getLeaves(req, res, next){
+        let documents; 
+        try {
+
+
+            // documents = await Attendance.find();
+
+
+
+            documents = await Attendance.aggregate([
+                // {
+                //     $match: { 
+                //         $and:[
+                //             {"user_id": ObjectId(req.params.user_id)}
+                //         ]
+                //     },
+                // },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user_id',
+                        foreignField: '_id',
+                        as: 'userData'
+                    },
+                },
+                {
+                    $unwind:"$userData"
+                },
+                {
+                    $project:{
+                        _id:1,
+                        user_id:1,
+                        user_name:"$userData.name",
+                        // year:1,
+                        months:{
+                            // month:1,
+                            month_name:1,
+                            // _id:1,
+                        },
+                        // "months.presentdays":{},
+                        "months.presentdays": {$ifNull: ["$presentdays", []]},
+                        "months.leavedays":{
+                            _id:1,
+                            leave_date:1,
+                            approved:1,
+                        }
+
+                    }
+                }
+
+            ]);
+
+
+
+
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+        return res.json({ "status":200, data:documents });
+    },
+
     async store(req, res, next){
 
         const { user_id, leavedays } = req.body;
