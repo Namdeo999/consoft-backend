@@ -240,29 +240,33 @@ const QuantityReportController = {
         let quantity_reports_exist;
         try {
 
-            // console.log(quantity_report_id);
-            // console.log(inputs);
-            inputs.forEach(async (list, key) => {
 
-                quantity_reports_exist = await QuantityWorkItemReport.exists({ quantity_report_id: ObjectId(quantity_report_id), item_id: list.item_id });
+            console.log(quantity_report_id);
+            console.log(inputs);
+            inputs.forEach( async (list, key) => {
+
+                quantity_reports_exist = await QuantityWorkItemReport.exists({quantity_report_id: ObjectId(quantity_report_id), item_id:list.item_id });
+
                 if (quantity_reports_exist) {
                     return;
                 }
                 const quantity_work_report = new QuantityWorkItemReport({
-                    quantity_report_id: ObjectId(quantity_report_id),
 
-                    item_id: ObjectId(list.item_id),
+                    quantity_report_id:ObjectId(quantity_report_id),
+
+                    item_id : ObjectId(list.item_id),
                     unit_name: list.unit_name,
-                    num_length: list.num_length,
-                    num_width: list.num_width,
-                    num_height: list.num_height,
-                    num_total: list.num_total,
-                    remark: list.remark,
+                    num_length : list.num_length,
+                    num_width : list.num_width,
+                    num_height : list.num_height,
+                    num_total : list.num_total,
+                    remark : list.remark,
                 });
                 const result = await quantity_work_report.save();
 
-
+            
                 // console.log(quantity_reports_exist);
+               
 
             });
 
