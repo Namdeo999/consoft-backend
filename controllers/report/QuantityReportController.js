@@ -14,195 +14,113 @@ const QuantityReportController = {
 
         let documents;
         try {
-            // documents = await Report.find();
-            documents = await Report.aggregate(
-                {
-                    $match: {
-                        $and: [
-                            { "company_id": ObjectId("62ba94b8ea988119bbf13687") },
-                            { "project_id": ObjectId("62c827499c1d4cb814ead624") },
-                        ]
-                    }
+        const { company_id, project_id, inputs } = req.body;
 
-                },
-                {
-                    $lookup: {
-                        from: 'quantityReports',
-                        localField: '_id',
-                        foreignField: 'report_id',
-                        // as: 'reportItem'
-                        let: { "user_id": ObjectId("62c827689c1d4cb814ead866") },
-                        let: { "quantity_report_date": "2022/08/06" },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: { $eq: ["$user_id", "$$user_id"] },
-                                    $expr: { $eq: ["$quantity_report_date", "$$quantity_report_date"] }
-
-                                }
-                            }
-
-                        ],
-                        as: 'quantityReport'
-                    },
-                },
-
-                {
-                    $unwind: "$quantityReport"
-                },
-
-                {
-                    $lookup: {
-                        from: "quantityWorkItemReports",
-                        let: { "quantity_report_id": "$quantityReport._id" },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: { $eq: ["$quantity_report_id", "$$quantity_report_id"] }
-                                }
-                            },
-                        ],
-                        as: 'quantityWorkItems'
-                    }
-                },
-                {
-                    $unwind: "$quantityWorkItems"
-                },
-                {
-                    $lookup: {
-                        from: "items",
-                        localField: 'quantityWorkItems.item_id',
-                        foreignField: '_id',
-                        as: 'itemsName'
-                    }
+        documents = await Report.aggregate([
+        // db.reports.aggregate([
+            {
+                $match: {
+                    $and: [
+                        { "company_id": ObjectId(company_id) },
+                        { "project_id": ObjectId(project_id) },
+                    ]
                 }
 
+            },
+            {
+                $lookup: {
+                    from: 'quantityReports',
+                    localField: '_id',
+                    foreignField: 'report_id',
+                    // as: 'reportItem'
+                    // let: { "user_id": ObjectId("62c827689c1d4cb814ead866") },
+                    let: { "user_id": ObjectId(req.params.user_id) },
+                    // let: { "quantity_report_date": "2022/08/06" },
+                    let: { "quantity_report_date": req.params.user_date },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$user_id", "$$user_id"] },
+                                $expr: { $eq: ["$quantity_report_date", "$$quantity_report_date"] }
 
+                            }
+                        }
 
+                    ],
+                    as: 'quantityReport'
+                },
+            },
 
-            )
+            {
+                $unwind: "$quantityReport"
+            },
 
+            {
+                $lookup: {
+                    from: "quantityWorkItemReports",
+                    let: { "quantity_report_id": "$quantityReport._id" },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ["$quantity_report_id", "$$quantity_report_id"] }
+                            }
+                        },
+                    ],
+                    as: 'quantityWorkItems'
+                }
+            },
 
+            {
+                $unwind: "$quantityWorkItems"
+            },
 
-            // documents = await QuantityReport.aggregate([
-            // {
-            //     $match: { 
-            //         $and:[
-            //             {"user_id": ObjectId(req.params.user_id)},
-            //         ]
-            //     },
-            // },
+            {
+                $lookup: {
+                    from: "quantityReportItems",
+                    localField: "quantityWorkItems.item_id",
+                    foreignField: "_id",
+                    as: 'itemsName'
+                }
+            },
+            {
+                $unwind: "$itemsName"
+            },
+            {
+                $project: {
+                    _id: 1,
+                    company_id: 1,
+                    project_id: 1,
+                    quantityReport: {
+                        _id: 1,
+                        user_id: 1,
+                        report_id: 1,
+                        quantity_report_date: 1,
+                        quantity_report_time: 1,
+                    },
+                    quantityWorkItems: {
+                        _id: 1,
+                        quantity_report_id: 1,
+                        item_id: 1,
+                        num_length: 1,
+                        num_width: 1,
+                        num_height: 1,
+                        num_total: 1,
+                        remark: 1,
+                        subquantityitems: 1,
+                        itemsName: "$itemsName.item_name"
+                       
+                    }
 
-            // {
-            //     $addFields: {
-            //         'quantityitems': {
-            //             $map: {
-            //                 input: "$quantityitems",
-            //                 in: {
-            //                     $mergeObjects: [
-            //                     "$$this",
-            //                         {
-            //                             item_id: {
-            //                                 $toObjectId: "$$this.item_id"
-            //                             }
-            //                         }
-            //                     ]
-            //                 }
-            //             }
-            //         }
-            //     }
-            // },
+                }
+            },
 
-            // {
-            //     "$unwind": "$quantityitems"
-            // },
-
-            // {
-            // $lookup: {
-            //     from: 'quantityReportItems',
-            //     localField: 'dates.quantityitems.item_id',
-            //     foreignField: '_id',
-            //     as: 'reportItemData'
-            // },
-            // },
-
-            // {
-            //     $project: {
-            //         _id: 1,
-            //         report_id: 1,
-            //         user_id: 1,
-            //         dates: {
-            //             quantity_report_date:1,
-            //             quantity_report_time:1,
-            //             _id:1,
-            //         },
-
-            //         "dates": {
-            //             "quantityitems": {
-            //               $m: [
-            //                 "$reportItemData",
-            //                 0
-            //               ]
-            //             },
-
-            //           }
-
-
-            //     }
-            // },
-
-            // {
-            //     "$group": {
-            //       "_id": "$_id",
-            //       "quantityitems": {
-            //         $push: "$quantityitems"
-            //       }
-            //     }
-            // }
-
-            // {
-            //     $project: {
-            //         _id: 1,
-            //         report_id: 1,
-            //         user_id: 1,
-            //         dates: {
-            //             quantity_report_date:1,
-            //             quantity_report_time:1,
-            //             _id:1,
-            //         },
-            //         'dates.quantityitems':{
-            //             item_id:1,
-            //             unit_name:1,
-            //             item_idd:'$reportItemData._id',
-            //             item_name:'$reportItemData.item_name',
-            //             // $map: {
-            //             //     input: "$quantityitems",
-            //             //     as: "i",
-            //             //     in: { 
-            //             //         $mergeObjects: 
-            //             //         [ "$$i",
-            //             //             {
-            //             //                 $first: {
-            //             //                     $filter: {
-            //             //                         input: "$reportItemData",
-            //             //                         cond: 
-            //             //                             { $eq: ["$$this._id","$$i.item_id"] },
-            //             //                     },
-            //             //                 },
-            //             //             },
-            //             //         ]
-            //             //     },
-            //             // },
-
-            //         }
+        ])
+            // .then(res =>
+            //     console.log(res))
 
 
 
 
-            //    }
-            // }
-
-            // ])
 
 
 
@@ -243,30 +161,30 @@ const QuantityReportController = {
 
             console.log(quantity_report_id);
             console.log(inputs);
-            inputs.forEach( async (list, key) => {
+            inputs.forEach(async (list, key) => {
 
-                quantity_reports_exist = await QuantityWorkItemReport.exists({quantity_report_id: ObjectId(quantity_report_id), item_id:list.item_id });
+                quantity_reports_exist = await QuantityWorkItemReport.exists({ quantity_report_id: ObjectId(quantity_report_id), item_id: list.item_id });
 
                 if (quantity_reports_exist) {
                     return;
                 }
                 const quantity_work_report = new QuantityWorkItemReport({
 
-                    quantity_report_id:ObjectId(quantity_report_id),
+                    quantity_report_id: ObjectId(quantity_report_id),
 
-                    item_id : ObjectId(list.item_id),
+                    item_id: ObjectId(list.item_id),
                     unit_name: list.unit_name,
-                    num_length : list.num_length,
-                    num_width : list.num_width,
-                    num_height : list.num_height,
-                    num_total : list.num_total,
-                    remark : list.remark,
+                    num_length: list.num_length,
+                    num_width: list.num_width,
+                    num_height: list.num_height,
+                    num_total: list.num_total,
+                    remark: list.remark,
                 });
                 const result = await quantity_work_report.save();
 
-            
+
                 // console.log(quantity_reports_exist);
-               
+
 
             });
 
