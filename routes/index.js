@@ -182,7 +182,7 @@ router.delete('/contractor/:contractor_id',ContractorController.destroy);
 //report
 router.post('/report/:type', ReportController.saveReport);
 
-    router.get('/quantity-report', QuantityReportController.index);
+    router.get('/quantity-report/:user_id', QuantityReportController.index);
     // router.post('/quantity-report',QuantityReportController.store);
 
         // report item
@@ -204,6 +204,8 @@ router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
 
 //user profile
 router.get('/attendance/:user_id', AttendanceController.index);
+
+router.get('/leaves', AttendanceController.getLeaves);
 router.post('/attendance', AttendanceController.store);
 
 

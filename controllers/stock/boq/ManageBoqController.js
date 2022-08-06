@@ -55,7 +55,6 @@ const ManageBoqController = {
                                                 $toObjectId: "$$this.item_id"
                                             }
                                         }
-                                        
                                     ]
                                 }
                             }
@@ -72,7 +71,6 @@ const ManageBoqController = {
                     },
                 },
                 { $unwind: "$projectData" },
-
                 {
                     $lookup: {
                         from: 'quantityReportItems',
@@ -81,7 +79,6 @@ const ManageBoqController = {
                         as: 'reportItemData'
                     },
                 },
-
                 {
                     $lookup: {
                         from: 'units',
