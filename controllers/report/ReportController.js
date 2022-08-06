@@ -67,10 +67,12 @@ const ReportController = {
                         // sub_remark:sub_remark,
                     }
                     
-                    QuantityReportController.store(bodyData).then((result)=>{
-                        if (result.status === Constants.RES_SUCCESS) {
-                            res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
-                        }
+                    QuantityReportController.store(bodyData).then((result, err)=>{
+                        // if (result.status === Constants.RES_SUCCESS) {
+                        //     res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
+                        // }else{
+                        //     return (err);
+                        // }
                     });
                     break;
                 case Constants.QUALITY:
