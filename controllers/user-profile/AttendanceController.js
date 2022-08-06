@@ -170,6 +170,37 @@ const AttendanceController = {
 
         res.send(CustomSuccessHandler.success('Leave apply successfully'));
         // const project_exist = await ProjectTeam.findOne({ project_id: ObjectId(project_id) }).select('_id');
+    },
+
+    async approveLeaves(req, res, next){
+        try {
+
+            const {leavedates}  = req.body;
+
+            console.log(leavedates)
+
+            // leavedates.forEach( async (list, key) => {
+                
+            //     const approve = await Attendance.findOneAndUpdate(
+            //         { 
+            //             _id: req.params.id,
+            //             "months.leavedays._id": ObjectId(list.leave_date_id)
+            //         },
+            //         {
+            //             "months.leavedays": {
+            //                 approved:true
+            //                 // leave_date : list,
+            //             }
+            //         },
+            //         { new: true }
+    
+            //     ).select('-__v');
+            // })
+
+            res.send(CustomSuccessHandler.success("Approved successfully!"))
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
     }
 
 }

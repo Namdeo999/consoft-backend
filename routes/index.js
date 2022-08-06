@@ -182,12 +182,16 @@ router.delete('/contractor/:contractor_id', ContractorController.destroy);
 //report
 router.post('/report/:type', ReportController.saveReport);
 
+
 router.get('/quantity-report/:user_id/:project_id/:user_date', QuantityReportController.index);
 // router.get('/quantity-report', QuantityReportController.index);
 // router.get('/quantity-report/:user_id', QuantityReportController.edit);
 // router.delete('/quantity-report/:id/:item_id/:date', QuantityReportController.destroy);
-// router.put('/quantity-report/:_id', SupplierController.update);
-// router.post('/quantity-report',QuantityReportController.store);
+
+    router.get('/edit-quantity-report/:id', QuantityReportController.edit);
+    router.put('/quantity-report/:id', QuantityReportController.update);
+    // router.post('/quantity-report',QuantityReportController.store);
+
 
 
 // report item
@@ -209,9 +213,10 @@ router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
 
 //user profile
 router.get('/attendance/:user_id', AttendanceController.index);
+router.post('/attendance', AttendanceController.store);
 
 router.get('/leaves', AttendanceController.getLeaves);
-router.post('/attendance', AttendanceController.store);
+router.put('/approve-leaves/:id', AttendanceController.approveLeaves);
 
 
 
