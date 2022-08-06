@@ -53,26 +53,15 @@ const ReportController = {
                         report_id:report_id,
                         user_id:user_id,
                         inputs:inputs,
-                        // item_id:item_id,
-                        // unit_name:unit_name,
-                        // num_length:num_length,
-                        // num_width:num_width,
-                        // num_height:num_height,
-                        // num_total:num_total,
-                        // remark:remark,
-                        // sub_num_length:sub_num_length,
-                        // sub_num_width:sub_num_width,
-                        // sub_num_height:sub_num_height,
-                        // sub_num_total:sub_num_total,
-                        // sub_remark:sub_remark,
                     }
                     
-                    QuantityReportController.store(bodyData).then((result, err)=>{
-                        // if (result.status === Constants.RES_SUCCESS) {
-                        //     res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
-                        // }else{
-                        //     return (err);
-                        // }
+                    QuantityReportController.store(bodyData).then((result)=>{
+                        if (result.status === Constants.RES_SUCCESS) {
+                            res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
+                        }
+                        else{
+                            return ("something went wrong");
+                        }
                     });
                     break;
                 case Constants.QUALITY:
