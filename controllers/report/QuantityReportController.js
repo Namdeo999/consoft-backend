@@ -21,8 +21,8 @@ const QuantityReportController = {
             {
                 $match: {
                     $and: [
-                        { "company_id": ObjectId(company_id) },
-                        { "project_id": ObjectId(project_id) },
+                        // { "company_id": ObjectId(company_id) },
+                        { "project_id": ObjectId(req.params.project_id) },
                     ]
                 }
 
@@ -107,7 +107,7 @@ const QuantityReportController = {
                         num_total: 1,
                         remark: 1,
                         subquantityitems: 1,
-                        itemsName: "$itemsName.item_name"
+                        item_name: "$itemsName.item_name"
                        
                     }
 
