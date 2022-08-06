@@ -1,4 +1,4 @@
-import { QuantityReport, QuantityWorkItemReport } from "../../models/index.js";
+import { QuantityReport, QuantityWorkItemReport, Report } from "../../models/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import CustomFunction from "../../services/CustomFunction.js";
@@ -14,7 +14,76 @@ const QuantityReportController = {
 
         let documents;
         try {
-            documents = await QuantityReport.find();
+            // documents = await Report.find();
+            documents = await Report.aggregate(
+                {
+                    $match: {
+                        $and: [
+                            { "company_id": ObjectId("62ba94b8ea988119bbf13687") },
+                            { "project_id": ObjectId("62c827499c1d4cb814ead624") },
+                        ]
+                    }
+
+                },
+                {
+                    $lookup: {
+                        from: 'quantityReports',
+                        localField: '_id',
+                        foreignField: 'report_id',
+                        // as: 'reportItem'
+                        let: { "user_id": ObjectId("62c827689c1d4cb814ead866") },
+                        let: { "quantity_report_date": "2022/08/06" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ["$user_id", "$$user_id"] },
+                                    $expr: { $eq: ["$quantity_report_date", "$$quantity_report_date"] }
+
+                                }
+                            }
+
+                        ],
+                        as: 'quantityReport'
+                    },
+                },
+
+                {
+                    $unwind: "$quantityReport"
+                },
+
+                {
+                    $lookup: {
+                        from: "quantityWorkItemReports",
+                        let: { "quantity_report_id": "$quantityReport._id" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ["$quantity_report_id", "$$quantity_report_id"] }
+                                }
+                            },
+                        ],
+                        as: 'quantityWorkItems'
+                    }
+                },
+                {
+                    $unwind: "$quantityWorkItems"
+                },
+                {
+                    $lookup: {
+                        from: "items",
+                        localField: 'quantityWorkItems.item_id',
+                        foreignField: '_id',
+                        as: 'itemsName'
+                    }
+                }
+
+
+
+
+            )
+
+
+
             // documents = await QuantityReport.aggregate([
             // {
             //     $match: { 
@@ -49,12 +118,12 @@ const QuantityReportController = {
             // },
 
             // {
-            //     $lookup: {
-            //         from: 'quantityReportItems',
-            //         localField: 'dates.quantityitems.item_id',
-            //         foreignField: '_id',
-            //         as: 'reportItemData'
-            //     },
+            // $lookup: {
+            //     from: 'quantityReportItems',
+            //     localField: 'dates.quantityitems.item_id',
+            //     foreignField: '_id',
+            //     as: 'reportItemData'
+            // },
             // },
 
             // {
@@ -171,30 +240,30 @@ const QuantityReportController = {
         let quantity_reports_exist;
         try {
 
-            console.log(quantity_report_id);
-            console.log(inputs);
-            inputs.forEach( async (list, key) => {
+            // console.log(quantity_report_id);
+            // console.log(inputs);
+            inputs.forEach(async (list, key) => {
 
-                quantity_reports_exist = await QuantityWorkItemReport.exists({quantity_report_id: ObjectId(quantity_report_id), item_id:list.item_id });
+                quantity_reports_exist = await QuantityWorkItemReport.exists({ quantity_report_id: ObjectId(quantity_report_id), item_id: list.item_id });
                 if (quantity_reports_exist) {
                     return;
                 }
                 const quantity_work_report = new QuantityWorkItemReport({
-                    quantity_report_id:ObjectId(quantity_report_id),
+                    quantity_report_id: ObjectId(quantity_report_id),
 
-                    item_id : ObjectId(list.item_id),
+                    item_id: ObjectId(list.item_id),
                     unit_name: list.unit_name,
-                    num_length : list.num_length,
-                    num_width : list.num_width,
-                    num_height : list.num_height,
-                    num_total : list.num_total,
-                    remark : list.remark,
+                    num_length: list.num_length,
+                    num_width: list.num_width,
+                    num_height: list.num_height,
+                    num_total: list.num_total,
+                    remark: list.remark,
                 });
                 const result = await quantity_work_report.save();
 
-            
+
                 // console.log(quantity_reports_exist);
-               
+
             });
 
             return ({ status: 200 });
