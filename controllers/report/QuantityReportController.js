@@ -181,7 +181,7 @@ const QuantityReportController = {
                 }
                 const quantity_work_report = new QuantityWorkItemReport({
                     quantity_report_id:ObjectId(quantity_report_id),
-                    
+
                     item_id : ObjectId(list.item_id),
                     unit_name: list.unit_name,
                     num_length : list.num_length,
@@ -193,7 +193,7 @@ const QuantityReportController = {
                 const result = await quantity_work_report.save();
 
             
-                console.log(quantity_reports_exist);
+                // console.log(quantity_reports_exist);
                
             });
 
