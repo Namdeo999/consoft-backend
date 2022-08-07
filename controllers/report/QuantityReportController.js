@@ -28,7 +28,7 @@ const QuantityReportController = {
 
             },
             {
-                $lookup: {
+                $lookup: { 
                     from: 'quantityReports',
                     localField: '_id',
                     foreignField: 'report_id',
