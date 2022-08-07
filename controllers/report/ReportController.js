@@ -52,7 +52,7 @@ const ReportController = {
                     const bodyData = {
                         report_id:report_id,
                         user_id:user_id,
-                        inputs:inputs,
+                        inputs:inputs, 
                     }
                     
                     QuantityReportController.store(bodyData).then((result, err)=>{
