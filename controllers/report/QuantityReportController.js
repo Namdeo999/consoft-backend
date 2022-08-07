@@ -87,8 +87,8 @@ const QuantityReportController = {
             },
             {
                 $project: {
-                    _id: 1,
-                    company_id: 1,
+                    _id: 1, 
+                    company_id: 1,     
                     project_id: 1,
                     quantityReport: {
                         _id: 1,
@@ -340,6 +340,36 @@ const QuantityReportController = {
             return err;
         }
         // res.send(CustomSuccessHandler.success('Quantity item report created successfully'));
+    },
+    async edit(req, res, next){
+        let document;
+        try {
+            // document = await QuantityWorkItemReport.findOne({ _id:req.params.id }).select('-__v');
+            document = await QuantityWorkItemReport.findOne({ _id:req.params.id }).select('-__v');
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+
+        return res.json({"status":200, data:document});
+    },
+
+    async update(req, res, next){
+
+        const {inputs} = req.body;
+        console.log(inputs);
+        let document;
+        try {
+            document = await QuantityWorkItemReport.findOneAndUpdate(
+                { _id: req.params.id},
+
+                {company_id, category_name},
+                {new: true}
+            );
+        } catch (err) {
+            return next(err);
+        }
+        res.status(201).json(document);
+        return res.send(CustomSuccessHandler.success(" updated successfully"))
     }
 
 }
