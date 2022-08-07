@@ -1,12 +1,9 @@
-import { QuantityReport, QuantityWorkItemReport, Report } from "../../models/index.js";
+import { QuantityReport, QuantityWorkItemReport } from "../../models/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import CustomFunction from "../../services/CustomFunction.js";
 
-import ReportController from "./ReportController.js";
 import { ObjectId } from "mongodb";
-
-
 
 const QuantityReportController = {
 
@@ -17,7 +14,6 @@ const QuantityReportController = {
         const { company_id, project_id, inputs } = req.body;
 
         documents = await Report.aggregate([
-        // db.reports.aggregate([
             {
                 $match: {
                     $and: [
@@ -32,8 +28,6 @@ const QuantityReportController = {
                     from: 'quantityReports',
                     localField: '_id',
                     foreignField: 'report_id',
-                    // as: 'reportItem'
-                    // let: { "user_id": ObjectId("62c827689c1d4cb814ead866") },
                     let: { "user_id": ObjectId(req.params.user_id) },
                     // let: { "quantity_report_date": "2022/08/06" },
                     let: { "quantity_report_date": req.params.user_date },
@@ -115,15 +109,7 @@ const QuantityReportController = {
             },
 
         ])
-            // .then(res =>
-            //     console.log(res))
-
-
-
-
-
-
-
+            
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
@@ -131,216 +117,82 @@ const QuantityReportController = {
 
     },
 
-    async store(req, res, next) {
-        const { report_id, user_id, inputs } = req;
+    async store(req, res, next){
+        const { report_id, user_id, inputs} = req;
         let current_date = CustomFunction.currentDate();
         let current_time = CustomFunction.currentTime();
-        const report_exist = await QuantityReport.exists({ report_id: ObjectId(report_id), user_id: ObjectId(user_id), quantity_report_date: current_date });
+        const report_exist = await QuantityReport.exists({report_id: ObjectId(report_id), user_id: ObjectId(user_id),quantity_report_date: current_date});
         let quantity_report_id
         try {
             if (!report_exist) {
                 const quantity_report = new QuantityReport({
                     report_id,
                     user_id,
-                    quantity_report_date: current_date,
-                    quantity_report_time: current_time
+                    quantity_report_date:current_date,
+                    quantity_report_time:current_time
                 });
                 const result = await quantity_report.save();
                 quantity_report_id = result._id;
-            } else {
+            }else{
                 quantity_report_id = report_exist._id;
             }
         } catch (err) {
             return next(err);
         }
 
-        let quantity_reports;
         let quantity_reports_exist;
         try {
 
+            inputs.forEach( async (list, key) => {
 
-            console.log(quantity_report_id);
-            console.log(inputs);
-            inputs.forEach(async (list, key) => {
-
-                quantity_reports_exist = await QuantityWorkItemReport.exists({ quantity_report_id: ObjectId(quantity_report_id), item_id: list.item_id });
-
+                quantity_reports_exist = await QuantityWorkItemReport.exists({quantity_report_id: ObjectId(quantity_report_id), item_id:list.item_id });
+                // console.log(quantity_reports_exist)
                 if (quantity_reports_exist) {
                     return;
                 }
-                const quantity_work_report = new QuantityWorkItemReport({
+                const quantity_work_item_report = new QuantityWorkItemReport({
+                    quantity_report_id:ObjectId(quantity_report_id),
 
-                    quantity_report_id: ObjectId(quantity_report_id),
-
-                    item_id: ObjectId(list.item_id),
-                    unit_name: list.unit_name,
-                    num_length: list.num_length,
-                    num_width: list.num_width,
-                    num_height: list.num_height,
-                    num_total: list.num_total,
-                    remark: list.remark,
+                    item_id : ObjectId(list.item_id),
+                    num_length : list.num_length,
+                    num_width : list.num_width,
+                    num_height : list.num_height,
+                    num_total : list.num_total,
+                    remark : list.remark,
                 });
-                const result = await quantity_work_report.save();
+                const item_result = await quantity_work_item_report.save();
+                
+                if (list.subquantityitems.length > 0) {
 
-
-                // console.log(quantity_reports_exist);
-
-
+                    list.subquantityitems.forEach(async (sub_list, key1) => {
+                        console.log(sub_list)
+                        
+                        const quantity_work_sub_item_report = await QuantityWorkItemReport.findByIdAndUpdate(
+                            { _id:  item_result._id },
+                            {
+                                $push:{
+                                    "subquantityitems": {
+                                        sub_length : sub_list.sub_length,
+                                        sub_width : sub_list.sub_width,
+                                        sub_height : sub_list.sub_height,
+                                        sub_total : sub_list.sub_total,
+                                        sub_remark : sub_list.sub_remark,
+                                    }
+                                }
+                            },
+                            { new: true }
+                        );
+                    })
+                }
             });
 
-            return ({ status: 200 });
-
+            return ({ status:200 });
         } catch (err) {
             return next(err)
         }
 
     },
 
-    async storeOld(req, res, next) {
-
-        const { report_id, user_id, inputs } = req;
-        const report_exist = await QuantityReport.exists({ report_id: ObjectId(report_id), user_id: ObjectId(user_id) });
-
-
-        let quantity_report_id
-        try {
-            if (!report_exist) {
-                const quantity_report = new QuantityReport({
-                    report_id,
-                    user_id
-                });
-                const result = await quantity_report.save();
-                quantity_report_id = result._id;
-            } else {
-                quantity_report_id = report_exist._id;
-            }
-        } catch (err) {
-            return next(err);
-        }
-
-        let current_date = CustomFunction.currentDate();
-        let current_time = CustomFunction.currentTime();
-
-        try {
-            const date_report = await QuantityReport.findOne({
-                $and: [
-                    {
-                        _id: { $eq: ObjectId(quantity_report_id) },
-                        dates: {
-                            $elemMatch: { quantity_report_date: current_date },
-                        }
-                    }
-                ]
-            })
-
-            if (!date_report) {
-                await QuantityReport.findByIdAndUpdate(
-                    { _id: ObjectId(quantity_report_id) },
-                    {
-                        $push: {
-                            dates: {
-                                quantity_report_date: current_date,
-                                quantity_report_time: current_time
-                            }
-                        }
-                    },
-                    { new: true }
-                )
-            }
-
-        } catch (err) {
-            return next(err);
-        }
-
-        let quantity_reports;
-        try {
-            // const report_exist = await QuantityReport.exists({_id: ObjectId(quantity_report_id), project_id: ObjectId(project_id)});
-            // console.log(inputs);
-
-            inputs.forEach(async (list, key) => {
-
-                quantity_reports = await QuantityReport.find({
-                    _id: { $eq: ObjectId(quantity_report_id) },
-                    dates: {
-                        $elemMatch: { quantity_report_date: current_date },
-                    },
-                    "dates.quantityitems.item_id": ObjectId(list.item_id)
-                })
-
-                if (quantity_reports.length > 0) {
-                    return;
-                }
-
-                const quantityitemData = await QuantityReport.findOneAndUpdate(
-                    {
-                        $and: [
-                            {
-                                _id: { $eq: ObjectId(quantity_report_id) },
-                                dates: { $elemMatch: { quantity_report_date: current_date }, }
-                            }
-                        ]
-                    },
-                    {
-                        $push: {
-                            "dates.$.quantityitems": {
-                                item_id: ObjectId(list.item_id),
-                                unit_name: list.unit_name,
-                                num_length: list.num_length,
-                                num_width: list.num_width,
-                                num_height: list.num_height,
-                                num_total: list.num_total,
-                                remark: list.remark,
-                            }
-                        }
-                    },
-                    { new: true }
-                );
-
-                if (list.subquantityitems.length > 0) {
-                    list.subquantityitems.forEach(async (sub_list, key1) => {
-
-                        await QuantityReport.updateOne(
-                            {
-                                $and: [
-                                    {
-                                        _id: { $eq: ObjectId(quantity_report_id) },
-                                        dates: { $elemMatch: { quantity_report_date: current_date }, },
-                                        "dates.quantityitems.item_id": list.item_id
-                                        // quantityitems: { $elemMatch: { item_id: item_id[key]}, }
-                                    }
-                                ]
-                            },
-                            {
-                                $push: {
-                                    "dates.$.quantityitems.$[qitem].subquantityitems": {
-                                        sub_length: sub_list.sub_length,
-                                        sub_width: sub_list.sub_width,
-                                        sub_height: sub_list.sub_height,
-                                        sub_total: sub_list.sub_total,
-                                        sub_remark: sub_list.sub_remark,
-                                    }
-                                }
-                            },
-                            {
-                                arrayFilters: [
-                                    {
-                                        "qitem.item_id": list.item_id
-                                    }
-                                ]
-                            }
-
-                        )
-                    });
-                }
-
-            });
-
-            return ({ status: 200 });
-        } catch (err) {
-            return err;
-        }
-        // res.send(CustomSuccessHandler.success('Quantity item report created successfully'));
-    },
     async edit(req, res, next){
         let document;
         try {
@@ -353,24 +205,250 @@ const QuantityReportController = {
         return res.json({"status":200, data:document});
     },
 
-    async update(req, res, next){ 
+    async update(req, res, next){
 
         const {inputs} = req.body;
-        console.log(inputs);
-        let document;
+        // console.log(inputs);
+        
         try {
-            document = await QuantityWorkItemReport.findOneAndUpdate(
-                { _id: req.params.id},
 
-                {company_id, category_name},
-                {new: true}
-            );
+            inputs.forEach( async (list, key) => {
+                
+                const quantity_work_item_report = await QuantityWorkItemReport.findByIdAndUpdate(
+                    { _id: req.params.id},
+                    {
+                        item_id : ObjectId(list.item_id),
+                        num_length : list.num_length,
+                        num_width : list.num_width,
+                        num_height : list.num_height,
+                        num_total : list.num_total,
+                        remark : list.remark,
+                    },
+                    {new: true}
+                );
+            });
+
+           
+                //final
+                
+                
+                if (list.subquantityitems.length > 0) {
+                    
+                    const result = await QuantityWorkItemReport.find({ _id:req.params.id});
+                    console.log(result);
+                    if (result.subquantityitems > 0) {
+                
+                    }
+
+                    // const document = await QuantityWorkItemReport.updateMany(
+                    //     { _id: req.params.id},
+                    //     {
+                    //         $pull: {
+                    //             subquantityitems: {user_id : ObjectId(user_id)} 
+                    //         } 
+                    //     },
+                    //     { new: true }
+                    //     // false, // Upsert
+                    //     // true, // Multi
+                    // )
+
+                    // list.subquantityitems.forEach(async (sub_list, key1) => {
+                    //     const quantity_work_sub_item_report = await QuantityWorkItemReport.findByIdAndUpdate(
+                    //         { _id: req.params.id},
+                    //         {
+
+
+                    //             $addToSet:{
+                    //                 "subquantityitems": {
+                    //                     sub_length : sub_list.sub_length,
+                    //                     sub_width : sub_list.sub_width,
+                    //                     sub_height : sub_list.sub_height,
+                    //                     sub_total : sub_list.sub_total,
+                    //                     sub_remark : sub_list.sub_remark,
+                    //                 }
+                    //             }
+                    //         },
+                    //         { new: true }
+                    //     );
+
+                    // })
+                }
+
+            
+
+
+            // if (list.subquantityitems.length > 0) {}
+
         } catch (err) {
             return next(err);
         }
-        res.status(201).json(document);
+        // res.status(201).json(document);
         return res.send(CustomSuccessHandler.success(" updated successfully"))
+    
+    },
+
+    async quantityItemExist(req, res, next){
+
+        let current_date = CustomFunction.currentDate();
+        let quantity_report_id;
+        let item_ids = [];
+        try {
+            quantity_report_id = await QuantityReport.exists({ quantity_report_date: current_date });
+            if (quantity_report_id) {
+                item_ids = await QuantityWorkItemReport.find({ quantity_report_id:quantity_report_id }).select('-_id item_id');
+            }
+        } catch (err) {
+            return next(err);
+        }
+
+        return res.json({"status":200, data:item_ids});
     }
+
+
+
+
+    // async storeOld(req, res, next){
+
+    //     const { report_id, user_id, inputs} = req;
+    //     const report_exist = await QuantityReport.exists({report_id: ObjectId(report_id), user_id: ObjectId(user_id)});
+
+
+    //     let quantity_report_id
+    //     try {
+    //         if (!report_exist) {
+    //             const quantity_report = new QuantityReport({
+    //                 report_id,
+    //                 user_id
+    //             });
+    //             const result = await quantity_report.save();
+    //             quantity_report_id = result._id;
+    //         }else{
+    //             quantity_report_id = report_exist._id;
+    //         }
+    //     } catch (err) {
+    //         return next(err);
+    //     }
+
+    //     let current_date = CustomFunction.currentDate();
+    //     let current_time = CustomFunction.currentTime();
+
+    //     try {
+    //         const date_report = await QuantityReport.findOne({
+    //             $and: [
+    //                 {
+    //                     _id: { $eq: ObjectId(quantity_report_id) }, 
+    //                     dates: { 
+    //                         $elemMatch: { quantity_report_date: current_date}, 
+    //                     }
+    //                 }
+    //             ]
+    //         })
+
+    //         if (!date_report) {
+    //             await QuantityReport.findByIdAndUpdate(
+    //                 { _id: ObjectId(quantity_report_id) },
+    //                 {
+    //                     $push:{
+    //                         dates: {
+    //                             quantity_report_date:current_date,
+    //                             quantity_report_time:current_time
+    //                         } 
+    //                     } 
+    //                 },
+    //                 { new: true }
+    //             )
+    //         }
+
+    //     } catch (err) {
+    //         return next(err);
+    //     }
+
+    //     let quantity_reports;
+    //     try {
+            
+    //         inputs.forEach( async (list, key) => {
+
+    //             quantity_reports = await QuantityReport.find({
+    //                 _id: { $eq: ObjectId(quantity_report_id) }, 
+    //                 dates: { 
+    //                     $elemMatch: { quantity_report_date: current_date}, 
+    //                 },
+    //                 "dates.quantityitems.item_id": ObjectId(list.item_id)
+    //             })
+
+    //             if (quantity_reports.length > 0) {
+    //                 return;
+    //             }
+                
+    //             const quantityitemData = await QuantityReport.findOneAndUpdate(
+    //                 {
+    //                     $and: [
+    //                         {
+    //                             _id: { $eq: ObjectId(quantity_report_id) },
+    //                             dates: { $elemMatch: { quantity_report_date: current_date}, }
+    //                         }
+    //                     ]
+    //                 },
+    //                 {
+    //                     $push:{
+    //                         "dates.$.quantityitems": {
+    //                             item_id : ObjectId(list.item_id),
+    //                             unit_name: list.unit_name,
+    //                             num_length : list.num_length,
+    //                             num_width : list.num_width,
+    //                             num_height : list.num_height,
+    //                             num_total : list.num_total,
+    //                             remark : list.remark,
+    //                         }
+    //                     }
+    //                 },
+    //                 { new: true }
+    //             );
+
+    //             if (list.subquantityitems.length > 0) {
+    //                 list.subquantityitems.forEach( async (sub_list, key1) => {
+
+    //                     await QuantityReport.updateOne(
+    //                         {
+    //                             $and: [
+    //                                 {
+    //                                     _id: { $eq: ObjectId(quantity_report_id) },
+    //                                     dates: { $elemMatch: { quantity_report_date: current_date}, },
+    //                                     "dates.quantityitems.item_id": list.item_id
+    //                                 }
+    //                             ]
+    //                         },
+    //                         {
+    //                             $push: {
+    //                                 "dates.$.quantityitems.$[qitem].subquantityitems": {
+    //                                     sub_length: sub_list.sub_length,
+    //                                     sub_width: sub_list.sub_width,
+    //                                     sub_height: sub_list.sub_height,
+    //                                     sub_total: sub_list.sub_total,
+    //                                     sub_remark: sub_list.sub_remark,
+    //                                 }
+    //                             }
+    //                         },
+    //                         {
+    //                             arrayFilters: [
+    //                                 {
+    //                                     "qitem.item_id": list.item_id
+    //                                 }
+    //                             ]
+    //                         }
+                            
+    //                     )
+    //                 });
+    //             }
+
+    //         });
+
+    //         return ({ status:200 });
+    //     } catch (err) {
+    //         return err;
+    //     }
+    //     // res.send(CustomSuccessHandler.success('Quantity item report created successfully'));
+    // }
 
 }
 
