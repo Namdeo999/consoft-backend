@@ -78,7 +78,9 @@ const QuantityReportItemController = {
         } catch (err) {
             return next(err);
         }
-    },
+    }
+
+    
 
 
 }
