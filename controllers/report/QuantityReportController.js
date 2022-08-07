@@ -14,107 +14,108 @@ const QuantityReportController = {
 
         let documents;
         try {
-        const { company_id, project_id, inputs } = req.body;
+            const { company_id, project_id, inputs } = req.body;
 
-        documents = await Report.aggregate([
-        // db.reports.aggregate([
-            {
-                $match: {
-                    $and: [
-                        // { "company_id": ObjectId(company_id) },
-                        { "project_id": ObjectId(req.params.project_id) },
-                    ]
-                }
-
-            },
-            {
-                $lookup: { 
-                    from: 'quantityReports',
-                    localField: '_id',
-                    foreignField: 'report_id',
-                    // as: 'reportItem'
-                    // let: { "user_id": ObjectId("62c827689c1d4cb814ead866") },
-                    let: { "user_id": ObjectId(req.params.user_id) },
-                    // let: { "quantity_report_date": "2022/08/06" },
-                    let: { "quantity_report_date": req.params.user_date },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: { $eq: ["$user_id", "$$user_id"] },
-                                $expr: { $eq: ["$quantity_report_date", "$$quantity_report_date"] }
-
-                            }
-                        }
-
-                    ],
-                    as: 'quantityReport'
-                },
-            },
-
-            {
-                $unwind: "$quantityReport"
-            },
-
-            {
-                $lookup: {
-                    from: "quantityWorkItemReports",
-                    let: { "quantity_report_id": "$quantityReport._id" },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: { $eq: ["$quantity_report_id", "$$quantity_report_id"] }
-                            }
-                        },
-                    ],
-                    as: 'quantityWorkItems'
-                }
-            },
-
-            {
-                $unwind: "$quantityWorkItems"
-            },
-
-            {
-                $lookup: {
-                    from: "quantityReportItems",
-                    localField: "quantityWorkItems.item_id",
-                    foreignField: "_id",
-                    as: 'itemsName'
-                }
-            },
-            {
-                $unwind: "$itemsName"
-            },
-            {
-                $project: {
-                    _id: 1, 
-                    company_id: 1,     
-                    project_id: 1,
-                    quantityReport: {
-                        _id: 1,
-                        user_id: 1,
-                        report_id: 1,
-                        quantity_report_date: 1,
-                        quantity_report_time: 1,
-                    },
-                    quantityWorkItems: {
-                        _id: 1,
-                        quantity_report_id: 1,
-                        item_id: 1,
-                        num_length: 1,
-                        num_width: 1,
-                        num_height: 1,
-                        num_total: 1,
-                        remark: 1,
-                        subquantityitems: 1,
-                        item_name: "$itemsName.item_name"
-                       
+            documents = await Report.aggregate([
+                // db.reports.aggregate([
+                {
+                    $match: {
+                        $and: [
+                            // { "company_id": ObjectId(company_id) },
+                            { "project_id": ObjectId(req.params.project_id) },
+                        ]
                     }
 
-                }
-            },
+                },
+                {
+                    $lookup: {
+                        from: 'quantityReports',
+                        localField: '_id',
+                        foreignField: 'report_id',
+                        // as: 'reportItem'
+                        // let: { "user_id": ObjectId("62c827689c1d4cb814ead866") },
+                        let: { "user_id": ObjectId(req.params.user_id) },
+                        // let: { "quantity_report_date": "2022/08/06" },
+                        let: { "quantity_report_date": req.params.user_date },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ["$user_id", "$$user_id"] },
+                                    $expr: { $eq: ["$quantity_report_date", "$$quantity_report_date"] }
 
-        ])
+                                }
+                            }
+
+                        ],
+                        as: 'quantityReport'
+                    },
+                },
+
+                {
+                    $unwind: "$quantityReport"
+                },
+
+                {
+                    $lookup: {
+                        from: "quantityWorkItemReports",
+                        let: { "quantity_report_id": "$quantityReport._id" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ["$quantity_report_id", "$$quantity_report_id"] }
+                                }
+                            },
+                        ],
+                        as: 'quantityWorkItems'
+                    }
+                },
+
+                {
+                    $unwind: "$quantityWorkItems"
+                },
+
+                {
+                    $lookup: {
+                        from: "quantityReportItems",
+                        localField: "quantityWorkItems.item_id",
+                        foreignField: "_id",
+                        as: 'itemsName'
+                    }
+                },
+                {
+                    $unwind: "$itemsName"
+                },
+                {
+                    $project: {
+                        _id: 1, 
+                        company_id: 1,
+                        project_id: 1,
+                        quantityReport: {
+                            _id: 1,
+                            user_id: 1,
+                            report_id: 1,
+                            quantity_report_date: 1,
+                            quantity_report_time: 1,
+                        },
+                        quantityWorkItems: {
+                            _id: 1,
+                            quantity_report_id: 1,
+                            item_id: 1,
+                            unit_name: 1,
+                            num_length: 1,
+                            num_width: 1,
+                            num_height: 1,
+                            num_total: 1,
+                            remark: 1,
+                            subquantityitems: 1,
+                            item_name: "$itemsName.item_name"
+
+                        }
+
+                    }
+                },
+
+            ])
             // .then(res =>
             //     console.log(res))
 
@@ -162,7 +163,7 @@ const QuantityReportController = {
             console.log(quantity_report_id);
             console.log(inputs);
             inputs.forEach(async (list, key) => {
-
+                // console.log(list)
                 quantity_reports_exist = await QuantityWorkItemReport.exists({ quantity_report_id: ObjectId(quantity_report_id), item_id: list.item_id });
 
                 if (quantity_reports_exist) {
@@ -341,29 +342,29 @@ const QuantityReportController = {
         }
         // res.send(CustomSuccessHandler.success('Quantity item report created successfully'));
     },
-    async edit(req, res, next){
+    async edit(req, res, next) {
         let document;
         try {
             // document = await QuantityWorkItemReport.findOne({ _id:req.params.id }).select('-__v');
-            document = await QuantityWorkItemReport.findOne({ _id:req.params.id }).select('-__v');
+            document = await QuantityWorkItemReport.findOne({ _id: req.params.id }).select('-__v');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
 
-        return res.json({"status":200, data:document});
+        return res.json({ "status": 200, data: document });
     },
 
-    async update(req, res, next){ 
+    async update(req, res, next) {
 
-        const {inputs} = req.body;
+        const { inputs } = req.body;
         console.log(inputs);
         let document;
         try {
             document = await QuantityWorkItemReport.findOneAndUpdate(
-                { _id: req.params.id},
+                { _id: req.params.id },
 
-                {company_id, category_name},
-                {new: true}
+                { company_id, category_name },
+                { new: true }
             );
         } catch (err) {
             return next(err);
