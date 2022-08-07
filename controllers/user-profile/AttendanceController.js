@@ -57,19 +57,16 @@ const AttendanceController = {
                             leave_date:1,
                             approved:1,
                         }
-
                     }
                 }
-
             ]);
-
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
         return res.json({ "status":200, data:documents });
     },
 
-    async store(req, res, next){
+    async applyLeaves(req, res, next){
         const { user_id, leavedates } = req.body;
         let year = CustomFunction.currentYearMonthDay('YYYY');
         let month = CustomFunction.currentYearMonthDay('MM')
@@ -93,19 +90,23 @@ const AttendanceController = {
         } catch (err) {
             return next(err);
         }
+
+        if (leavedates) {
+            console.log("if")
+        }else{
+            console.log("else")
+        }
+
         let leave_date_exist;
         try {
-            console.log(leavedates)
             leavedates.forEach( async (list, key) => {
                 leave_date_exist = await Attendance.find({
                     _id: attendance_main_id , 
                     "leavedates.leave_date": list.leave_date
                 })
-
                 if (leave_date_exist.length > 0) {
                     return;
                 }
-
                 const leaveData = await Attendance.findByIdAndUpdate(
                     {_id: attendance_main_id},
                     {
@@ -117,9 +118,7 @@ const AttendanceController = {
                     },
                     { new: true }
                 );
-
             })
-
         } catch (err) {
             return next(err)
         }
@@ -223,26 +222,21 @@ const AttendanceController = {
 
     async approveLeaves(req, res, next){
         try {
-
             const {leavedates}  = req.body;
             leavedates.forEach( async (list, key) => {
                 await Attendance.findOneAndUpdate(
                     {
-                        _id: req.params.id, "leavedates._id": ObjectId(list.leave_date_id)
+                        _id: req.params.id, "leavedates._id": list.leave_date_id
                     },
                     {
                         $set: 
                         { 
-                            // "leavedates.$.approved" : true, 
-                            approved : true, 
+                            "leavedates.$.approved" : true 
                         }
-
                     },
-                    { new: true }
-    
-                ).select('-__v');
+                );
             })
-            res.send(CustomSuccessHandler.success("Approved successfully!"))
+            res.send(CustomSuccessHandler.success("Leave Approved successfully!"))
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }

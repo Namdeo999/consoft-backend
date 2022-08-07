@@ -36,9 +36,7 @@ const attendanceSchema = mongoose.Schema({
         leave_date:{type:String},
         remark:{type:String},
         approved:{type:Boolean, default:false},
-    }]
-    
-    
+    }] 
 });
 
 export default mongoose.model('Attendance', attendanceSchema, 'attendances');
