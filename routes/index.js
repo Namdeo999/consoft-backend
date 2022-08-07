@@ -184,7 +184,8 @@ router.post('/report/:type', ReportController.saveReport);
 router.get('/quantity-report/:user_id/:project_id/:user_date', QuantityReportController.index);
 // router.delete('/quantity-report/:id/:item_id/:date', QuantityReportController.destroy);
 router.get('/edit-quantity-report/:id', QuantityReportController.edit);
-// router.put('/quantity-report/:id', QuantityReportController.update);
+router.put('/quantity-report/:id', QuantityReportController.update);
+router.get('/quantity-item-exist', QuantityReportController .quantityItemExist);
 
 
 
