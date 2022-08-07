@@ -1,4 +1,4 @@
-import { QuantityReport, QuantityWorkItemReport, Report } from "../../models/index.js";
+import { QuantityReport, QuantityWorkItemReport } from "../../models/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import CustomFunction from "../../services/CustomFunction.js";
@@ -16,17 +16,18 @@ const QuantityReportController = {
         try {
             const { company_id, project_id, inputs } = req.body;
 
-            documents = await Report.aggregate([
-                // db.reports.aggregate([
-                {
-                    $match: {
-                        $and: [
-                            // { "company_id": ObjectId(company_id) },
-                            { "project_id": ObjectId(req.params.project_id) },
-                        ]
-                    }
 
-                },
+        documents = await Report.aggregate([
+            {
+                $match: {
+                    $and: [
+                        // { "company_id": ObjectId(company_id) },
+                        { "project_id": ObjectId(req.params.project_id) },
+                    ]
+                }
+
+            },
+           
                 {
                     $lookup: {
                         from: 'quantityReports',
@@ -132,23 +133,23 @@ const QuantityReportController = {
 
     },
 
-    async store(req, res, next) {
-        const { report_id, user_id, inputs } = req;
+    async store(req, res, next){
+        const { report_id, user_id, inputs} = req;
         let current_date = CustomFunction.currentDate();
         let current_time = CustomFunction.currentTime();
-        const report_exist = await QuantityReport.exists({ report_id: ObjectId(report_id), user_id: ObjectId(user_id), quantity_report_date: current_date });
+        const report_exist = await QuantityReport.exists({report_id: ObjectId(report_id), user_id: ObjectId(user_id),quantity_report_date: current_date});
         let quantity_report_id
         try {
             if (!report_exist) {
                 const quantity_report = new QuantityReport({
                     report_id,
                     user_id,
-                    quantity_report_date: current_date,
-                    quantity_report_time: current_time
+                    quantity_report_date:current_date,
+                    quantity_report_time:current_time
                 });
                 const result = await quantity_report.save();
                 quantity_report_id = result._id;
-            } else {
+            }else{
                 quantity_report_id = report_exist._id;
             }
         } catch (err) {
@@ -369,7 +370,7 @@ const QuantityReportController = {
         } catch (err) {
             return next(err);
         }
-        res.status(201).json(document);
+        // res.status(201).json(document);
         return res.send(CustomSuccessHandler.success(" updated successfully"))
     }
 
