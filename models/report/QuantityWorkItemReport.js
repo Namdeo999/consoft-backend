@@ -5,6 +5,7 @@ const quantityWorkItemReportSchema = mongoose.Schema({
     quantity_report_id:{ type: ObjectId },
     item_id: { type: ObjectId }, 
     num_length: { type: Number }, 
+    unit_name:{type:String},
     num_width: { type: Number }, 
     num_height: { type: Number }, 
     num_total: { type: Number }, 
