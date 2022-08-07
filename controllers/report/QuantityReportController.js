@@ -28,7 +28,7 @@ const QuantityReportController = {
 
             },
             {
-                $lookup: {
+                $lookup: { 
                     from: 'quantityReports',
                     localField: '_id',
                     foreignField: 'report_id',
@@ -353,7 +353,7 @@ const QuantityReportController = {
         return res.json({"status":200, data:document});
     },
 
-    async update(req, res, next){
+    async update(req, res, next){ 
 
         const {inputs} = req.body;
         console.log(inputs);
