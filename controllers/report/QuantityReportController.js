@@ -13,7 +13,6 @@ const QuantityReportController = {
         try {
         const { company_id, project_id, inputs } = req.body;
 
-        console.log(req.params.user_date)
         documents = await Report.aggregate([
             {
                 $match: {
@@ -274,15 +273,18 @@ const QuantityReportController = {
     },
 
     async quantityItemExist(req, res, next){
-
         let current_date = CustomFunction.currentDate();
-        let quantity_report_id;
         let item_ids = [];
         try {
-            quantity_report_id = await QuantityReport.exists({ quantity_report_date: current_date });
+            const report_id = await Report.exists({ project_id: req.params.project_id });
+            if (!report_id) {
+                return res.json(CustomErrorHandler.notExist("Data not found"));
+            }
+            const quantity_report_id = await QuantityReport.exists({ report_id:report_id, user_id:req.params.user_id, quantity_report_date: current_date });
             if (quantity_report_id) {
                 item_ids = await QuantityWorkItemReport.find({ quantity_report_id:quantity_report_id }).select('-_id item_id');
             }
+            
         } catch (err) {
             return next(err);
         }

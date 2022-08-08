@@ -187,7 +187,7 @@ router.post('/report/:type', ReportController.saveReport);
     router.put('/quantity-report/:id', QuantityReportController.update);
 
     // router.post('/quantity-report',QuantityReportController.store);
-    router.get('/quantity-item-exist', QuantityReportController .quantityItemExist);
+    router.get('/quantity-item-exist/:project_id/:user_id', QuantityReportController .quantityItemExist);
     
     // report item
     router.get('/quantity-report-item/:company_id', QuantityReportItemController.index);
