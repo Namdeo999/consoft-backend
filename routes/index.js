@@ -182,7 +182,6 @@ router.delete('/contractor/:contractor_id', ContractorController.destroy);
 //report
 router.post('/report/:type', ReportController.saveReport);
 
-
     router.get('/quantity-report/:user_id/:project_id/:user_date', QuantityReportController.index);    
 
     router.get('/edit-quantity-report/:id', QuantityReportController.edit);
