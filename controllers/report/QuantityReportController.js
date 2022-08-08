@@ -1,4 +1,4 @@
-import { QuantityReport, QuantityWorkItemReport } from "../../models/index.js";
+import { QuantityReport, QuantityWorkItemReport,Report } from "../../models/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import CustomFunction from "../../services/CustomFunction.js";
@@ -161,8 +161,8 @@ const QuantityReportController = {
         try {
 
 
-            console.log(quantity_report_id);
-            console.log(inputs);
+            // console.log(quantity_report_id);
+            // console.log(inputs);
             inputs.forEach(async (list, key) => {
                 // console.log(list)
                 quantity_reports_exist = await QuantityWorkItemReport.exists({ quantity_report_id: ObjectId(quantity_report_id), item_id: list.item_id });
@@ -355,24 +355,114 @@ const QuantityReportController = {
         return res.json({ "status": 200, data: document });
     },
 
-    async update(req, res, next) {
+    async update(req, res, next){
 
-        const { inputs } = req.body;
-        console.log(inputs);
-        let document;
+        const {inputs} = req.body;
+        // console.log(inputs);
+        
         try {
-            document = await QuantityWorkItemReport.findOneAndUpdate(
-                { _id: req.params.id },
 
-                { company_id, category_name },
-                { new: true }
-            );
+            inputs.forEach( async (list, key) => {
+                
+                const quantity_work_item_report = await QuantityWorkItemReport.findByIdAndUpdate(
+                    { _id: req.params.id},
+                    {
+                        item_id : ObjectId(list.item_id),
+                        num_length : list.num_length,
+                        num_width : list.num_width,
+                        num_height : list.num_height,
+                        num_total : list.num_total,
+                        remark : list.remark,
+                    },
+                    {new: true}
+                );
+            });
+
+           
+                //final
+                
+                
+                if (list.subquantityitems.length > 0) {
+                    
+                    const result = await QuantityWorkItemReport.find({ _id:req.params.id});
+                    console.log(result);
+                    if (result.subquantityitems > 0) {
+                
+                    }
+
+                    // const document = await QuantityWorkItemReport.updateMany(
+                    //     { _id: req.params.id},
+                    //     {
+                    //         $pull: {
+                    //             subquantityitems: {user_id : ObjectId(user_id)} 
+                    //         } 
+                    //     },
+                    //     { new: true }
+                    //     // false, // Upsert
+                    //     // true, // Multi
+                    // )
+
+                    // list.subquantityitems.forEach(async (sub_list, key1) => {
+                    //     const quantity_work_sub_item_report = await QuantityWorkItemReport.findByIdAndUpdate(
+                    //         { _id: req.params.id},
+                    //         {
+
+
+                    //             $addToSet:{
+                    //                 "subquantityitems": {
+                    //                     sub_length : sub_list.sub_length,
+                    //                     sub_width : sub_list.sub_width,
+                    //                     sub_height : sub_list.sub_height,
+                    //                     sub_total : sub_list.sub_total,
+                    //                     sub_remark : sub_list.sub_remark,
+                    //                 }
+                    //             }
+                    //         },
+                    //         { new: true }
+                    //     );
+
+                    // })
+                }
+
+            
+
+
+            // if (list.subquantityitems.length > 0) {}
+
         } catch (err) {
             return next(err);
         }
         // res.status(201).json(document);
         return res.send(CustomSuccessHandler.success(" updated successfully"))
-    }
+    
+    },
+    async quantityItemExist(req, res, next){
+
+        let current_date = CustomFunction.currentDate();
+        let quantity_report_id;
+        let item_ids = [];
+        try {
+            quantity_report_id = await QuantityReport.exists({ quantity_report_date: current_date });
+            if (quantity_report_id) {
+                item_ids = await QuantityWorkItemReport.find({ quantity_report_id:quantity_report_id }).select('-_id item_id');
+            }
+        } catch (err) {
+            return next(err);
+        }
+
+        return res.json({"status":200, data:item_ids});
+    },
+    async destroy(req, res, next) {
+        let document;
+        try {
+            // document = await QuantityWorkItemReport.findOne({ _id:req.params.id }).select('-__v');
+            document = await QuantityWorkItemReport.findOne({ _id: req.params.id }).select('-__v');
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+
+        return res.json({ "status": 200, data: document });
+    },
 
 }
 

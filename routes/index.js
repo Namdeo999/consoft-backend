@@ -185,7 +185,8 @@ router.get('/quantity-report/:user_id/:project_id/:user_date', QuantityReportCon
 // router.delete('/quantity-report/:id/:item_id/:date', QuantityReportController.destroy);
 router.get('/edit-quantity-report/:id', QuantityReportController.edit);
 router.put('/quantity-report/:id', QuantityReportController.update);
-router.get('/quantity-item-exist', QuantityReportController .quantityItemExist);
+router.get('/quantity-item-exist/:project_id/:user_id', QuantityReportController.quantityItemExist);
+router.put('/quantity-report/:id', QuantityReportController.update);
 
 
 
