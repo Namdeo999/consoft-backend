@@ -1,4 +1,4 @@
-import { QuantityReport, QuantityWorkItemReport,Report } from "../../models/index.js";
+import { QuantityReport, QuantityWorkItemReport, Report } from "../../models/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import CustomFunction from "../../services/CustomFunction.js";
@@ -17,17 +17,17 @@ const QuantityReportController = {
             const { company_id, project_id, inputs } = req.body;
 
 
-        documents = await Report.aggregate([
-            {
-                $match: {
-                    $and: [
-                        // { "company_id": ObjectId(company_id) },
-                        { "project_id": ObjectId(req.params.project_id) },
-                    ]
-                }
+            documents = await Report.aggregate([
+                {
+                    $match: {
+                        $and: [
+                            // { "company_id": ObjectId(company_id) },
+                            { "project_id": ObjectId(req.params.project_id) },
+                        ]
+                    }
 
-            },
-           
+                },
+
                 {
                     $lookup: {
                         from: 'quantityReports',
@@ -88,7 +88,7 @@ const QuantityReportController = {
                 },
                 {
                     $project: {
-                        _id: 1, 
+                        _id: 1,
                         company_id: 1,
                         project_id: 1,
                         quantityReport: {
@@ -133,23 +133,23 @@ const QuantityReportController = {
 
     },
 
-    async store(req, res, next){
-        const { report_id, user_id, inputs} = req;
+    async store(req, res, next) {
+        const { report_id, user_id, inputs } = req;
         let current_date = CustomFunction.currentDate();
         let current_time = CustomFunction.currentTime();
-        const report_exist = await QuantityReport.exists({report_id: ObjectId(report_id), user_id: ObjectId(user_id),quantity_report_date: current_date});
+        const report_exist = await QuantityReport.exists({ report_id: ObjectId(report_id), user_id: ObjectId(user_id), quantity_report_date: current_date });
         let quantity_report_id
         try {
             if (!report_exist) {
                 const quantity_report = new QuantityReport({
                     report_id,
                     user_id,
-                    quantity_report_date:current_date,
-                    quantity_report_time:current_time
+                    quantity_report_date: current_date,
+                    quantity_report_time: current_time
                 });
                 const result = await quantity_report.save();
                 quantity_report_id = result._id;
-            }else{
+            } else {
                 quantity_report_id = report_exist._id;
             }
         } catch (err) {
@@ -358,12 +358,9 @@ const QuantityReportController = {
     async update(req, res, next){
 
         const {inputs} = req.body;
-        // console.log(inputs);
-        
         try {
-
+             console.log(inputs)
             inputs.forEach( async (list, key) => {
-                
                 const quantity_work_item_report = await QuantityWorkItemReport.findByIdAndUpdate(
                     { _id: req.params.id},
                     {
@@ -376,58 +373,46 @@ const QuantityReportController = {
                     },
                     {new: true}
                 );
-            });
 
-           
-                //final
-                
-                
                 if (list.subquantityitems.length > 0) {
+                    const sub_quantity_items = await QuantityWorkItemReport.find({ _id:req.params.id}).select(' _id subquantityitems._id');
+                    // console.log(sub_quantity_items[0].subquantityitems)
                     
-                    const result = await QuantityWorkItemReport.find({ _id:req.params.id});
-                    console.log(result);
-                    if (result.subquantityitems > 0) {
-                
+                    if(sub_quantity_items.length > 0){
+
+                        sub_quantity_items[0].subquantityitems.forEach(async (list, key1) => {
+                            await QuantityWorkItemReport.findOneAndUpdate(
+                                { _id: req.params.id},
+                                {
+                                    $pull: {subquantityitems: {_id : ObjectId(list._id)} } 
+                                },
+                                { new: true }
+                                // false, // Upsert
+                                // true, // Multi
+                            )
+                        })
+
                     }
 
-                    // const document = await QuantityWorkItemReport.updateMany(
-                    //     { _id: req.params.id},
-                    //     {
-                    //         $pull: {
-                    //             subquantityitems: {user_id : ObjectId(user_id)} 
-                    //         } 
-                    //     },
-                    //     { new: true }
-                    //     // false, // Upsert
-                    //     // true, // Multi
-                    // )
-
-                    // list.subquantityitems.forEach(async (sub_list, key1) => {
-                    //     const quantity_work_sub_item_report = await QuantityWorkItemReport.findByIdAndUpdate(
-                    //         { _id: req.params.id},
-                    //         {
-
-
-                    //             $addToSet:{
-                    //                 "subquantityitems": {
-                    //                     sub_length : sub_list.sub_length,
-                    //                     sub_width : sub_list.sub_width,
-                    //                     sub_height : sub_list.sub_height,
-                    //                     sub_total : sub_list.sub_total,
-                    //                     sub_remark : sub_list.sub_remark,
-                    //                 }
-                    //             }
-                    //         },
-                    //         { new: true }
-                    //     );
-
-                    // })
+                    list.subquantityitems.forEach(async (sub_list, key1) => {
+                        await QuantityWorkItemReport.findByIdAndUpdate(
+                            { _id:req.params.id },
+                            {
+                                $push:{
+                                    "subquantityitems": {
+                                        sub_length : sub_list.sub_length,
+                                        sub_width : sub_list.sub_width,
+                                        sub_height : sub_list.sub_height,
+                                        sub_total : sub_list.sub_total,
+                                        sub_remark : sub_list.sub_remark,
+                                    }
+                                }
+                            },
+                            { new: true }
+                        );
+                    })
                 }
-
-            
-
-
-            // if (list.subquantityitems.length > 0) {}
+            });
 
         } catch (err) {
             return next(err);
@@ -436,21 +421,24 @@ const QuantityReportController = {
         return res.send(CustomSuccessHandler.success(" updated successfully"))
     
     },
-    async quantityItemExist(req, res, next){
-
+    async quantityItemExist(req, res, next) {
         let current_date = CustomFunction.currentDate();
-        let quantity_report_id;
         let item_ids = [];
         try {
-            quantity_report_id = await QuantityReport.exists({ quantity_report_date: current_date });
-            if (quantity_report_id) {
-                item_ids = await QuantityWorkItemReport.find({ quantity_report_id:quantity_report_id }).select('-_id item_id');
+            const report_id = await Report.exists({ project_id: req.params.project_id });
+            if (!report_id) {
+                return res.json(CustomErrorHandler.notExist("Data not found"));
             }
+            const quantity_report_id = await QuantityReport.exists({ report_id: report_id, user_id: req.params.user_id, quantity_report_date: current_date });
+            if (quantity_report_id) {
+                item_ids = await QuantityWorkItemReport.find({ quantity_report_id: quantity_report_id }).select('-_id item_id');
+            }
+
         } catch (err) {
             return next(err);
         }
 
-        return res.json({"status":200, data:item_ids});
+        return res.json({ "status": 200, data: item_ids });
     },
     async destroy(req, res, next) {
         let document;
