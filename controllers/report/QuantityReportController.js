@@ -227,9 +227,7 @@ const QuantityReportController = {
                 if (list.subquantityitems.length > 0) {
                     const sub_quantity_items = await QuantityWorkItemReport.find({ _id:req.params.id}).select(' _id subquantityitems._id');
                     // console.log(sub_quantity_items[0].subquantityitems)
-                    
                     if(sub_quantity_items.length > 0){
-
                         sub_quantity_items[0].subquantityitems.forEach(async (list, key1) => {
                             await QuantityWorkItemReport.findOneAndUpdate(
                                 { _id: req.params.id},
@@ -241,7 +239,6 @@ const QuantityReportController = {
                                 // true, // Multi
                             )
                         })
-
                     }
 
                     list.subquantityitems.forEach(async (sub_list, key1) => {

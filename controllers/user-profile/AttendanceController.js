@@ -21,13 +21,9 @@ const AttendanceController = {
         let documents; 
         try {
             documents = await Attendance.aggregate([
-                // {
-                //     $match: { 
-                //         $and:[
-                //             {"user_id": ObjectId(req.params.user_id)}
-                //         ]
-                //     },
-                // },
+                {$unwind:'$leavedates'},
+                {$match:{'leavedates.approved':false}},
+                
                 {
                     $lookup: {
                         from: 'users',
@@ -40,23 +36,25 @@ const AttendanceController = {
                     $unwind:"$userData"
                 },
                 {
+                    $group:{
+                        _id:'$_id', 
+                        "user_id": { "$first": "$user_id" },
+                        "user_name": { "$first": "$userData.name" },
+                        leavedates:{$push:'$leavedates'}
+                    }
+                },
+                {
                     $project:{
                         _id:1,
                         user_id:1,
-                        user_name:"$userData.name",
-                        // year:1,
-                        // months:{
-                        //     // month:1,
-                        //     month_name:1,
-                        //     // _id:1,
-                        // },
-                        // "months.presentdays":{},
+                        user_name:"$user_name",
                         "presentdates": {$ifNull: ["$presentdates", []]},
-                        "leavedates":{
-                            _id:1,
-                            leave_date:1,
-                            approved:1,
-                        }
+                        // "leavedates":{
+                        //     _id:1,
+                        //     leave_date:1,
+                        //     approved:1,
+                        // }
+                        leavedates:"$leavedates"
                     }
                 }
             ]);
