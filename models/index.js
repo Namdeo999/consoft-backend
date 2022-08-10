@@ -26,6 +26,7 @@ export { default as SubWorkAssign } from './assign-work/SubWorkAssign.js';
 export { default as Unit } from './stock/Unit.js';
 export { default as Item } from './stock/Item.js';
 export { default as ManageStock } from './stock/ManageStock.js';
+export { default as StockEntry } from './stock/StockEntry.js';
 export { default as ManageBoq } from './stock/ManageBoq.js';
 
 //tools machinery
@@ -50,4 +51,7 @@ export {default as Supplier } from './supplier/Supplier.js';
 
 //user profile
 export { default as Attendance } from './user-profile/Attendance.js';
+
+// water level
+export { default as WaterLevel } from './water-level/WaterLevel.js';
  

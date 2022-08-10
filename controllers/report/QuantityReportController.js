@@ -96,6 +96,7 @@ const QuantityReportController = {
                         num_height: 1,
                         num_total: 1,
                         remark: 1,
+                        quality_type: 1,
                         subquantityitems: 1
                     }
                 }
@@ -148,6 +149,7 @@ const QuantityReportController = {
                     num_height : list.num_height,
                     num_total : list.num_total,
                     remark : list.remark,
+                    quality_type : list.quality_type,
                 });
                 const item_result = await quantity_work_item_report.save();
                 
@@ -163,6 +165,7 @@ const QuantityReportController = {
                                         sub_height : sub_list.sub_height,
                                         sub_total : sub_list.sub_total,
                                         sub_remark : sub_list.sub_remark,
+                                        sub_quality_type : sub_list.sub_quality_type
                                     }
                                 }
                             },
@@ -206,6 +209,7 @@ const QuantityReportController = {
                         num_height : list.num_height,
                         num_total : list.num_total,
                         remark : list.remark,
+                        quality_type : list.quality_type,
                     },
                     {new: true}
                 );
@@ -237,6 +241,7 @@ const QuantityReportController = {
                                         sub_height : sub_list.sub_height,
                                         sub_total : sub_list.sub_total,
                                         sub_remark : sub_list.sub_remark,
+                                        sub_quality_type : sub_list.sub_quality_type
                                     }
                                 }
                             },

@@ -1,7 +1,10 @@
 import Joi from "joi";
-import { ManageStock, Item } from "../../models/index.js";
+import { ManageStock, StockEntry } from "../../models/index.js";
+import { manageStockSchema } from "../../validators/index.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
+import CustomFunction from "../../services/CustomFunction.js";
+import { ObjectId } from "mongodb";
 
 const ManageStockController = {
 
@@ -37,33 +40,52 @@ const ManageStockController = {
     },
 
     async store(req, res, next){
-        const manageStockSchema = Joi.object({
-            item_id:Joi.string().required(),
-            qty:Joi.number().required(),
-            location:Joi.string().required(),
-            vehicle_no:Joi.string().required(),
-        });
-
+        
         const {error} = manageStockSchema.validate(req.body);
         if(error){
             return next(error);
         }
+        const {company_id, project_id, user_id, stockEntry} = req.body;
 
-        const {item_id, qty, location, vehicle_no} = req.body;
-        const manageStock = new ManageStock({
-            item_id,
-            qty,
-            location,
-            vehicle_no,
-        });
-
+        const stock_exist = await ManageStock.exists({company_id: ObjectId(company_id), project_id: ObjectId(project_id),user_id: ObjectId(user_id)});
+        let stock_id
         try {
-            const result = await manageStock.save();
-            res.send(CustomSuccessHandler.success('Stock entry created successfully'));
+            if (!stock_exist) {
+                const manage_stock = new ManageStock({
+                    company_id,
+                    project_id,
+                    user_id
+                });
+                const result = await manage_stock.save();
+                stock_id = result._id;
+            }else{
+                stock_id = stock_exist._id;
+            }
         } catch (err) {
             return next(err);
         }
 
+        let current_date = CustomFunction.currentDate();
+        let current_time = CustomFunction.currentTime();
+
+        try {
+            stockEntry.forEach(stock => {
+                const stock_entry = new StockEntry({
+                    stock_id:ObjectId(stock_id),
+                    item_id:ObjectId(stock.item_id),
+                    unit_name : stock.unit_name,
+                    qty : stock.qty,
+                    location : stock.location,
+                    vehicle_no : stock.vehicle_no,
+                    entry_date : current_date,
+                    entry_time : current_time,
+                });
+                stock_entry.save();
+            });
+        } catch (err) {
+            return next(err);
+        }
+        res.send(CustomSuccessHandler.success('Stock entry successfully'));
     },
 
     async edit(req, res, next){

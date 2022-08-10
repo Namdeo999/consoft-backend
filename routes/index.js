@@ -27,7 +27,10 @@ import {
     SupplierController,
 
     //revert
-    RevertController, VerifyController, AttendanceController
+    RevertController, VerifyController, AttendanceController,
+
+    //water level
+    WaterLevelController
 
 
 } from '../controllers/index.js';
@@ -226,7 +229,9 @@ router.get('/leaves', AttendanceController.getLeaves);
 router.post('/apply-leaves', AttendanceController.applyLeaves);
 router.put('/approve-leaves/:id', AttendanceController.approveLeaves);
 
-
+//water level
+// router.get('/water-level/:led_status', WaterLevelController.waterLevel);
+router.post('/water-level', WaterLevelController.waterLevel);
 
 
 

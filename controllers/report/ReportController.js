@@ -60,12 +60,8 @@ const ReportController = {
                             res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
                         }else{
                             return (err);
-
                         }
                     });
-                    break;
-                case Constants.QUALITY:
-                    console.log("Quality")
                     break;
                 case Constants.TANDP:
                     console.log("TAndP")

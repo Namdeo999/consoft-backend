@@ -14,6 +14,7 @@ export { default as projectTypeSchema } from './project/ProjectTypeValidator.js'
 export { default as projectTeamSchema } from './project/ProjectTeamValidator.js';
 
 //stock
+export { default as manageStockSchema } from './stock/manageStockValidator.js';
 export { default as manageBoqSchema } from './stock/manageBoqValidator.js';
 
 //assign work

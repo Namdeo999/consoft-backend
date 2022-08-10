@@ -59,3 +59,8 @@ export { default as VerifyController } from './verify/VerifyController.js';
 //user profile
 export { default as AttendanceController } from './user-profile/AttendanceController.js';
 
+
+//water level
+
+export { default as WaterLevelController} from './water-level/WaterLevelController.js';
+
