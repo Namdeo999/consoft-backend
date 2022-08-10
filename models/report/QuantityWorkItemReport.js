@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 const quantityWorkItemReportSchema = mongoose.Schema({
     quantity_report_id:{ type: ObjectId },
     item_id: { type: ObjectId }, 
+    unit_name: { type: String }, 
     num_length: { type: Number }, 
     num_width: { type: Number }, 
     num_height: { type: Number }, 

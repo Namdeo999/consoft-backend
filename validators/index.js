@@ -24,6 +24,7 @@ export { default as contractorSchema } from './contractor/ContractorValidator.js
 
 //report
 export { default as reportSchema } from './report/ReportValidator.js';
+export { default as qualityTypeSchema } from './report/quality-type/QualityTypeValidator.js';
 
 //tools
 

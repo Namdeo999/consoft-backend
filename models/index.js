@@ -42,10 +42,10 @@ export { default as QuantityReportItem } from './report/quantity-report-item/Qua
 export { default as Report } from './report/Report.js';
 export { default as QuantityReport } from './report/QuantityReport.js';
 export { default as QuantityWorkItemReport } from './report/QuantityWorkItemReport.js';
+export { default as QualityType } from './report/quality-type/QualityType.js';
 
 
 //supplier
-
 export {default as Supplier } from './supplier/Supplier.js';
 
 //user profile

@@ -21,7 +21,7 @@ import {
     ChecklistOptionTypeController, ChecklistOptionController, ChecklistController, ToolsMachineryController,
 
     //report 
-    ReportController, QuantityReportController, QuantityReportItemController,
+    ReportController, QuantityReportController, QuantityReportItemController,QualityTypeController,
 
     //supplier
     SupplierController,
@@ -194,9 +194,18 @@ router.post('/report/:type', ReportController.saveReport);
     // report item
     router.get('/quantity-report-item/:company_id', QuantityReportItemController.index);
     router.post('/quantity-report-item', QuantityReportItemController.store);
+    router.get('/edit-quantity-report-item/:id', QuantityReportItemController.edit);
+    router.put('/update-quantity-report-item/:id', QuantityReportItemController.update);
+    router.delete('/delete-quantity-report-item/:id', QuantityReportItemController.destroy);
+
+    //quality type
+    router.get('/quality-type/', QualityTypeController.index);
+    router.post('/quality-type', QualityTypeController.store);
+    router.get('/quality-type/:id', QualityTypeController.edit);
+    router.put('/quality-type/:id', QualityTypeController.update);
+    router.delete('/quality-type/:id', QualityTypeController.destroy);
 
 
-        
 router.get('/supplier', SupplierController.index);
 router.post('/supplier', SupplierController.store);
 router.get('/supplier/:supplier_id', SupplierController.edit);
@@ -210,8 +219,8 @@ router.put('/revert-submit-work/:work_id', RevertController.revertSubmitWork);
 router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
 
 //user profile
-router.get('/attendance/:user_id', AttendanceController.index);
-// router.post('/attendance', AttendanceController.store);
+router.get('/attendance/:user_id', AttendanceController.attendance);
+// router.post('/attendance', AttendanceController.attendance);
 
 router.get('/leaves', AttendanceController.getLeaves);
 router.post('/apply-leaves', AttendanceController.applyLeaves);

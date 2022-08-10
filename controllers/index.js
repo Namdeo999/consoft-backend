@@ -45,6 +45,7 @@ export {default as ContractorController } from './contractor/ContractorControlle
 export { default as ReportController } from './report/ReportController.js'
 export { default as QuantityReportController } from './report/QuantityReportController.js';
 export { default as QuantityReportItemController } from './report/quantity-report-item/QuantityReportItemController.js';
+export { default as QualityTypeController } from './report/quality-type/QualityTypeController.js';
 
 //supplier
 export { default as SupplierController } from './supplier/SupplierController.js';
