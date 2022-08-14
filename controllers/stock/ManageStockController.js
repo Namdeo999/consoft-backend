@@ -14,25 +14,67 @@ const ManageStockController = {
             documents =  await ManageStock.aggregate([
                 {
                     $lookup: {
-                        from: 'items',
-                        localField: 'item_id',
-                        foreignField: '_id',
-                        as: 'itemData'
+                        from: 'stockEntries',
+                        localField: '_id',
+                        foreignField: 'stock_id',
+                        as: 'stockEntryData'
                     },
                 },
-                { $unwind: "$itemData" },
-                
                 {
-                    $project: {
+                    $unwind:"$stockEntryData"
+                },
+                {
+                            $lookup:{
+                                from:'items',
+                                localField:'stockEntryData.item_id',
+                                foreignField:'_id',
+                                as:'itemName'
+                                    }
+                },
+                {
+                    $unwind:"$itemName"
+                },
+                {
+                    $project:{
                         _id:1,
-                        item_id:1,
-                        item_name:'$itemData.item_name',
-                        qty:1,
-                        location:1,
-                        vehicle_no:1,
+                        company_id:1,
+                        project_id:1,
+                        user_id:1,
+                        stockEntryData:{
+                            _id:1,
+                            stock_id:1,
+                            unit_name:1,
+                            item_name:'$itemName.item_name',
+                            qty:1,
+                            location:1,
+                            vehicle_no:1
+                        }
                     }
-                } 
+                }
             ])
+            
+
+            //documents =  await ManageStock.aggregate([
+                // {
+                //     $lookup: {
+                //         from: 'items',
+                //         localField: 'item_id',
+                //         foreignField: '_id',
+                //         as: 'itemData'
+                //     },
+                // },
+                // { $unwind: "$itemData" },
+                // {
+                //     $project: {
+                //         _id:1,
+                //         item_id:1,
+                //         item_name:'$itemData.item_name',
+                //         qty:1,
+                //         location:1,
+                //         vehicle_no:1,
+                //     }
+                // } 
+            //])
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }

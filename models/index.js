@@ -40,10 +40,14 @@ export {default as Contractor} from './contractor/Contractor.js';
 //reports
 export { default as QuantityReportItem } from './report/quantity-report-item/QuantityReportItem.js';
 
+export { default as ManpowerCategory } from './report/manpower-category/ManpowerCategory.js';
+export { default as ManpowerSubCategory } from './report/manpower-sub-category/ManpowerSubCategory.js';
 export { default as Report } from './report/Report.js';
 export { default as QuantityReport } from './report/QuantityReport.js';
 export { default as QuantityWorkItemReport } from './report/QuantityWorkItemReport.js';
 export { default as QualityType } from './report/quality-type/QualityType.js';
+export { default as ManpowerReport } from './report/ManpowerReport.js';
+export { default as ManpowerMemberReport } from './report/ManpowerMemberReport.js';
 
 
 //supplier

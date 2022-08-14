@@ -1,4 +1,3 @@
-import Joi from "joi";
 import { ProjectCategory } from "../../models/index.js";
 import { projectCategorySchema } from "../../validators/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";

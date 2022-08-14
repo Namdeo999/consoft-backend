@@ -67,6 +67,13 @@ const CustomFunction  = {
         var minm = 100000;
         var maxm = 999999;
         return Math.floor(Math.random() * (maxm - minm + 1)) + minm;
+    },
+
+
+    capitalize(str){
+        if (typeof str !== 'string') return ''
+        return str.charAt(0).toUpperCase() + str.slice(1);
+        // return str[0].toUpperCase() + str.slice(1);
     }
 
     // #!/bin/sh
