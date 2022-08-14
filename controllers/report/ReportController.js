@@ -4,6 +4,8 @@ import { reportSchema } from "../../validators/index.js";
 import { Report } from "../../models/index.js";
 import Constants from "../../constants/index.js";
 import QuantityReportController from './QuantityReportController.js';
+import ManpowerReportController from "./ManpowerReportController.js";
+
 
 const ReportController = {
 
@@ -24,7 +26,7 @@ const ReportController = {
         // return;
 
         try {
-            const {company_id, project_id, user_id, inputs} = req.body;
+            const {company_id, project_id, user_id} = req.body;
             const exist = await Report.exists({company_id:company_id, project_id:project_id});
             let report_id ;
             
@@ -38,18 +40,32 @@ const ReportController = {
             }else{
                 report_id = exist._id;
             }
-            
+            let bodyData;
             switch (req.params.type) {
-
                 case Constants.MANPOWER:
-                    console.log("Manpower")
+                    const {contractor_id, manpower_category_id, members} = req.body;
+                    bodyData = {
+                        report_id:report_id,
+                        user_id:user_id,
+                        contractor_id:contractor_id,
+                        manpower_category_id:manpower_category_id,
+                        members:members,
+                    }
+                    ManpowerReportController.store(bodyData).then((result)=>{
+                       
+                        if (result.status === Constants.RES_SUCCESS) {
+                            res.send(CustomSuccessHandler.success('Manpower report created successfully'))
+                        }else{
+                            return (result.error);
+                        }
+                    });
                     break;
                 case Constants.STOCK:
                     console.log("Stock")
                     break;
                 case Constants.QUANTITY:
-
-                    const bodyData = {
+                    const {inputs} = req.body;
+                    bodyData = {
                         report_id:report_id,
                         user_id:user_id,
                         inputs:inputs,
@@ -60,12 +76,8 @@ const ReportController = {
                             res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
                         }else{
                             return (err);
-
                         }
                     });
-                    break;
-                case Constants.QUALITY:
-                    console.log("Quality")
                     break;
                 case Constants.TANDP:
                     console.log("TAndP")
@@ -77,7 +89,6 @@ const ReportController = {
             }
 
             // use another controller function here
-
         } catch (err) {
             return next(err);
         }

@@ -21,13 +21,16 @@ import {
     ChecklistOptionTypeController, ChecklistOptionController, ChecklistController, ToolsMachineryController,
 
     //report 
-    ReportController, QuantityReportController, QuantityReportItemController,
+    ReportController,QuantityReportController,QuantityReportItemController,QualityTypeController,ManpowerCategoryController,ManpowerSubCategoryController,ManpowerReportController,
 
     //supplier
     SupplierController,
 
     //revert
-    RevertController, VerifyController, AttendanceController
+    RevertController, VerifyController, AttendanceController,
+
+    //water level
+    WaterLevelController
 
 
 } from '../controllers/index.js';
@@ -194,9 +197,32 @@ router.post('/report/:type', ReportController.saveReport);
     // report item
     router.get('/quantity-report-item/:company_id', QuantityReportItemController.index);
     router.post('/quantity-report-item', QuantityReportItemController.store);
+    router.get('/edit-quantity-report-item/:id', QuantityReportItemController.edit);
+    router.put('/update-quantity-report-item/:id', QuantityReportItemController.update);
+    router.delete('/delete-quantity-report-item/:id', QuantityReportItemController.destroy);
+
+    //quality type
+    router.get('/quality-type/', QualityTypeController.index);
+    router.post('/quality-type/', QualityTypeController.store);
+    router.get('/quality-type/:id', QualityTypeController.edit);
+    router.put('/quality-type/:id', QualityTypeController.update);
+    router.delete('/quality-type/:id', QualityTypeController.destroy);
+
+    //manpower category
+    router.get('/manpower-category/:company_id', ManpowerCategoryController.index);
+    router.post('/manpower-category', ManpowerCategoryController.store);
+    router.get('/edit-manpower-category/:id', ManpowerCategoryController.edit);
+    router.put('/manpower-category/:id', ManpowerCategoryController.update);
+    router.delete('/manpower-category/:id', ManpowerCategoryController.destroy);
+
+    //manpower sub category
+    router.get('/manpower-sub-category/:manpower_category_id', ManpowerSubCategoryController.index);
+    router.post('/manpower-sub-category', ManpowerSubCategoryController.store);
+    router.get('/edit-manpower-sub-category/:id', ManpowerSubCategoryController.edit);
+    router.put('/manpower-sub-category/:id', ManpowerSubCategoryController.update);
+    router.delete('/manpower-sub-category/:id', ManpowerSubCategoryController.destroy);
 
 
-        
 router.get('/supplier', SupplierController.index);
 router.post('/supplier', SupplierController.store);
 router.get('/supplier/:supplier_id', SupplierController.edit);
@@ -210,14 +236,16 @@ router.put('/revert-submit-work/:work_id', RevertController.revertSubmitWork);
 router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
 
 //user profile
-router.get('/attendance/:user_id', AttendanceController.index);
-// router.post('/attendance', AttendanceController.store);
+router.get('/attendance/:user_id', AttendanceController.attendance);
+// router.post('/attendance', AttendanceController.attendance);
 
 router.get('/leaves', AttendanceController.getLeaves);
 router.post('/apply-leaves', AttendanceController.applyLeaves);
 router.put('/approve-leaves/:id', AttendanceController.approveLeaves);
 
-
+//water level
+// router.get('/water-level/:led_status', WaterLevelController.waterLevel);
+router.post('/water-level', WaterLevelController.waterLevel);
 
 
 

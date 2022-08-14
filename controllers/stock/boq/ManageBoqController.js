@@ -130,10 +130,35 @@ const ManageBoqController = {
         }
         catch (error) {
             return next(CustomErrorHandler.serverError());
-
         }
-
         return res.json({ status: 200, data: documents });
+
+        //sum
+
+        // db.quantityWorkItemReports.aggregate([
+            // {
+            //     $match:{
+            //       "item_id": ObjectId("62dd341a3285084614654976")
+            //     }
+            //   },
+        //     { $unwind: "$subquantityitems" },
+        //     {
+        //          $group:
+        //            {
+        //              _id: "$quantity_report_id" ,
+        //              totalAmount: { $sum: "$num_total"},
+        //              subtotalAmount: { $sum: "$subquantityitems.sub_total"},
+        //              count: { $sum: 1 }
+        //            }
+        //        }
+        //     ]);
+
+
+
+    },
+
+    async boqcal(req, res, next){
+        
     },
 
     async store(req, res, next) {

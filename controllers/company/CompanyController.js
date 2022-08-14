@@ -38,7 +38,7 @@ const CompanyController = {
             const refresh_token = JwtService.sign({ _id: company._id }, '1y', REFRESH_SECRET);
 
             await RefreshToken.create({ token: refresh_token });
-            
+        
             res.json({status:200, access_token, refresh_token, _id: company._id, company_name: company.company_name, mobile:company.mobile, email:company.email});
             
         } catch (err) {

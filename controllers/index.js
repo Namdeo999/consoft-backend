@@ -43,8 +43,12 @@ export {default as ContractorController } from './contractor/ContractorControlle
 //report
 
 export { default as ReportController } from './report/ReportController.js'
+export { default as ManpowerCategoryController } from './report/manpower-category/ManpowerCategoryController.js';
+export { default as ManpowerSubCategoryController } from './report/manpower-sub-category/ManpowerSubCategoryController.js';
 export { default as QuantityReportController } from './report/QuantityReportController.js';
 export { default as QuantityReportItemController } from './report/quantity-report-item/QuantityReportItemController.js';
+export { default as QualityTypeController } from './report/quality-type/QualityTypeController.js';
+export { default as ManpowerReportController } from './report/ManpowerReportController.js';
 
 //supplier
 export { default as SupplierController } from './supplier/SupplierController.js';
@@ -57,4 +61,9 @@ export { default as VerifyController } from './verify/VerifyController.js';
 
 //user profile
 export { default as AttendanceController } from './user-profile/AttendanceController.js';
+
+
+//water level
+
+export { default as WaterLevelController} from './water-level/WaterLevelController.js';
 

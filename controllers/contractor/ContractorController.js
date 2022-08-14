@@ -14,6 +14,7 @@ const ContractorController = {
         }
         return res.json(documents);
     },
+
     async store(req, res, next) {
 
         const {error} = contractorSchema.validate(req.body);
@@ -23,11 +24,7 @@ const ContractorController = {
 
         try {
             const exist = await Contractor.exists({project_id: req.body.project_id , contractor_name: req.body.contractor_name});
-            // project = await ProjectTeam.find({
-            //     $and: [
-            //         { project_id: { $eq: ObjectId(project_id) }, users: { $elemMatch: { user_id: ObjectId(element) } } }
-            //     ]
-            // })
+            
             if(exist){
                 return next(CustomErrorHandler.alreadyExist('Contractor already exist in this project'));
             }
@@ -35,8 +32,9 @@ const ContractorController = {
             return next(err);
         }
         
-        const { project_id, contractor_name, phone_no } = req.body;
+        const { company_id, project_id, contractor_name, phone_no } = req.body;
         const contractor = new Contractor({
+            company_id,
             project_id,
             contractor_name,
             phone_no
@@ -62,7 +60,7 @@ const ContractorController = {
 
     async destroy(req, res, next) {
         let document;
-        document = await Contractor.findOneAndRemove({ _id: req.params.contractor_id });
+        document = await Contractor.findByIdAndRemove({ _id: req.params.contractor_id });
         if (!document) {
             return next(new Error('Nothing to delete'));
         }

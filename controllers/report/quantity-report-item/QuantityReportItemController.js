@@ -56,8 +56,9 @@ const QuantityReportItemController = {
             return next(error);
         }
         
+        const { company_id, item_name, unit_id } = req.body;
         try {
-            const exist = await QuantityReportItem.exists({item_name:req.body.item_name});
+            const exist = await QuantityReportItem.exists({company_id:company_id, item_name:item_name});
             if(exist){
                 return next(CustomErrorHandler.alreadyExist('This item is already exist'));
             }
@@ -65,7 +66,6 @@ const QuantityReportItemController = {
             return next(err);
         }
 
-        const {  company_id, item_name, unit_id } = req.body;
         const quantity_report_item = new QuantityReportItem({
             company_id,
             item_name,
@@ -78,10 +78,17 @@ const QuantityReportItemController = {
         } catch (err) {
             return next(err);
         }
-    }
+    },
 
-    
+    async edit(req, res, next){
 
+    },
+    async update(req, res, next){
+
+    },
+    async destroy(req, res, next){
+
+    },
 
 }
 

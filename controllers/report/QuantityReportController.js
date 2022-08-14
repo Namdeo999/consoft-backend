@@ -12,12 +12,10 @@ const QuantityReportController = {
         let documents;
         try {
         const { company_id, project_id, inputs } = req.body;
-
         documents = await Report.aggregate([
             {
                 $match: {
                     $and: [
-                        // { "company_id": ObjectId(company_id) },
                         { "project_id": ObjectId(req.params.project_id) },
                     ]
                 }
@@ -36,10 +34,8 @@ const QuantityReportController = {
                             $match: {
                                 $expr: { $eq: ["$user_id", "$$user_id"] },
                                 $expr: { $eq: ["$quantity_report_date", "$$quantity_report_date"] }
-
                             }
                         }
-
                     ],
                     as: 'quantityReport'
                 },
@@ -63,11 +59,9 @@ const QuantityReportController = {
                     as: 'quantityWorkItems'
                 }
             },
-
             {
                 $unwind: "$quantityWorkItems"
             },
-
             {
                 $lookup: {
                     from: "quantityReportItems",
@@ -95,26 +89,24 @@ const QuantityReportController = {
                         _id: 1,
                         quantity_report_id: 1,
                         item_id: 1,
+                        item_name: "$itemsName.item_name",
+                        unit_name: 1,
                         num_length: 1,
                         num_width: 1,
                         num_height: 1,
                         num_total: 1,
                         remark: 1,
-                        subquantityitems: 1,
-                        item_name: "$itemsName.item_name"
-                       
+                        quality_type: 1,
+                        subquantityitems: 1
                     }
-
                 }
             },
-
         ])
             
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json({ "status": 200, data: documents });
-
+        return res.json({ "status": 200, data:documents });
     },
 
     async store(req, res, next){
@@ -142,11 +134,8 @@ const QuantityReportController = {
 
         let quantity_reports_exist;
         try {
-
             inputs.forEach( async (list, key) => {
-
                 quantity_reports_exist = await QuantityWorkItemReport.exists({quantity_report_id: ObjectId(quantity_report_id), item_id:list.item_id });
-                // console.log(quantity_reports_exist)
                 if (quantity_reports_exist) {
                     return;
                 }
@@ -154,19 +143,18 @@ const QuantityReportController = {
                     quantity_report_id:ObjectId(quantity_report_id),
 
                     item_id : ObjectId(list.item_id),
+                    unit_name : list.unit_name,
                     num_length : list.num_length,
                     num_width : list.num_width,
                     num_height : list.num_height,
                     num_total : list.num_total,
                     remark : list.remark,
+                    quality_type : list.quality_type,
                 });
                 const item_result = await quantity_work_item_report.save();
                 
                 if (list.subquantityitems.length > 0) {
-
                     list.subquantityitems.forEach(async (sub_list, key1) => {
-                        // console.log(sub_list)
-                        
                         const quantity_work_sub_item_report = await QuantityWorkItemReport.findByIdAndUpdate(
                             { _id:  item_result._id },
                             {
@@ -177,6 +165,7 @@ const QuantityReportController = {
                                         sub_height : sub_list.sub_height,
                                         sub_total : sub_list.sub_total,
                                         sub_remark : sub_list.sub_remark,
+                                        sub_quality_type : sub_list.sub_quality_type
                                     }
                                 }
                             },
@@ -196,7 +185,6 @@ const QuantityReportController = {
     async edit(req, res, next){
         let document;
         try {
-            // document = await QuantityWorkItemReport.findOne({ _id:req.params.id }).select('-__v');
             document = await QuantityWorkItemReport.findOne({ _id:req.params.id }).select('-__v');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
@@ -215,21 +203,20 @@ const QuantityReportController = {
                     { _id: req.params.id},
                     {
                         item_id : ObjectId(list.item_id),
+                        unit_name : list.unit_name,
                         num_length : list.num_length,
                         num_width : list.num_width,
                         num_height : list.num_height,
                         num_total : list.num_total,
                         remark : list.remark,
+                        quality_type : list.quality_type,
                     },
                     {new: true}
                 );
 
                 if (list.subquantityitems.length > 0) {
                     const sub_quantity_items = await QuantityWorkItemReport.find({ _id:req.params.id}).select(' _id subquantityitems._id');
-                    // console.log(sub_quantity_items[0].subquantityitems)
-                    
                     if(sub_quantity_items.length > 0){
-
                         sub_quantity_items[0].subquantityitems.forEach(async (list, key1) => {
                             await QuantityWorkItemReport.findOneAndUpdate(
                                 { _id: req.params.id},
@@ -241,7 +228,6 @@ const QuantityReportController = {
                                 // true, // Multi
                             )
                         })
-
                     }
 
                     list.subquantityitems.forEach(async (sub_list, key1) => {
@@ -255,6 +241,7 @@ const QuantityReportController = {
                                         sub_height : sub_list.sub_height,
                                         sub_total : sub_list.sub_total,
                                         sub_remark : sub_list.sub_remark,
+                                        sub_quality_type : sub_list.sub_quality_type
                                     }
                                 }
                             },
@@ -267,9 +254,7 @@ const QuantityReportController = {
         } catch (err) {
             return next(err);
         }
-        // res.status(201).json(document);
         return res.send(CustomSuccessHandler.success(" updated successfully"))
-    
     },
 
     async quantityItemExist(req, res, next){
@@ -278,7 +263,7 @@ const QuantityReportController = {
         try {
             const report_id = await Report.exists({ project_id: req.params.project_id });
             if (!report_id) {
-                return res.json(CustomErrorHandler.notExist("Data not found"));
+                return res.json({"status":401});
             }
             const quantity_report_id = await QuantityReport.exists({ report_id:report_id, user_id:req.params.user_id, quantity_report_date: current_date });
             if (quantity_report_id) {
