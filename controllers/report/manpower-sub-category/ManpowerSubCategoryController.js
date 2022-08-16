@@ -8,7 +8,7 @@ const ManpowerSubCategoryController = {
     async index(req, res, next){
         let documents;
         try {
-            documents = await ManpowerSubCategory.find({manpower_category_id:req.params.manpower_category_id}).select('-__v');
+            documents = await ManpowerSubCategory.find({company_id:req.params.company_id}).select('-__v');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }

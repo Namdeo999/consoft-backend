@@ -216,7 +216,8 @@ router.post('/report/:type', ReportController.saveReport);
     router.delete('/manpower-category/:id', ManpowerCategoryController.destroy);
 
     //manpower sub category
-    router.get('/manpower-sub-category/:manpower_category_id', ManpowerSubCategoryController.index);
+    // router.get('/manpower-sub-category/:manpower_category_id', ManpowerSubCategoryController.index);
+    router.get('/manpower-sub-category/:company_id', ManpowerSubCategoryController.index);
     router.post('/manpower-sub-category', ManpowerSubCategoryController.store);
     router.get('/edit-manpower-sub-category/:id', ManpowerSubCategoryController.edit);
     router.put('/manpower-sub-category/:id', ManpowerSubCategoryController.update);
