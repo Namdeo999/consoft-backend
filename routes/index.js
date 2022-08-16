@@ -21,7 +21,7 @@ import {
     ChecklistOptionTypeController, ChecklistOptionController, ChecklistController, ToolsMachineryController,
 
     //report 
-    ReportController,QuantityReportController,QuantityReportItemController,QualityTypeController,ManpowerCategoryController,ManpowerSubCategoryController,ManpowerReportController,
+    ReportController, QuantityReportController, QuantityReportItemController, QualityTypeController, ManpowerCategoryController, ManpowerSubCategoryController,
 
     //supplier
     SupplierController,
