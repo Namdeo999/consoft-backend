@@ -55,7 +55,7 @@ router.post('/verify-product-key', ProductKeyController.verifyProductKey);
 
 router.post('/register', userController.register);
 router.get('/user', user_auth, userController.user);
-router.get('/users', userController.index);
+router.get('/users/:company_id', userController.index);
 
 router.get('/role-by-users/:role_id', userController.roleByUsers);
 
@@ -63,20 +63,21 @@ router.post('/refresh', refreshController.refresh);
 router.post('/logout', auth, loginController.logout);
 
 //role
-router.get('/role', UserRoleController.index);
+router.get('/role/:company_id', UserRoleController.index);
 router.post('/role', UserRoleController.store);
 router.get('/role/:id', UserRoleController.edit);
 router.put('/role/:id', UserRoleController.update);
 router.delete('/role/:id', UserRoleController.destroy);
 
 //project category
-router.get('/project-category', ProjectCategoryController.index);
+router.get('/project-category/:company_id', ProjectCategoryController.index);
 router.post('/project-category', ProjectCategoryController.store);
 router.get('/project-category/:id', ProjectCategoryController.edit);
 router.put('/project-category/:id', ProjectCategoryController.update);
 router.delete('/project-category/:id', ProjectCategoryController.destroy);
 
-router.get('/project-type', ProjectTypeController.index);
+router.get('/project-type/:company_id', ProjectTypeController.index);
+router.get('/project-type-by-category/:category_id', ProjectTypeController.getProjectTypeByCategory);
 router.post('/project-type', ProjectTypeController.store);
 router.get('/project-type/:id', ProjectTypeController.edit);
 router.put('/project-type/:id', ProjectTypeController.update);
@@ -190,7 +191,6 @@ router.post('/report/:type', ReportController.saveReport);
     router.get('/edit-quantity-report/:id', QuantityReportController.edit);
     router.put('/quantity-report/:id', QuantityReportController.update);
 
-
     // router.post('/quantity-report',QuantityReportController.store);
     router.get('/quantity-item-exist/:project_id/:user_id', QuantityReportController .quantityItemExist);
     
@@ -222,7 +222,6 @@ router.post('/report/:type', ReportController.saveReport);
     router.get('/edit-manpower-sub-category/:id', ManpowerSubCategoryController.edit);
     router.put('/manpower-sub-category/:id', ManpowerSubCategoryController.update);
     router.delete('/manpower-sub-category/:id', ManpowerSubCategoryController.destroy);
-
 
 router.get('/supplier', SupplierController.index);
 router.post('/supplier', SupplierController.store);

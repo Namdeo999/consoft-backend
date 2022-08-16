@@ -20,9 +20,9 @@ const ManpowerSubCategoryController = {
         if(error){
             return next(error);
         }
-        const {manpower_category_id, manpower_sub_category} = req.body;
+        const {company_id,manpower_category_id, manpower_sub_category} = req.body;
         try {
-            const exist = await ManpowerSubCategory.exists({manpower_category_id:manpower_category_id, manpower_sub_category:manpower_sub_category});
+            const exist = await ManpowerSubCategory.exists({company_id:company_id,manpower_category_id:manpower_category_id, manpower_sub_category:manpower_sub_category});
             if (exist) {
                 return next(CustomErrorHandler.alreadyExist(CustomFunction.capitalize(`${manpower_sub_category} is already exist`)));
             }
@@ -31,6 +31,7 @@ const ManpowerSubCategoryController = {
         }
 
         const sub_category = new ManpowerSubCategory({
+            company_id,
             manpower_category_id,
             manpower_sub_category,
         });
@@ -58,16 +59,17 @@ const ManpowerSubCategoryController = {
         if(error){
             return next(error);
         }
-        const {manpower_category_id, manpower_sub_category} = req.body;
-        let document;
+        const {company_id, manpower_category_id, manpower_sub_category} = req.body;
         try {
-            const exist = await ManpowerSubCategory.exists({manpower_category_id:manpower_category_id, manpower_sub_category:manpower_sub_category});
+            let document;
+            const exist = await ManpowerSubCategory.exists({company_id:company_id,manpower_category_id:manpower_category_id, manpower_sub_category:manpower_sub_category});
             if (exist) {
                 return next(CustomErrorHandler.alreadyExist(CustomFunction.capitalize(`${manpower_sub_category} is already exist`)));
             }
             document = await ManpowerSubCategory.findByIdAndUpdate(
                 { _id: req.params.id},
                 {
+                    company_id,
                     manpower_category_id, 
                     manpower_sub_category
                 },

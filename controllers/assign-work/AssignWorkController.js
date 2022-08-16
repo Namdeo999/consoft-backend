@@ -43,7 +43,6 @@ const AssignWorkController = {
                         {
                             $match:{
                                 $expr:{$eq:["$user_id","$$user_id"]}
-                                
                             }
                         },
                         {
@@ -74,7 +73,7 @@ const AssignWorkController = {
         } catch (error) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json(documents);
+        return res.json({status:200, data:documents});
 
     },
 
