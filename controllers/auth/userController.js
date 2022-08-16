@@ -32,9 +32,14 @@ const userController ={
         }
         
         try {
-            const exist = await User.exists({mobile:req.body.mobile});
-            if (exist) {
+            const mobile_exist = await User.exists({mobile:req.body.mobile});
+            if (mobile_exist) {
                 return next(CustomErrorHandler.alreadyExist('This mobile is already taken.'));
+            }
+
+            const email_exist = await User.exists({email:req.body.email});
+            if (email_exist) {
+                return next(CustomErrorHandler.alreadyExist('This email is already taken.'));
             }
 
         } catch (err) {
@@ -135,19 +140,22 @@ const userController ={
     async index(req, res, next){
         let users;
         try {
-            // users = await User.find().select('-password -createdAt -updatedAt -__v');
-
             users = await User.aggregate([
+                {
+                    $match: {
+                        "company_id":ObjectId(req.params.company_id)
+                    }
+                },
                 {
                     $lookup: {
                         from: "userRoles",
                         localField: 'role_id',
                         foreignField: "_id",
-                        as: 'data'
+                        as: 'userRoleData'
                     }
                 },
                 {
-                    $unwind: "$data"
+                    $unwind: "$userRoleData"
                 },
                 {
                     $project: {
@@ -155,7 +163,8 @@ const userController ={
                         name: 1,
                         email: 1,
                         mobile: 1,
-                        user_role: "$data.user_role"
+                        company_id: 1,
+                        user_role: "$userRoleData.user_role"
                     }
                 }
             ])
@@ -163,7 +172,7 @@ const userController ={
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json(users);
+        return res.json({status:200, data:users});
     },
 
     async roleByUsers(req, res, next){

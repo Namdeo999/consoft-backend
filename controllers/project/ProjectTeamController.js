@@ -141,39 +141,6 @@ const projectTeamController = {
                 }
             });
 
-            //const document = await ProjectTeam.findByIdAndUpdate(
-                //{ _id: ObjectId(project_exist_id) },
-                // { $push: {users: {user_id : user_id,} } }, // single code insert
-
-                //{
-
-                    // $push: {
-                    //     'users': {
-                    //         $each: user_id.map((id) => {
-                    //             return { user_id: id };
-                    //         })
-                    //     },
-                    // },
-
-                    // $addToSet: {
-                    //     users: {
-                    //        $each: [ 
-                    //         { user_id: ObjectId('62bc3d6fd368747a9fe3e99f') },
-                    //         { user_id: ObjectId('62c2affaa77f4f2ce4a10b3e') },
-                    //     ],
-                    //     }
-                    // }
-
-
-                    // $addToSet: { 
-                    //     users: {
-                    //         $each: users
-                    //     }
-                    // } 
-                //},
-                //{ new: true }
-            //)
-
             res.send(CustomSuccessHandler.success('Project assign successfully'));
         } catch (err) {
             return next(err);
@@ -202,12 +169,8 @@ const projectTeamController = {
 
     async projectTeamRoleWise(req, res, next){
         let documents;
-
         try {
             // documents = await ProjectTeam.find({project_id:req.params.id}).select('-createdAt -updatedAt -__v');
-
-
-
             documents = await ProjectTeam.aggregate([
                 {
                     $match: {
@@ -222,8 +185,6 @@ const projectTeamController = {
                         as: 'project_data'
                     },
                 },
-               
-                
             ])
 
         } catch (err) {
@@ -231,7 +192,6 @@ const projectTeamController = {
         }
         return res.json(documents);
     },
-
 }
 
 export default projectTeamController;
