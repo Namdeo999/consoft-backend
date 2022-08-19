@@ -9,7 +9,6 @@ const manpowerReportSchema = mongoose.Schema({
     report_id:{ type: ObjectId },
     user_id:{ type: ObjectId },
     contractor_id:{ type: ObjectId },
-    manpower_category_id:{ type: ObjectId },
     manpower_report_date:{ type:String, default:date },
     manpower_report_time:{ type:String, default:time }, 
 

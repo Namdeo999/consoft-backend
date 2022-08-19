@@ -6,7 +6,7 @@ import {
     loginController, refreshController, userController,
 
     //company
-    CompanyController, ProductKeyController, UserRoleController,
+    CompanyController, ProductKeyController, UserRoleController, UserPrivilegeController,
 
     //project
     ProjectCategoryController, ProjectTypeController, ProjectController, ProjectTeamController,
@@ -68,6 +68,13 @@ router.post('/role', UserRoleController.store);
 router.get('/role/:id', UserRoleController.edit);
 router.put('/role/:id', UserRoleController.update);
 router.delete('/role/:id', UserRoleController.destroy);
+
+// user privilege
+router.get('/privilege', UserPrivilegeController.index);
+router.post('/privilege', UserPrivilegeController.store);
+router.get('/privilege/:id', UserPrivilegeController.edit);
+router.put('/privilege/:id', UserPrivilegeController.update);
+router.delete('/privilege/:id', UserPrivilegeController.destroy);
 
 //project category
 router.get('/project-category/:company_id', ProjectCategoryController.index);
@@ -188,7 +195,7 @@ router.delete('/contractor/:contractor_id', ContractorController.destroy);
 router.post('/report/:type', ReportController.saveReport);
 
     router.get('/quantity-report/:user_id/:project_id/:user_date', QuantityReportController.index);    
-    router.get('/manpower-report/:project_id', ManpowerReportController.index);    
+    router.get('/manpower-report/:project_id/:user_id/:date', ManpowerReportController.index);    
 
     router.get('/edit-quantity-report/:id', QuantityReportController.edit);
     router.put('/quantity-report/:id', QuantityReportController.update);

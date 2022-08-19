@@ -3,6 +3,7 @@ export { default as loginController } from '../controllers/auth/loginController.
 export { default as userController } from '../controllers/auth/userController.js';
 export { default as refreshController } from '../controllers/auth/refreshController.js';
 export { default as UserRoleController } from './company/UserRoleController.js';
+export { default as UserPrivilegeController } from './company/UserPrivilegeController.js';
 
 //mail
 // export { default as MailControllher } from './MailController.js';

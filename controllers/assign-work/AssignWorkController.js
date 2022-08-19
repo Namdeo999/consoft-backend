@@ -17,7 +17,7 @@ const AssignWorkController = {
                         $and:[
                             {
                                 "company_id": ObjectId(req.params.company_id),
-                            },
+                            }
                             // { "work_status":false },
                             // { "revert_status":false },
                             // { "verify":false }
@@ -55,9 +55,7 @@ const AssignWorkController = {
                         {
                             $match:{
                                 $expr:{$eq:["$user_id","$$user_id"]},
-                                $expr:{$eq:["$work_status",false]},
-                                $expr:{$eq:["$revert_status",false]},
-                                $expr:{$eq:["$verify",false]}
+                                $expr:{$eq:["$work_status", false]},
                             }
                         },
                         {
