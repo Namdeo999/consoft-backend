@@ -1,5 +1,6 @@
 export { default as User } from './auth/User.js';
 export { default as UserRole } from './company/UserRole.js';
+export { default as UserPrivilege } from './company/UserPrivilege.js';
 export { default as RefreshToken } from './auth/RefreshToken.js';
 export { default as ProductKey } from './auth/ProductKey.js';
 export { default as Company } from './company/Company.js';

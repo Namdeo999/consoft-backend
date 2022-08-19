@@ -43,16 +43,14 @@ const ReportController = {
             let bodyData;
             switch (req.params.type) {
                 case Constants.MANPOWER:
-                    const {contractor_id, manpower_category_id, members} = req.body;
+                    const {contractor_id,manpowerCategories} = req.body;
                     bodyData = {
                         report_id:report_id,
                         user_id:user_id,
                         contractor_id:contractor_id,
-                        manpower_category_id:manpower_category_id,
-                        members:members,
+                        manpowerCategories:manpowerCategories,
                     }
                     ManpowerReportController.store(bodyData).then((result)=>{
-                       
                         if (result.status === Constants.RES_SUCCESS) {
                             res.send(CustomSuccessHandler.success('Manpower report created successfully'))
                         }else{

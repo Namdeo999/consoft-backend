@@ -73,7 +73,7 @@ const CompanyController = {
         try {
             const exist = await Company.exists({mobile:req.body.mobile});
             if(exist){
-                return next(CustomErrorHandler.alreadyExist('Mobile no is already axist'));                
+                return next(CustomErrorHandler.alreadyExist('Mobile no is already exist'));                
             }
         } catch (err) {
             return next(err);
@@ -82,7 +82,7 @@ const CompanyController = {
         try {
             const exist = await Company.exists({email:req.body.email});
             if(exist){
-                return next(CustomErrorHandler.alreadyExist('Email is already axist'));
+                return next(CustomErrorHandler.alreadyExist('Email is already exist'));
             }
         } catch (err) {
             return next(err);

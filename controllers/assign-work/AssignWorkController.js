@@ -13,6 +13,18 @@ const AssignWorkController = {
             documents = await AssignWork.aggregate([
                 // { "$match" : { "assign_works.user_id" : { "$exists" : false } } },
                 {
+                    $match:{
+                        $and:[
+                            {
+                                "company_id": ObjectId(req.params.company_id),
+                            }
+                            // { "work_status":false },
+                            // { "revert_status":false },
+                            // { "verify":false }
+                        ]
+                    },
+                },
+                {
                     $lookup: {
                         from: "userRoles",
                         localField: "role_id",
@@ -42,7 +54,8 @@ const AssignWorkController = {
                        pipeline:[
                         {
                             $match:{
-                                $expr:{$eq:["$user_id","$$user_id"]}
+                                $expr:{$eq:["$user_id","$$user_id"]},
+                                $expr:{$eq:["$work_status", false]},
                             }
                         },
                         {
@@ -143,7 +156,7 @@ const AssignWorkController = {
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json(documents);
+        return res.json({status:200, data:documents});
     },
 
     async store(req, res, next) {
