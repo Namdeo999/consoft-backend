@@ -10,7 +10,17 @@ const ManpowerCategoryController = {
     async index(req, res, next){
         let documents;
         try {
-            documents = await ManpowerCategory.find({company_id:req.params.company_id}).select('-__v');
+            documents = await ManpowerCategory.find({company_id:req.params.company_id, project_id:req.params.project_id}).select('-__v');
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+        return res.json({status:200, data:documents});
+    },
+
+    async getManpowerCategoryByContractor(req, res, next){
+        let documents;
+        try {
+            documents = await ManpowerCategory.find({company_id:req.params.company_id, project_id:req.params.project_id, contractor_id:req.params.contractor_id}).select('-__v');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
@@ -22,9 +32,9 @@ const ManpowerCategoryController = {
         if(error){
             return next(error);
         }
-        const {company_id, manpower_category} = req.body;
+        const {company_id, project_id, contractor_id, manpower_category} = req.body;
         try {
-            const exist = await ManpowerCategory.exists({company_id:company_id, manpower_category:manpower_category});
+            const exist = await ManpowerCategory.exists({company_id:company_id, project_id:project_id, contractor_id:contractor_id, manpower_category:manpower_category});
             if (exist) {
                 return next(CustomErrorHandler.alreadyExist(CustomFunction.capitalize(`${manpower_category} is already exist`)));
             }
@@ -34,6 +44,8 @@ const ManpowerCategoryController = {
 
         const category = new ManpowerCategory({
             company_id,
+            project_id,
+            contractor_id,
             manpower_category,
         });
 
@@ -61,10 +73,10 @@ const ManpowerCategoryController = {
         if(error){
             return next(error);
         }
-        const {company_id, manpower_category} = req.body;
+        const {company_id, project_id, contractor_id, manpower_category} = req.body;
         try {
             let document;
-            const exist = await ManpowerCategory.exists({company_id:company_id, manpower_category:manpower_category});
+            const exist = await ManpowerCategory.exists({company_id:company_id, project_id:project_id, contractor_id:contractor_id, manpower_category:manpower_category});
             if (exist) {
                 return next(CustomErrorHandler.alreadyExist(CustomFunction.capitalize(`${manpower_category} is already exist`)) );
             }
@@ -72,6 +84,8 @@ const ManpowerCategoryController = {
                 { _id: req.params.id},
                 {
                     company_id, 
+                    project_id,
+                    contractor_id, 
                     manpower_category
                 },
                 {new: true}
