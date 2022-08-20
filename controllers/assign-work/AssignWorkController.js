@@ -51,17 +51,34 @@ const AssignWorkController = {
                     $lookup: {
                         from: "subWorkAssigns",
                         let: { "user_id": "$user_id" },
-                       pipeline:[
-                        {
-                            $match:{
-                                $expr:{$eq:["$user_id","$$user_id"]},
-                                $expr:{$eq:["$work_status", false]},
+                        pipeline:[
+                            {
+                                // $match:{
+                                //     $expr:{$eq:["$user_id","$$user_id"]},
+                                // }
+
+                                $match:{
+                                    $and:[
+                                        {
+                                            $expr: { $eq: ["$user_id", "$$user_id"] },
+                                        },
+                                        {"work_status":false},
+                                        // {"verify":false},
+
+                                        // {
+                                        //     $or: [
+                                        //         { "verify":false },
+                                        //         { "work_status":true },
+                                        //     ]
+                                        // },
+                                    ]
+                                }
+
+                            },
+                            {
+                                $sort: { exp_completion_time: 1, exp_completion_time: 1 }
                             }
-                        },
-                        {
-                            $sort: { exp_completion_time: 1, exp_completion_time: 1 }
-                        }
-                       ],
+                        ],
                         as: 'assign_works'
                     }
                 },        
@@ -78,6 +95,7 @@ const AssignWorkController = {
                             work_code: 1,
                             exp_completion_date:1, 
                             exp_completion_time:1, 
+                            work_status: 1,
                             status: 1
                         },
                     }

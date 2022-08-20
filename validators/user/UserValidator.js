@@ -7,7 +7,6 @@ const userSchema = Joi.object({
     // password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
     role_id: Joi.string().required(),
     company_id: Joi.string().required(),//
-    project_id: Joi.string()//
     //repeat_password: Joi.ref('password')
 })
 

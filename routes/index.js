@@ -101,9 +101,10 @@ router.get('/user-by-projects/:user_id', ProjectController.userByProjects);
 
 
 //project team
-router.get('/project-team/:id', ProjectTeamController.index);
+router.get('/project-team/:project_id', ProjectTeamController.index);
 router.post('/project-team', ProjectTeamController.store);
-router.delete('/project-team/:project_id/:user_id', ProjectTeamController.destroy);
+router.delete('/project-team/:id', ProjectTeamController.destroy);
+// router.delete('/project-team/:project_id/:user_id', ProjectTeamController.destroy);
 
 router.get('/project-team-role-wise/:project_id', ProjectTeamController.projectTeamRoleWise);//pending
 
@@ -218,11 +219,13 @@ router.post('/report/:type', ReportController.saveReport);
     router.delete('/quality-type/:id', QualityTypeController.destroy);
 
     //manpower category
-    router.get('/manpower-category/:company_id', ManpowerCategoryController.index);
+    router.get('/manpower-category/:company_id/:project_id', ManpowerCategoryController.index);
     router.post('/manpower-category', ManpowerCategoryController.store);
     router.get('/edit-manpower-category/:id', ManpowerCategoryController.edit);
     router.put('/manpower-category/:id', ManpowerCategoryController.update);
     router.delete('/manpower-category/:id', ManpowerCategoryController.destroy);
+
+    router.get('/manpower-category/:company_id/:project_id/:contractor_id', ManpowerCategoryController.getManpowerCategoryByContractor);
 
     //manpower sub category
     // router.get('/manpower-sub-category/:manpower_category_id', ManpowerSubCategoryController.index);
