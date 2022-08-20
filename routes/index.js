@@ -101,9 +101,10 @@ router.get('/user-by-projects/:user_id', ProjectController.userByProjects);
 
 
 //project team
-router.get('/project-team/:id', ProjectTeamController.index);
+router.get('/project-team/:project_id', ProjectTeamController.index);
 router.post('/project-team', ProjectTeamController.store);
-router.delete('/project-team/:project_id/:user_id', ProjectTeamController.destroy);
+router.delete('/project-team/:id', ProjectTeamController.destroy);
+// router.delete('/project-team/:project_id/:user_id', ProjectTeamController.destroy);
 
 router.get('/project-team-role-wise/:project_id', ProjectTeamController.projectTeamRoleWise);//pending
 

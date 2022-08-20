@@ -47,39 +47,28 @@ const userController ={
         }
 
         const password = CustomFunction.stringPassword(6);
-
-        const { name, email, mobile, role_id, company_id, project_id } = req.body;
+        const { name, email, mobile, role_id, company_id } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
         
-        const user = new User({
-            name,
-            email,
-            mobile,
-            role_id,
-            password: hashedPassword,
-            company_id,
-        });
         // let access_token;
         // let refresh_token;
         try {
-            const result = await user.save();  
-            if(result) {
-
-
-                const projectTeam = new ProjectTeam({
-                    project_id:project_id,
-                    user_id:result._id,
-                });
-
-                const data = await projectTeam.save();
-
-                let info = transporter.sendMail({
-                    from: EMAIL_FROM, // sender address
-                    to: email, // list of receivers
-                    subject: "Login Password ", // Subject line
-                    text: " Password  " + password, // plain text body
-                });
-            } 
+            const user = new User({
+                name,
+                email,
+                mobile,
+                role_id,
+                password: hashedPassword,
+                company_id,
+            });
+            const result = await user.save(); 
+             
+            let info = transporter.sendMail({
+                from: EMAIL_FROM, // sender address
+                to: email, // list of receivers
+                subject: "Login Password ", // Subject line
+                text: " Password  " + password, // plain text body
+            });
             // Token
             // access_token = JwtService.sign({ _id: result._id }); //used
             // access_token = JwtService.sign({ _id: result._id, role_id: result.role_id }); //used
