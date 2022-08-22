@@ -1,16 +1,20 @@
 import { WaterLevel } from '../../models/index.js';
 import CustomSuccessHandler from '../../services/CustomSuccessHandler.js';
+import CustomFunction from '../../services/CustomFunction.js';
 
 const WaterLevelController = {
     async waterLevel(req, res, next){
+        // console.log("Testing " + CustomFunction.currentTime() );
+        console.log(req.body);
 
-        const {led_status} = req.body;
-        const water_level = new WaterLevel({
-            // led_status:req.params.led_status,
-            led_status:led_status,
-        });
+        // const {led_status} = req.body;
+
+        // const water_level = new WaterLevel({
+        //     led_status:req.params.led_status,
+        //     // led_status:led_status,
+        // });
         try {
-            const result = await water_level.save();
+            // const result = await water_level.save();
             res.send(CustomSuccessHandler.success('Led status updated successfully'));
         } catch (err) {
             return next(err);

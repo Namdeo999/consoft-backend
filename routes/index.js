@@ -133,6 +133,8 @@ router.post('/manage-boq', ManageBoqController.store);
 router.get('/edit-manage-boq/:id', ManageBoqController.edit);//pending
 router.put('/update-manage-boq/:id', ManageBoqController.update);
 
+router.get('/boq-cal', ManageBoqController.boqcal);
+
 // router.put('/products/:id', [auth, admin], productController.update);
 // router.delete('/products/:id', [auth, admin], productController.destroy);
 // router.get('/products', productController.index);
