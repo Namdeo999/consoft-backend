@@ -32,12 +32,12 @@ const userController ={
         }
         
         try {
-            const mobile_exist = await User.exists({mobile:req.body.mobile});
+            const mobile_exist = await User.exists({company_id:ObjectId(req.body.company_id), mobile:req.body.mobile});
             if (mobile_exist) {
                 return next(CustomErrorHandler.alreadyExist('This mobile is already taken.'));
             }
 
-            const email_exist = await User.exists({email:req.body.email});
+            const email_exist = await User.exists({company_id:ObjectId(req.body.company_id), email:req.body.email});
             if (email_exist) {
                 return next(CustomErrorHandler.alreadyExist('This email is already taken.'));
             }

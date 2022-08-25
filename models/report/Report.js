@@ -1,14 +1,16 @@
 import { ObjectId } from "mongodb";
 import mongoose from "mongoose";
-// import CustomFunction from "../../services/CustomFunction.js";
-// const date = CustomFunction.currentDate();
-// const time = CustomFunction.currentTime();
+import CustomFunction from "../../services/CustomFunction.js";
+const date = CustomFunction.currentDate();
+const time = CustomFunction.currentTime();
 
 const reportSchema = mongoose.Schema({
     company_id:{ type: ObjectId, required:true },
     project_id:{ type: ObjectId, required:true },
-    // user_id:{ type:ObjectId, required:true },
-});
+    user_id:{ type:ObjectId, required:true },
+    report_date:{ type:String, default:date },
+    report_time:{ type:String, default:time },
+}, { timestamps: true });
 
 
 

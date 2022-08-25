@@ -85,6 +85,7 @@ const UserAssignWorkController = {
                             submit_work_text:1,
                             revert_msg:1,
                             revert_status:1,
+                            work_percent:1,
                             work_status:1,
                             verify:1,
                         }

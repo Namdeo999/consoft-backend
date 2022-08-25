@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { ManageBoq } from "../../../models/index.js";
+import { ManageBoq, QuantityWorkItemReport } from "../../../models/index.js";
 import { manageBoqSchema } from "../../../validators/index.js";
 import CustomErrorHandler from "../../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../../services/CustomSuccessHandler.js";
@@ -196,9 +196,44 @@ const ManageBoqController = {
         return res.json({ status: 200, data: documents });
     },
 
-    // async boqcal(req, res, next){
-        
-    // },
+    async boqcal(req, res, next){
+        let totalItem;
+        let subTotalItem;
+        totalItem = await QuantityWorkItemReport.aggregate([
+            {
+                $group:
+                {
+                    _id: "$item_id" ,
+                    totalAmount: { $sum: "$num_total"},
+                    count: { $sum: 1 }
+                }
+            }
+        ]);
+        subTotalItem = await QuantityWorkItemReport.aggregate([
+            // {
+            //   $match:{
+            //     "item_id": ObjectId("62dd342d3285084614654ba4")
+            //   }
+            // },
+            { $unwind: "$subquantityitems" },
+            {
+                $group:
+                {
+                    _id: "$item_id" ,
+                    // totalAmount: { $sum: "$num_total"},
+                    subtotalAmount: { $sum: "$subquantityitems.sub_total"},
+                    count: { $sum: 1 }
+                }
+            },
+                      
+        ]);
+
+        // totalItem.forEach(element => {
+            
+        // });
+
+        return res.json({ status: 200, totalItem: totalItem, subTotalItem:subTotalItem });
+    },
 
     async store(req, res, next){
         const { error } = manageBoqSchema.validate(req.body);

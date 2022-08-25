@@ -118,8 +118,6 @@ const AttendanceController = {
         
     },
 
-    
-
     async applyLeaves(req, res, next){
         const { user_id, leavedates } = req.body;
         let year = CustomFunction.currentYearMonthDay('YYYY');
