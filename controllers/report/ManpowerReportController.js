@@ -8,12 +8,39 @@ const ManpowerReportController = {
 
     async index(req, res, next){
         let documents;
+        
         try {
             documents = await Report.aggregate([
+                // {
+                //     $match: { 
+                //         // "project_id": ObjectId("62c827ad9c1d4cb814eaddfa")
+                //         "project_id": ObjectId(req.params.project_id)
+                //     }
+                // },
+                // {
+                //     $lookup: { 
+                //         from: 'manpowerReports',
+                //         localField: '_id',
+                //         foreignField: 'report_id',
+                //         let: { "user_id": ObjectId(req.params.user_id) },
+                //         let: { "manpower_report_date":req.params.date },
+                //         pipeline: [
+                //             {
+                //                 $match: {
+                //                     $expr: { $eq: ["$user_id", "$$user_id"] },
+                //                     $expr: { $eq: ["$manpower_report_date", "$$manpower_report_date"] }
+                //                 }
+                //             }
+                //         ],
+                //         as: 'manpowerReportData'
+                //     },
+                // },
                 {
                     $match: { 
-                        // "project_id": ObjectId("62c827ad9c1d4cb814eaddfa")
-                        "project_id": ObjectId(req.params.project_id)
+                        "project_id": ObjectId(req.params.project_id),
+                        "user_id": ObjectId(req.params.user_id),
+                        "report_date": req.params.date
+                        // "company_id": ObjectId("62ba94b8ea988119bbf13687")
                     }
                 },
                 {
@@ -21,18 +48,8 @@ const ManpowerReportController = {
                         from: 'manpowerReports',
                         localField: '_id',
                         foreignField: 'report_id',
-                        let: { "user_id": ObjectId(req.params.user_id) },
-                        let: { "manpower_report_date":req.params.date },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: { $eq: ["$user_id", "$$user_id"] },
-                                    $expr: { $eq: ["$manpower_report_date", "$$manpower_report_date"] }
-                                }
-                            }
-                        ],
                         as: 'manpowerReportData'
-                    },
+                    }
                 },
                 {$unwind:"$manpowerReportData"},
                 {
@@ -59,48 +76,20 @@ const ManpowerReportController = {
                     }
                 },
                 {$unwind: "$manpowerMemberReportData"},
-                // {
-                //   $group:
-                //     {
-                //       _id: "$manpowerMemberReportData.manpower_report_id" ,
-                //       "company_id": { "$first": "$company_id" },
-                //       "project_id": { "$first": "$project_id" },
-                //       "user_id": { "$first": "$manpowerReportData.user_id" },
-                //       "contractor_id": { "$first": "$manpowerReportData.contractor_id" },
-                //       "contractor_name": { "$first": "$contractorData.contractor_name" },
-                //       "manpower_category_id": { "$first": "$manpowerMemberReportData.manpower_category_id" },
-                //       "manpowerCategories":{"$push":'$manpowerMemberReportData'}
-                //     }
-                // },
-
+                
                 {
-                    $group:
-                      {
+                    $group:{
                         _id: "$manpowerMemberReportData.manpower_report_id" ,
                         "company_id": { "$first": "$company_id" },
                         "project_id": { "$first": "$project_id" },
                         "user_id": { "$first": "$manpowerReportData.user_id" },
                         "contractor_id": { "$first": "$manpowerReportData.contractor_id" },
                         "contractor_name": { "$first": "$contractorData.contractor_name" },
-                        // "manpower_category_id": { "$first": "$manpowerMemberReportData.manpower_category_id" },
                         "manpower_category_id_new": { $addToSet : "$manpowerMemberReportData.manpower_category_id" },
                         "manpowerCategories":{"$push":'$manpowerMemberReportData'}
-                      }
-                  },
+                    }
+                },
 
-                // {
-                //     $project: {
-                //         _id: 1, 
-                //         company_id: 1,     
-                //         project_id: 1,
-                //         user_id: "$user_id",
-                //         contractor_id: "$contractor_id",
-                //         contractor_name: "$contractor_name",
-                //         manpower_category_id: "$manpower_category_id",
-                //         manpowerCategories:"$manpowerCategories",
-
-                //     }
-                // },
                 {
                     $project: {
                         _id: 1, 
@@ -252,7 +241,6 @@ const ManpowerReportController = {
         }
         let manpower_reports_exist;
         try {
-            console.log(manpowerCategories)
             manpowerCategories.forEach( async (list, key) => {
 
                 list.members.forEach( async (member_list, key) => {
@@ -262,7 +250,6 @@ const ManpowerReportController = {
                         return ;
                     }
 
-                    console.log(member_list);
                     const manpower_member_report = new ManpowerMemberReport({
                         manpower_report_id: ObjectId(manpower_report_id),
                         manpower_category_id: ObjectId(list.manpower_category_id),

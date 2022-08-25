@@ -15,31 +15,42 @@ const QuantityReportController = {
         documents = await Report.aggregate([
             {
                 $match: {
-                    $and: [
-                        { "project_id": ObjectId(req.params.project_id) },
-                    ]
+                    // $and: [
+                    //     { "project_id": ObjectId(req.params.project_id) },
+                    // ]
+                    "project_id": ObjectId(req.params.project_id),
+                    "user_id": ObjectId(req.params.user_id),
+                    "report_date": req.params.date
                 }
 
             },
+            // {
+            //     $lookup: { 
+            //         from: 'quantityReports',
+            //         localField: '_id',
+            //         foreignField: 'report_id',
+            //         let: { "user_id": ObjectId(req.params.user_id) },
+            //         // let: { "quantity_report_date": "2022/08/06" },
+            //         let: { "quantity_report_date": req.params.user_date },
+            //         pipeline: [
+            //             {
+            //                 $match: {
+            //                     $expr: { $eq: ["$user_id", "$$user_id"] },
+            //                     $expr: { $eq: ["$quantity_report_date", "$$quantity_report_date"] }
+            //                 }
+            //             }
+            //         ],
+            //         as: 'quantityReport'
+            //     },
+            // },
             {
                 $lookup: { 
-                    from: 'quantityReports',
-                    localField: '_id',
-                    foreignField: 'report_id',
-                    let: { "user_id": ObjectId(req.params.user_id) },
-                    // let: { "quantity_report_date": "2022/08/06" },
-                    let: { "quantity_report_date": req.params.user_date },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: { $eq: ["$user_id", "$$user_id"] },
-                                $expr: { $eq: ["$quantity_report_date", "$$quantity_report_date"] }
-                            }
-                        }
-                    ],
-                    as: 'quantityReport'
+                      from: 'quantityReports',
+                      localField: '_id',
+                      foreignField: 'report_id',
+                      as: 'quantityReport'
+                    }
                 },
-            },
 
             {
                 $unwind: "$quantityReport"

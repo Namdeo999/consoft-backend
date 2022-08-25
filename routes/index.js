@@ -197,7 +197,9 @@ router.delete('/contractor/:contractor_id', ContractorController.destroy);
 //report
 router.post('/report/:type', ReportController.saveReport);
 
-    router.get('/quantity-report/:user_id/:project_id/:user_date', QuantityReportController.index);    
+    router.get('/report/:project_id', ReportController.index);
+
+    router.get('/quantity-report/:project_id/:user_id/:date', QuantityReportController.index);    
     router.get('/manpower-report/:project_id/:user_id/:date', ManpowerReportController.index);    
 
     router.get('/edit-quantity-report/:id', QuantityReportController.edit);
@@ -259,6 +261,7 @@ router.put('/approve-leaves/:id', AttendanceController.approveLeaves);
 
 //water level
 // router.get('/water-level/:led_status', WaterLevelController.waterLevel);
+router.get('/water-level', WaterLevelController.index);
 router.post('/water-level', WaterLevelController.waterLevel);
 
 
