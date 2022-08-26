@@ -16,17 +16,20 @@ const ProjectCategoryController = {
     },
 
     async store(req, res, next){
-        
+
         const {error} = projectCategorySchema.validate(req.body);
         if(error){
             return next(error);
         }
         const {company_id, category_name} = req.body;
         try {
-            const exist = await ProjectCategory.exists({company_id:company_id, category_name:category_name});
+            // const exist = await ProjectCategory.exists({company_id:company_id, category_name:category_name});
+            // const exist = await ProjectCategory.find( { company_id:company_id, category_name:category_name } ).collation( { locale: 'en', strength: 1 } )
+            const exist = await ProjectCategory.exists( { company_id:company_id, category_name:category_name } ).collation( { locale: 'en', strength: 1 } )
             if (exist) {
                 return next(CustomErrorHandler.alreadyExist('This project category is already exist'));
             }
+
         } catch (err) {
             return next(err);
         }
@@ -65,16 +68,18 @@ const ProjectCategoryController = {
         const {company_id, category_name} = req.body;
         let document;
         try {
-            const exist = await ProjectCategory.exists({company_id:company_id, category_name:category_name});
+            // const exist = await ProjectCategory.exists({company_id:company_id, category_name:category_name});
+            const exist = await ProjectCategory.exists({company_id:company_id, category_name:category_name}).collation({locale:'en', strength:1});
             if (exist) {
                 return next(CustomErrorHandler.alreadyExist('This project category is already exist'));
             }
+
             document = await ProjectCategory.findOneAndUpdate({ _id: req.params.id},{company_id, category_name},{new: true});
         } catch (err) {
             return next(err);
         }
         // res.status(201).json(document);
-        return res.send(CustomSuccessHandler.success("Category updated successfully"))
+        return res.send(CustomSuccessHandler.success("Project category updated successfully"))
     },
 
     async destroy(req, res, next) {

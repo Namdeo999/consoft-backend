@@ -65,9 +65,9 @@ router.post('/logout', auth, loginController.logout);
 //role
 router.get('/role/:company_id', UserRoleController.index);
 router.post('/role', UserRoleController.store);
-router.get('/role/:id', UserRoleController.edit);
-router.put('/role/:id', UserRoleController.update);
-router.delete('/role/:id', UserRoleController.destroy);
+router.get('/edit-role/:id', UserRoleController.edit);
+router.put('/update-role/:id', UserRoleController.update);
+router.delete('/delete-role/:id', UserRoleController.destroy);
 
 // user privilege
 router.get('/privilege', UserPrivilegeController.index);
@@ -197,7 +197,9 @@ router.delete('/contractor/:contractor_id', ContractorController.destroy);
 //report
 router.post('/report/:type', ReportController.saveReport);
 
+    //admin
     router.get('/report/:project_id', ReportController.index);
+    router.get('/manpower-report-by-report-id/:report_id', ManpowerReportController.manpowerReportByReportId);
 
     router.get('/quantity-report/:project_id/:user_id/:date', QuantityReportController.index);    
     router.get('/manpower-report/:project_id/:user_id/:date', ManpowerReportController.index);    

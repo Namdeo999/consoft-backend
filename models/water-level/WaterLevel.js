@@ -1,4 +1,3 @@
-import { Timestamp } from "mongodb";
 import mongoose from "mongoose";
 import CustomFunction from "../../services/CustomFunction.js";
 
@@ -7,6 +6,7 @@ const time = CustomFunction.currentTime();
 
 const waterLevelSchema = mongoose.Schema({
     led_status:{ type: Number },
+    water_level:{ type: Number },
     image:{ type: String },
 }, {timestamps:true});
 
