@@ -286,6 +286,68 @@ const QuantityReportController = {
         }
 
         return res.json({"status":200, data:item_ids});
+    },
+
+    async quantityReportByReportId(req, res, next){
+        let documents;
+        try {
+            documents = await QuantityReport.aggregate([
+                {
+                    $match: { 
+                        "report_id": ObjectId(req.params.report_id),
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "quantityWorkItemReports",
+                        localField: "_id",
+                        foreignField: "quantity_report_id",
+                        as: 'quantityWorkItemsReportsData'
+                    }
+                },
+                {
+                    $unwind: "$quantityWorkItemsReportsData"
+                },
+                {
+                    $lookup: {
+                        from: "quantityReportItems",
+                        localField: "quantityWorkItemsReportsData.item_id",
+                        foreignField: "_id",
+                        as: 'quantityReportItemsData'
+                    }
+                },
+                {
+                    $unwind: "$quantityReportItemsData"
+                },
+                {
+                  $project: {
+                      _id: 1,
+                      user_id: 1,
+                      report_id: 1,
+                    //   quantity_report_date: 1,
+                    //   quantity_report_time: 1,
+                      quantityWorkItems: {
+                          _id: "$quantityWorkItemsReportsData._id",
+                          quantity_report_id: "$quantityWorkItemsReportsData.quantity_report_id",
+                          item_id: "$quantityWorkItemsReportsData.item_id",
+                          item_name: "$quantityReportItemsData.item_name",
+                          unit_name: "$quantityWorkItemsReportsData.unit_name",
+                          num_length: "$quantityWorkItemsReportsData.num_length",
+                          num_width: "$quantityWorkItemsReportsData.num_width",
+                          num_height: "$quantityWorkItemsReportsData.num_height",
+                          num_total: "$quantityWorkItemsReportsData.num_total",
+                          remark: "$quantityWorkItemsReportsData.remark",
+                          quality_type: "$quantityWorkItemsReportsData.quality_type",
+                          subquantityitems: "$quantityWorkItemsReportsData.subquantityitems",
+                      }
+                    }
+                },
+
+            ]);
+        } catch (err) {
+            return next(err);
+        }
+        return res.json({"status":200, data:documents});
     }
 
 

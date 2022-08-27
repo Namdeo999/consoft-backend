@@ -241,6 +241,26 @@ const AssignWorkController = {
 
     },
 
+    async changeWorkCompletionTime(req, res, next){
+        try {
+            const { exp_completion_date, exp_completion_time } = req.body;
+            const exp_date = CustomFunction.dateFormat(exp_completion_date);
+            const expectedTime = await SubWorkAssign.findByIdAndUpdate(
+                { _id: req.params.work_id },
+                {
+                    exp_completion_date:exp_date,
+                    exp_completion_time,
+                    comment_status:false
+                },
+                { new: true }
+
+            ).select('-__v');
+        } catch (error) {
+            return next(CustomErrorHandler.serverError());
+        }
+        res.send(CustomSuccessHandler.success("Change work completion date & time successfully!"))
+    },
+
     async edit(req, res, next) {
         let document;
         try {

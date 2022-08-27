@@ -114,245 +114,247 @@ const ReportController = {
     },
 
     // async index(req, res, next){
-        // let documents;
-        // documents = await reports.aggregate(
-
-        //     {
-        //         $match: { 
-        //             "project_id": ObjectId("62c827499c1d4cb814ead624"),
-        //         }
-        //     },
-        //     {
-        //        $lookup:{
-        //           from:"manpowerReports",
-        //           localField:'_id',
-        //           foreignField:"report_id",
-        //           as:"manpowerReportsData"
-        //         }
-        //     },
-        //     {$unwind:"$manpowerReportsData"},
+    //     const documents = await Report.aggregate([
+    //         {
+    //             $match: { 
+    //                 // "project_id": ObjectId("62c827499c1d4cb814ead624"),
+    //                 "project_id": ObjectId(req.params.project_id) 
+    //             }
+    //         },
+    //         {
+    //            $lookup:{
+    //               from:"manpowerReports",
+    //               localField:'_id',
+    //               foreignField:"report_id",
+    //               as:"manpowerReportsData"
+    //             }
+    //         },
+    //         {$unwind:"$manpowerReportsData"},
          
-        //     {
-        //         $lookup: {
-        //             from: "manpowerMemberReports",
-        //             let: { "manpower_report_id": "$manpowerReportsData._id" },
-        //             pipeline: [
-        //                 {
-        //                     $match: {
-        //                         $expr: { $eq: ["$manpower_report_id", "$$manpower_report_id"] }
-        //                     }
-        //                 },
-        //             ],
-        //             as: 'manpowerMemberReportData'
-        //         }
-        //     },
-        //     {$unwind: "$manpowerMemberReportData"},
+    //         {
+    //             $lookup: {
+    //                 from: "manpowerMemberReports",
+    //                 let: { "manpower_report_id": "$manpowerReportsData._id" },
+    //                 pipeline: [
+    //                     {
+    //                         $match: {
+    //                             $expr: { $eq: ["$manpower_report_id", "$$manpower_report_id"] }
+    //                         }
+    //                     },
+    //                 ],
+    //                 as: 'manpowerMemberReportData'
+    //             }
+    //         },
+    //         {$unwind: "$manpowerMemberReportData"},
         
-        //     {
-        //         $lookup: {
-        //             from: "contractors",
-        //             localField: "manpowerReportsData.contractor_id",
-        //             foreignField: "_id",
-        //             as: 'contractorData'
-        //         }
-        //     },
-        //     {$unwind:"$contractorData"},
-        //     {
-        //                     $lookup:{
-        //                               from:"manpowerCategories",
-        //                               let: { "manpower_category_id": "$manpowerMemberReportData.manpower_category_id".toString()},
-        //                               pipeline: [
-        //                                           {
-        //                                             $match: {
-        //                                                 $expr: { $eq: ["$_id", "$$manpower_category_id"] }
-        //                                                     }
-        //                                           },
-        //                                       ],
-        //                               as: 'manpowerCateg'
+    //         {
+    //             $lookup: {
+    //                 from: "contractors",
+    //                 localField: "manpowerReportsData.contractor_id",
+    //                 foreignField: "_id",
+    //                 as: 'contractorData'
+    //             }
+    //         },
+    //         {$unwind:"$contractorData"},
+    //         {
+    //                         $lookup:{
+    //                                   from:"manpowerCategories",
+    //                                   let: { "manpower_category_id": "$manpowerMemberReportData.manpower_category_id".toString()},
+    //                                   pipeline: [
+    //                                               {
+    //                                                 $match: {
+    //                                                     $expr: { $eq: ["$_id", "$$manpower_category_id"] }
+    //                                                         }
+    //                                               },
+    //                                           ],
+    //                                   as: 'manpowerCateg'
                             
-        //                               }
-        //     },
+    //                                   }
+    //         },
             
-        //     {$unwind: "$manpowerCateg"},
+    //         {$unwind: "$manpowerCateg"},
         
-        //     {
-        //         $lookup:{ 
-        //                   from:"manpowerSubCategories",
-        //                   let:{"manpower_sub_category_id":"$manpowerMemberReportData.manpower_sub_category_id".toString()},
-        //                   pipeline:[
-        //                               {
-        //                                 $match:{
-        //                                   $expr:{$eq:["$_id","$$manpower_sub_category_id"]}
-        //                                 }    
-        //                               }
-        //                             ],
-        //                     as:"manpowerSubCateg"
-        //                 }
-        //     },
-        //     {$unwind:"$manpowerSubCateg"},
-        //     {
-        //                 $lookup: { 
-        //                       from: 'quantityReports',
-        //                       localField: '_id',
-        //                       foreignField: 'report_id',
-        //                       as: 'quantityReport'
-        //                     }
-        //     },
-        //     {
-        //               $unwind: "$quantityReport"
-        //     },
-        //       {
-        //             $lookup: {
-        //                 from: "quantityWorkItemReports",
-        //                 let: { "quantity_report_id": "$quantityReport._id" },
-        //                 pipeline: [
-        //                     {
-        //                         $match: {
-        //                             $expr: { $eq: ["$quantity_report_id", "$$quantity_report_id"] }
-        //                         }
-        //                     },
-        //                 ],
-        //                 as: 'quantityWorkItems'
-        //             }
-        //         },
-        //         {
-        //             $unwind: "$quantityWorkItems"
-        //         },
-        //       {
-        //           $lookup: {
-        //               from: "quantityReportItems",
-        //               localField: "quantityWorkItems.item_id",
-        //               foreignField: "_id",
-        //               as: 'itemsName'
-        //           }
-        //         },
-        //         {
-        //             $unwind: "$itemsName"
-        //         },
+    //         {
+    //             $lookup:{ 
+    //                       from:"manpowerSubCategories",
+    //                       let:{"manpower_sub_category_id":"$manpowerMemberReportData.manpower_sub_category_id".toString()},
+    //                       pipeline:[
+    //                                   {
+    //                                     $match:{
+    //                                       $expr:{$eq:["$_id","$$manpower_sub_category_id"]}
+    //                                     }    
+    //                                   }
+    //                                 ],
+    //                         as:"manpowerSubCateg"
+    //                     }
+    //         },
+    //         {$unwind:"$manpowerSubCateg"},
+    //         {
+    //                     $lookup: { 
+    //                           from: 'quantityReports',
+    //                           localField: '_id',
+    //                           foreignField: 'report_id',
+    //                           as: 'quantityReport'
+    //                         }
+    //         },
+    //         {
+    //                   $unwind: "$quantityReport"
+    //         },
+    //           {
+    //                 $lookup: {
+    //                     from: "quantityWorkItemReports",
+    //                     let: { "quantity_report_id": "$quantityReport._id" },
+    //                     pipeline: [
+    //                         {
+    //                             $match: {
+    //                                 $expr: { $eq: ["$quantity_report_id", "$$quantity_report_id"] }
+    //                             }
+    //                         },
+    //                     ],
+    //                     as: 'quantityWorkItems'
+    //                 }
+    //             },
+    //             {
+    //                 $unwind: "$quantityWorkItems"
+    //             },
+    //           {
+    //               $lookup: {
+    //                   from: "quantityReportItems",
+    //                   localField: "quantityWorkItems.item_id",
+    //                   foreignField: "_id",
+    //                   as: 'itemsName'
+    //               }
+    //             },
+    //             {
+    //                 $unwind: "$itemsName"
+    //             },
         
-        //     {
-        //           $group:{
-        //               _id: "$_id" ,
-        //               "report_id": { "$first": "$report_id" },
-        //               "contractor_id": { "$first": "$contractorData._id" },
-        //               "company_id":{"$first":"$company_id"},
-        //               "project_id":{"$first":"$project_id"},
-        //               "contractor_name": { "$first": "$contractorData.contractor_name" },
-        //               "manpower_category_id_new": { $addToSet : "$manpowerMemberReportData.manpower_category_id" },
-        //               "manpowerCategories":{$addToSet:'$manpowerMemberReportData'},
-        //               "manpowers": { "$push": { manpower_category: "$manpowerCateg.manpower_category",
-        //                                     manpower_sub_category: "$manpowerSubCateg.manpower_sub_category",
-        //                                     manpower_category_id:"$manpowerCateg._id",
-        //                                     manpower_sub_category_id:"$manpowerSubCateg._id"
-        //               } },        
-        //               "quantityReport":{$addToSet:"$quantityReport"},            
-        //               "quantityWorkItems":{$addToSet:"$quantityWorkItems"}            
+    //         {
+    //               $group:{
+    //                   _id: "$_id" ,
+    //                   "report_id": { "$first": "$report_id" },
+    //                   "contractor_id": { "$first": "$contractorData._id" },
+    //                   "company_id":{"$first":"$company_id"},
+    //                   "project_id":{"$first":"$project_id"},
+    //                   "contractor_name": { "$first": "$contractorData.contractor_name" },
+    //                   "manpower_category_id_new": { $addToSet : "$manpowerMemberReportData.manpower_category_id" },
+    //                   "manpowerCategories":{$addToSet:'$manpowerMemberReportData'},
+    //                   "manpowers": { "$push": { manpower_category: "$manpowerCateg.manpower_category",
+    //                                         manpower_sub_category: "$manpowerSubCateg.manpower_sub_category",
+    //                                         manpower_category_id:"$manpowerCateg._id",
+    //                                         manpower_sub_category_id:"$manpowerSubCateg._id"
+    //                   } },        
+    //                   "quantityReport":{$addToSet:"$quantityReport"},            
+    //                   "quantityWorkItems":{$addToSet:"$quantityWorkItems"}            
              
-        //           }
-        //       },
+    //               }
+    //           },
         
         
           
-        //       {
-        //           $project: {
-        //               _id: "$_id",
-        //               report_id:"$_id",
-        //               project_id:"$project_id",
-        //               contractor_id: "$contractor_id",
-        //               contractor_name: "$contractor_name",
-        //               manpowerCategories:[{
-        //                   manpower_category_id: "$manpower_category_id_new",
-        //                     "members": {
-        //                       "$map": {
-        //                         "input": "$manpowerCategories",
-        //                         "in": {
-        //                           "$let": {
-        //                             "vars": {
-        //                               "m": {
-        //                                 "$arrayElemAt": [
-        //                                   {
-        //                                     "$filter": {
-        //                                       "input": "$manpowers",
-        //                                       "cond": {
-        //                                         "$eq": [
-        //                                           "$$mb.manpower_category_id",
-        //                                           "$$this.manpower_category_id"
-        //                                         ]
-        //                                       },
-        //                                       "as": "mb"
-        //                                     }
-        //                                   },
-        //                                   0
-        //                                 ]
-        //                               }
-        //                             },
-        //                             "in": {
-        //                               "$mergeObjects": [
-        //                                 "$$this",
-        //                                 {
-        //                                   "manpower_category": "$$m.manpower_category",
-        //                                   "manpower_sub_category":"$$m.manpower_sub_category"
-        //                                 }
-        //                               ]
-        //                             }
-        //                           }
-        //                         }
-        //                       }
-        //                     }
-        //               }],
+    //           {
+    //               $project: {
+    //                   _id: "$_id",
+    //                   report_id:"$_id",
+    //                   project_id:"$project_id",
+    //                   contractor_id: "$contractor_id",
+    //                   contractor_name: "$contractor_name",
+    //                   manpowerCategories:[{
+    //                       manpower_category_id: "$manpower_category_id_new",
+    //                         "members": {
+    //                           "$map": {
+    //                             "input": "$manpowerCategories",
+    //                             "in": {
+    //                               "$let": {
+    //                                 "vars": {
+    //                                   "m": {
+    //                                     "$arrayElemAt": [
+    //                                       {
+    //                                         "$filter": {
+    //                                           "input": "$manpowers",
+    //                                           "cond": {
+    //                                             "$eq": [
+    //                                               "$$mb.manpower_category_id",
+    //                                               "$$this.manpower_category_id"
+    //                                             ]
+    //                                           },
+    //                                           "as": "mb"
+    //                                         }
+    //                                       },
+    //                                       0
+    //                                     ]
+    //                                   }
+    //                                 },
+    //                                 "in": {
+    //                                   "$mergeObjects": [
+    //                                     "$$this",
+    //                                     {
+    //                                       "manpower_category": "$$m.manpower_category",
+    //                                       "manpower_sub_category":"$$m.manpower_sub_category"
+    //                                     }
+    //                                   ]
+    //                                 }
+    //                               }
+    //                             }
+    //                           }
+    //                         }
+    //                   }],
                       
-        //               "quantityReport":{
-        //                 "$map": {
-        //                     "input": "$quantityReport", 
-        //                     "in": {
-        //                       "$let": {
-        //                         "vars": {
-        //                           "m": {
-        //                             "$arrayElemAt": [
-        //                               {
-        //                                 "$filter": {
-        //                                   "input": "$quantityWorkItems",
-        //                                   "cond": {
-        //                                     "$eq": [
-        //                                       "$$mb.quantity_report_id",
-        //                                       "$$this._id"
-        //                                     ]
-        //                                   },
-        //                                   "as": "mb"
-        //                                 }
-        //                               },
-        //                               0
-        //                             ]
-        //                           }
-        //                         },
-        //                         "in": {
-        //                           "$mergeObjects": [
-        //                             "$$this",
-        //                             {
+    //                   "quantityReport":{
+    //                     "$map": {
+    //                         "input": "$quantityReport", 
+    //                         "in": {
+    //                           "$let": {
+    //                             "vars": {
+    //                               "m": {
+    //                                 "$arrayElemAt": [
+    //                                   {
+    //                                     "$filter": {
+    //                                       "input": "$quantityWorkItems",
+    //                                       "cond": {
+    //                                         "$eq": [
+    //                                           "$$mb.quantity_report_id",
+    //                                           "$$this._id"
+    //                                         ]
+    //                                       },
+    //                                       "as": "mb"
+    //                                     }
+    //                                   },
+    //                                   0
+    //                                 ]
+    //                               }
+    //                             },
+    //                             "in": {
+    //                               "$mergeObjects": [
+    //                                 "$$this",
+    //                                 {
                                       
-        //                               "quality_type": "$$m.quality_type",
-        //                               "item_name":"$$m.item_name",
-        //                               "quantity_report_id":"$$m.quantity_report_id",
-        //                               "item_id":"$$m.item_id",
-        //                               "unit_name":"$$m.unit_name",
-        //                               "num_length":"$$m.num_length",
-        //                               "num_width":"$$m.num_width",
-        //                               "num_height":"$$m.num_height",
-        //                               "num_total":"$$m.num_total",
-        //                               "remark":"$$m.remark",
-        //                               "subquantityitems":"$$m.subquantityitems"
+    //                                   "quality_type": "$$m.quality_type",
+    //                                   "item_name":"$$m.item_name",
+    //                                   "quantity_report_id":"$$m.quantity_report_id",
+    //                                   "item_id":"$$m.item_id",
+    //                                   "unit_name":"$$m.unit_name",
+    //                                   "num_length":"$$m.num_length",
+    //                                   "num_width":"$$m.num_width",
+    //                                   "num_height":"$$m.num_height",
+    //                                   "num_total":"$$m.num_total",
+    //                                   "remark":"$$m.remark",
+    //                                   "subquantityitems":"$$m.subquantityitems"
         
-        //                             }
-        //                           ]
-        //                         }
-        //                       }
-        //                     }
-        //                   }
-        //               },
+    //                                 }
+    //                               ]
+    //                             }
+    //                           }
+    //                         }
+    //                       }
+    //                   },
         
-        //           }
-        //       }
-        //   );
+    //               }
+    //           }
+    //         ]);
+
+    //     return res.json({ "status": 200, data:documents });
+
     // },
 
     async index(req, res, next){
@@ -380,6 +382,15 @@ const ReportController = {
                     }
                 },
                 {$unwind:"$userData"},
+                {
+                    $lookup: { 
+                        from: 'projects',
+                        localField: 'project_id',
+                        foreignField: '_id',
+                        as: 'projectData'
+                    }
+                },
+                {$unwind:"$projectData"},
                 // {
                 //     $lookup: { 
                 //         from: 'manpowerReports',
@@ -431,6 +442,7 @@ const ReportController = {
                         _id: 1, 
                         company_id: 1,     
                         project_id: 1,
+                        project_name: "$projectData.project_name",
                         user_id: "$user_id",
                         user_name: "$userData.name",
                         report_date: 1,

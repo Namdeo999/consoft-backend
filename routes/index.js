@@ -93,9 +93,11 @@ router.delete('/project-type/:id', ProjectTypeController.destroy);
 //project 
 router.get('/projects/:company_id', ProjectController.index);
 router.post('/projects', ProjectController.store);
-router.get('/projects/:id', ProjectController.edit);
+router.get('/edit-projects/:id', ProjectController.edit);
 router.put('/projects/:id', ProjectController.update);
 router.delete('/projects/:id', ProjectController.destroy);
+
+router.get('/projects-at-glance/:company_id', ProjectController.projectAtGlance);
 
 router.get('/user-by-projects/:user_id', ProjectController.userByProjects);
 
@@ -174,6 +176,8 @@ router.put('/assign-works/:id', AssignWorkController.update);
 router.get('/verify-revert-works/:company_id', AssignWorkController.verifyRevertWorks);
 router.delete('/sub-assign-work/:id', AssignWorkController.destroySubAssignWork);
 
+router.put('/change-work-completion-time/:work_id', AssignWorkController.changeWorkCompletionTime);
+
 //user-end assignwork
 router.get('/user-assign-works/:user_id', UserAssignWorkController.index)
 router.put('/user-submit-work/:work_id', UserAssignWorkController.userSubmitWork)
@@ -199,10 +203,12 @@ router.post('/report/:type', ReportController.saveReport);
 
     //admin
     router.get('/report/:project_id', ReportController.index);
+
+    router.get('/manpower-report/:project_id/:user_id/:date', ManpowerReportController.index);    
     router.get('/manpower-report-by-report-id/:report_id', ManpowerReportController.manpowerReportByReportId);
 
     router.get('/quantity-report/:project_id/:user_id/:date', QuantityReportController.index);    
-    router.get('/manpower-report/:project_id/:user_id/:date', ManpowerReportController.index);    
+    router.get('/quantity-report-by-report-id/:report_id', QuantityReportController.quantityReportByReportId);    
 
     router.get('/edit-quantity-report/:id', QuantityReportController.edit);
     router.put('/quantity-report/:id', QuantityReportController.update);

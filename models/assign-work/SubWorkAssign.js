@@ -11,6 +11,7 @@ const SubWorkAssign = mongoose.Schema({
     exp_completion_date:{ type:String, required:true },
     exp_completion_time:{ type:String, required:true },
     comment:{ type:String, default: null },
+    comment_status:{ type:Boolean, default: false },
     revert_msg:{ type:String, default: null },
     revert_status:{ type:Boolean, default:false },
     submit_work_text:{ type: String, default:null },
