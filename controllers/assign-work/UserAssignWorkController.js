@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb'
 import CustomErrorHandler from '../../services/CustomErrorHandler.js';
 import CustomSuccessHandler from '../../services/CustomSuccessHandler.js';
 import CustomFunction from '../../services/CustomFunction.js';
+import Constants from '../../constants/index.js';
 
 const UserAssignWorkController = {
     async index(req, res, next) {
@@ -80,6 +81,7 @@ const UserAssignWorkController = {
                             work_code: 1,
                             work: 1,
                             comment:1,
+                            comment_status:1,
                             exp_completion_date:1,
                             exp_completion_time:1,
                             submit_work_text:1,
@@ -102,14 +104,16 @@ const UserAssignWorkController = {
     async userWorkComment(req, res, next){
         try {
             const { comment } = req.body;
-            const work_comment = await SubWorkAssign.findByIdAndUpdate(
-                { _id: req.params.work_id },
-                {
-                    comment:comment,
-                },
-                { new: true }
-
-            ).select('-__v');
+                const work_comment = await SubWorkAssign.findByIdAndUpdate(
+                    { _id: req.params.work_id },
+                    {
+                        comment:comment,
+                        comment_status:true
+                    },
+                    { new: true }
+    
+                ).select('-__v');                
+            
         } catch (error) {
             return next(CustomErrorHandler.serverError());
         }
@@ -118,20 +122,33 @@ const UserAssignWorkController = {
 
     async userSubmitWork(req, res, next){
         try {
-            const { submit_work_text } = req.body;
+            const { work_percent } = req.body;
             const submit_date = CustomFunction.currentDate();
             const submit_time = CustomFunction.currentTime();
-            const subwork_assign = await SubWorkAssign.findByIdAndUpdate(
-                { _id: req.params.work_id },
-                {
-                    submit_work_text,
-                    submit_work_date:submit_date,
-                    submit_work_time:submit_time,
-                    work_status:true,
-                    revert_status:false,
-                },
-                { new: true }
-            ).select('-__v');
+
+            if (work_percent === Constants.HUNDRED_PERCENT) {
+                await SubWorkAssign.findByIdAndUpdate(
+                    { _id: req.params.work_id },
+                    {
+                        work_percent,
+                        submit_work_date:submit_date,
+                        submit_work_time:submit_time,
+                        work_status:true,
+                        revert_status:false,
+                    },
+                    { new: true }
+                ).select('-__v');
+            }else{
+                await SubWorkAssign.findByIdAndUpdate(
+                    { _id: req.params.work_id },
+                    {
+                        work_percent,
+                        revert_status:false,
+                    },
+                    { new: true }
+                ).select('-__v');
+            }
+
         } catch (error) {
             return next(CustomErrorHandler.serverError());
         }

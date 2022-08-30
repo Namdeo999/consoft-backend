@@ -4,6 +4,7 @@ import CustomErrorHandler from '../../services/CustomErrorHandler.js'
 import CustomSuccessHandler from '../../services/CustomSuccessHandler.js'
 import { ObjectId } from 'mongodb'
 import CustomFunction from '../../services/CustomFunction.js';
+
 const AssignWorkController = {
 
     async assignWork(req, res, next) {
@@ -250,7 +251,7 @@ const AssignWorkController = {
                 {
                     exp_completion_date:exp_date,
                     exp_completion_time,
-                    comment_status:false
+                    // comment_status:false
                 },
                 { new: true }
 

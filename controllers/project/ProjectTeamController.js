@@ -47,7 +47,7 @@ const projectTeamController = {
                 },
                 {
                     $project: {
-                        id:1,
+                        _id:1,
                         company_id:1,
                         project_id: 1,
                         project_name: '$project_data.project_name',

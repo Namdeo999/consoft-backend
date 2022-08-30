@@ -47,7 +47,7 @@ const userController ={
         }
 
         const password = CustomFunction.stringPassword(6);
-        const { name, email, mobile, role_id, company_id } = req.body;
+        const { name, email, mobile, role_id, user_privilege, company_id, assign_project, project_id } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
         
         // let access_token;
@@ -58,15 +58,32 @@ const userController ={
                 email,
                 mobile,
                 role_id,
+                user_privilege,
                 password: hashedPassword,
                 company_id,
             });
-            const result = await user.save(); 
+            const result = await user.save();
+            
+            //assign to project
+            if(assign_project === true){
+                if (result) {
+                    const exist = await ProjectTeam.exists({ company_id:ObjectId(company_id), project_id: ObjectId(project_id), user_id:ObjectId(result._id)});
+                    if (exist) {
+                        return next(CustomErrorHandler.alreadyExist('User is already assined on this project'));
+                    }
+                    const project_team = new ProjectTeam({
+                        company_id,
+                        project_id,
+                        user_id:result._id
+                    });
+                    await project_team.save();
+                }
+            }
              
             let info = transporter.sendMail({
                 from: EMAIL_FROM, // sender address
                 to: email, // list of receivers
-                subject: "Login Password ", // Subject line
+                subject: "Product key & login password ", // Subject line
                 text: " Password  " + password, // plain text body
             });
             // Token

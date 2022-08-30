@@ -9,38 +9,76 @@ const loginController = {
     async login(req, res, next){
 
         const loginSchema = Joi.object({
-            // email: Joi.string().email().required(),
-            mobile:Joi.number().required(),
+            mobile:Joi.string().pattern(/^[0-9]{10}$/).required(),
             // password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
             password: Joi.string().required(),
         });
-
         const {error} = loginSchema.validate(req.body);
-
+        
         if(error){
             return next(error);
         }
-
         try {
-            const user = await User.findOne({mobile: req.body.mobile});
-            if(!user){
+            let user_detail;
+            // const user = await User.findOne({mobile: req.body.mobile});
+
+           await User.aggregate([
+                {
+                    $match: {
+                        "mobile": req.body.mobile
+                    }
+                    
+                },
+                {
+                    $lookup: {
+                        from: 'companies',
+                        localField: 'company_id',
+                        foreignField: '_id',
+                        as: 'companyData'
+                    },
+                },
+                { $unwind: "$companyData" },
+                {
+                    $lookup: {
+                        from: 'userPriveleges',
+                        localField: 'user_privilege',
+                        foreignField: '_id',
+                        as: 'userPrivilegeData'
+                    },
+                },
+                { $unwind: "$userPrivilegeData" },
+                {
+                    $project:{
+                        _id:1,
+                        company_id:1,
+                        company_name:'$companyData.company_name',
+                        role_id: 1,
+                        password:1,
+                        name:1,
+                        mobile:1,
+                        email:1,
+                        user_privilege: '$userPrivilegeData.privilege',
+                    }
+                }
+            ]).then(function ([res]) {
+                user_detail = res;
+            });
+
+            if(!user_detail){
                 return next(CustomErrorHandler.wrongCredentials())
             }
-
-            // console.log(user)
             // compare the password
-            const match = await bcrypt.compare(req.body.password,user.password);
+            const match = await bcrypt.compare(req.body.password, user_detail.password);
             if (!match) {
                 return next(CustomErrorHandler.wrongCredentials());
             }
-
             //generate token
-            const access_token = JwtService.sign({ _id: user._id, role_id: user.role_id });
-            const refresh_token = JwtService.sign({ _id: user._id, role_id: user.role_id }, '1y', REFRESH_SECRET);
+            const access_token = JwtService.sign({ _id: user_detail._id, role_id: user_detail.role_id });
+            const refresh_token = JwtService.sign({ _id: user_detail._id, role_id: user_detail.role_id }, '1y', REFRESH_SECRET);
 
             await RefreshToken.create({ token: refresh_token });
 
-            res.json({status:200, access_token, refresh_token, _id: user._id, company_id:user.company_id, role_id: user.role_id });
+            res.json({status:200, access_token, refresh_token, _id: user_detail._id, company_id:user_detail.company_id, company_name:user_detail.company_name, role_id: user_detail.role_id, name: user_detail.name, mobile:user_detail.mobile, email:user_detail.email, user_privilege:user_detail.user_privilege });
 
         } catch (err) {
             return next(err);

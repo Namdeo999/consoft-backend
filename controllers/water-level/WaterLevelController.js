@@ -121,7 +121,7 @@ const WaterLevelController = {
     async index(req, res, next){
         let documents;
         try {
-            documents = await WaterLevel.find().select('-createdAt -updatedAt -__v');
+            documents = await WaterLevel.find().select('led_status');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
