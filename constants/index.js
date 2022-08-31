@@ -9,4 +9,5 @@ export default{
     QUALITY:'Quality',
     TANDP:'Tandp',
     RES_SUCCESS:200,
+    HUNDRED_PERCENT:100,
 }

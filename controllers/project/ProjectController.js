@@ -136,6 +136,16 @@ const ProjectController = {
             return next(CustomErrorHandler.serverError());
         }
         return res.json(projects);
+    },
+
+    async projectAtGlance(req, res, next){
+        let documents;
+        try {
+            documents = await Project.find({company_id:req.params.company_id}).select('-createdAt -updatedAt -__v');
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+        return res.json({"status":200, data:documents});
     }
 
 

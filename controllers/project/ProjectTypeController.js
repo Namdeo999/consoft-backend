@@ -36,7 +36,7 @@ const ProjectTypeController = {
         try {
             const exist = await ProjectType.exists({company_id:company_id, project_type:project_type});
             if(exist){
-                return next(CustomErrorHandler.alreadyExist('Project type is already axist'));
+                return next(CustomErrorHandler.alreadyExist('Project type is already exist'));
             }
         } catch (err) {
             return next(err);

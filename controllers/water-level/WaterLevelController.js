@@ -6,6 +6,7 @@ import multer from 'multer';
 import path from 'path';
 import Joi from 'joi';
 import fs from 'fs';
+import { encode, decode } from 'node-base64-image';
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'assets/images/water_level/uploads/'),
@@ -28,14 +29,31 @@ const handleMultipartData = multer({
 const WaterLevelController = {
 
     async waterLevel(req, res, next){
-        // console.log("Testing " + CustomFunction.currentTime() );
-        console.log("request************** ")
-        console.log(req);
-        console.log("request body ######################################")
-        console.log(req.body);
+        
+        
+        // fs.writeFileSync(image_path + image_name,image, {encoding: 'base64'}, function(err){
+        //     console.log('File created');
+        // });
+
         // res.send(CustomSuccessHandler.success('Led status updated successfully'));
+        // const destination = 'assets/images/water_level/uploads/'
+        // const filePath = req.file.path;
 
+        // fs.writeFile('image.png', base64Image, {encoding: 'base64'}, function(err) {
+        //     console.log('File created');
+        // });
 
+        // const bitmap = Buffer.from(req.body.image, 'base64');
+        // fs.writeFileSync("assets/images/water_level/uploads/example.png", bitmap);
+
+        
+        // await decode(image, { fname: './assets/images/water_level/uploads/example2', ext: 'png' });
+        // await decode(image, { fname: 'assets/images/water_level/uploads/example2', ext: 'png' });
+        
+        
+        // fs.writeFileSync(fileName, data, {encoding: 'base64'}, function(err){
+        //     //Finished
+        // });
         
 
         // save image
@@ -67,20 +85,34 @@ const WaterLevelController = {
         //     }
 
         //     const {led_status} = req.body;
-    
-        //     const water_level = new WaterLevel({
-        //         led_status:led_status,
-        //         image:filePath,
-        //     });
-        //     try {
-        //         // const result = await water_level.save();
-        //         // res.send(CustomSuccessHandler.success('Led status updated successfully' + req.body));
-        //     } catch (err) {
-        //         return next(err);
-        //     }
+            console.log(req.body);
+            const {image, led_status, water_level} = req.body;
+            const image_path = "assets/images/water_level/uploads/";
+            const image_name = `${Date.now()}_${Math.round(Math.random() * 1e9)}.png`;
+
+            // fs.writeFileSync('assets/images/water_level/uploads/image2.png',image, {encoding: 'base64'}, function(err){
+            //     console.log('File created');
+            // });
+
+            fs.writeFileSync(image_path + image_name,image, {encoding: 'base64'}, function(err){
+                console.log('File created');
+            });
+
+            // await decode(image, { fname: image_path + image_name, ext: 'png' });
+            const waterLevel = new WaterLevel({
+                led_status:led_status,
+                water_level:water_level,
+                image:image_path + image_name,
+            });
+            try {
+                const result = await waterLevel.save();
+                // res.send(CustomSuccessHandler.success('Led status updated successfully' + req.body));
+                res.send(CustomSuccessHandler.success('Water level status updated successfully'));
+            } catch (err) {
+                return next(err);
+            }
             
         // });
-        res.send(CustomSuccessHandler.success('Led status updated successfully'));
         
         // return res.json({status:200,message:"Led status updated successfully",  re_body:req.body, req_file:req.file});
 
@@ -89,7 +121,7 @@ const WaterLevelController = {
     async index(req, res, next){
         let documents;
         try {
-            documents = await WaterLevel.find().select('-createdAt -updatedAt -__v');
+            documents = await WaterLevel.find().select('led_status');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }

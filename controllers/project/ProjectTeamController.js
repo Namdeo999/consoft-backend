@@ -47,7 +47,7 @@ const projectTeamController = {
                 },
                 {
                     $project: {
-                        id:1,
+                        _id:1,
                         company_id:1,
                         project_id: 1,
                         project_name: '$project_data.project_name',
@@ -70,15 +70,26 @@ const projectTeamController = {
             return next(error);
         }
 
+        const teamExist = [];
+        
         try {
+
             const { company_id, project_id, user_id } = req.body;
-            user_id.forEach( async (list) => {
+            
+            user_id.forEach( async (list, key) => {
+
                 const exist = await ProjectTeam.findOne({ company_id:ObjectId(company_id), project_id: ObjectId(project_id), user_id:ObjectId(list)});
+                
                 if (exist) {
                     // return next(CustomErrorHandler.alreadyExist(CustomFunction.capitalize(`${privilege} is already exist`)));
                     // return next(CustomErrorHandler.alreadyExist('This project category is already exist'));
-                    return ;
+                    // teamExist.push(`${key+1} DS` );
+                    return ;                    
                 }
+                
+                // if (teamExist.length > 0) {
+                //     return ;
+                // }
                 const project_team = new ProjectTeam({
                     company_id,
                     project_id,
@@ -87,10 +98,12 @@ const projectTeamController = {
 
                 const result = await project_team.save();
             });
-            res.send(CustomSuccessHandler.success('Project team created successfully'));
         } catch (err) {
+            // console.log("object")
             return next(err);
+            // if (err == breakError) throw err;
         }
+        res.send(CustomSuccessHandler.success('Project team created successfully'));
     },
 
     async destroy(req, res, next) {
@@ -100,6 +113,8 @@ const projectTeamController = {
         }
         return res.send(CustomSuccessHandler.success("Project team deleted successfully"))
     },
+
+    //$2b$10$PyVMhfU2qArD2ZNipyqJlO47KOKIS2s68KwLWRXcC.RSKJDzoQSa. //9mauu9// user pass
 
     // async index(req, res, next) {
     //     let documents;
