@@ -94,6 +94,8 @@ const SupplierController = {
         return res.send(CustomSuccessHandler.success("Supplier deleted successfully"))
     },
 
+    //
+
 }
 
 export default SupplierController;
