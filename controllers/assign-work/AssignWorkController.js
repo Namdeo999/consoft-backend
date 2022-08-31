@@ -9,105 +9,168 @@ const AssignWorkController = {
 
     async assignWork(req, res, next) {
         let documents;
-
         try {
-            documents = await AssignWork.aggregate([
-                // { "$match" : { "assign_works.user_id" : { "$exists" : false } } },
+            documents = await SubWorkAssign.aggregate([
                 {
                     $match:{
                         $and:[
-                            {
-                                "company_id": ObjectId(req.params.company_id),
-                            }
-                            // { "work_status":false },
-                            // { "revert_status":false },
-                            // { "verify":false }
+                            {"company_id": ObjectId(req.params.company_id)},
+                            {"work_status":false},
+                            {"verify":false},
                         ]
                     },
-                },
-                {
-                    $lookup: {
-                        from: "userRoles",
-                        localField: "role_id",
-                        foreignField: "_id",
-                        as: 'userrole_collection'
-                    }
-                },
-                {
-                    $unwind:"$userrole_collection"
-                },            
-                {
-                    $lookup: {
-                        from: "users",
-                        localField: "user_id",
-                        foreignField: "_id",
-                        as: 'users_collection',
-                    }
-                },
-                {
-                    $unwind:"$users_collection"
-                },
-                         
-                {
-                    $lookup: {
-                        from: "subWorkAssigns",
-                        let: { "user_id": "$user_id" },
-                        pipeline:[
-                            {
-                                // $match:{
-                                //     $expr:{$eq:["$user_id","$$user_id"]},
-                                // }
-
-                                $match:{
-                                    $and:[
-                                        {
-                                            $expr: { $eq: ["$user_id", "$$user_id"] },
-                                        },
-                                        {"work_status":false},
-                                        // {"verify":false},
-
-                                        // {
-                                        //     $or: [
-                                        //         { "verify":false },
-                                        //         { "work_status":true },
-                                        //     ]
-                                        // },
-                                    ]
-                                }
-
-                            },
-                            {
-                                $sort: { exp_completion_time: 1, exp_completion_time: 1 }
-                            }
-                        ],
-                        as: 'assign_works'
-                    }
-                },        
-                {
-                    $project: {
-                        role_id: 1,
-                        user_id: 1,
-                        user_role:"$userrole_collection.user_role",
-                        user_name:"$users_collection.name",
-                        assign_works: {
-                            _id: 1,
-                            assign_work_id: 1,
-                            work: 1,
-                            work_code: 1,
-                            exp_completion_date:1, 
-                            exp_completion_time:1, 
-                            work_status: 1,
-                            status: 1
-                        },
-                    }
-                }
+                  },
+                  {
+                      $lookup: {
+                          from: "users",
+                          localField: "user_id",
+                          foreignField: "_id",
+                          as: 'userData',
+                      }
+                  },
+                  {
+                      $unwind:"$userData"
+                  },
+                  {
+                      $group:{
+                          _id: "$user_id" ,
+                          "work_id": { "$first": "$_id" },
+                          "assign_work_id": { "$first": "$assign_work_id" },
+                          "user_id": { "$first": "$user_id" },
+                          "user_name": { "$first": "$userData.name" },
+                          // "manpower_category_id_new": { $addToSet : "$manpowerMemberReportData.manpower_category_id" },
+                          "assign_works":{"$push":{
+                                _id:"$_id",
+                                work_code:'$work_code', 
+                                work:'$work', 
+                                exp_completion_date:'$exp_completion_date', 
+                                exp_completion_time:'$exp_completion_time', 
+                                work_percent:'$work_percent', 
+                                work_status:'$work_status', 
+                                comment:'$comment', 
+                                comment_status:'$comment_status', 
+                            }, 
+                          }
+                      }
+                    },
+                    {
+                        $project: {
+                            // _id: "$work_id", 
+                            assign_work_id: "$assign_work_id",     
+                            user_id: "$user_id",
+                            user_name: "$user_name",
+                            assign_works:"$assign_works"
+                        }
+                    },
             ])
         } catch (error) {
             return next(CustomErrorHandler.serverError());
         }
         return res.json({status:200, data:documents});
-
     },
+
+    // async assignWork(req, res, next) {
+    //     let documents;
+
+    //     try {
+    //         documents = await AssignWork.aggregate([
+    //             // { "$match" : { "assign_works.user_id" : { "$exists" : false } } },
+    //             {
+    //                 $match:{
+    //                     $and:[
+    //                         {
+    //                             "company_id": ObjectId(req.params.company_id),
+    //                         }
+    //                         // { "work_status":false },
+    //                         // { "revert_status":false },
+    //                         // { "verify":false }
+    //                     ]
+    //                 },
+    //             },
+    //             {
+    //                 $lookup: {
+    //                     from: "userRoles",
+    //                     localField: "role_id",
+    //                     foreignField: "_id",
+    //                     as: 'userrole_collection'
+    //                 }
+    //             },
+    //             {
+    //                 $unwind:"$userrole_collection"
+    //             },            
+    //             {
+    //                 $lookup: {
+    //                     from: "users",
+    //                     localField: "user_id",
+    //                     foreignField: "_id",
+    //                     as: 'users_collection',
+    //                 }
+    //             },
+    //             {
+    //                 $unwind:"$users_collection"
+    //             },
+                         
+    //             {
+    //                 $lookup: {
+    //                     from: "subWorkAssigns",
+    //                     let: { "user_id": "$user_id" },
+    //                     pipeline:[
+    //                         {
+    //                             // $match:{
+    //                             //     $expr:{$eq:["$user_id","$$user_id"]},
+    //                             // }
+
+    //                             $match:{
+    //                                 $and:[
+    //                                     {
+    //                                         $expr: { $eq: ["$user_id", "$$user_id"] },
+    //                                     },
+    //                                     {"work_status":false},
+    //                                     // {"verify":false},
+
+    //                                     // {
+    //                                     //     $or: [
+    //                                     //         { "verify":false },
+    //                                     //         { "work_status":true },
+    //                                     //     ]
+    //                                     // },
+    //                                 ]
+    //                             }
+
+    //                         },
+    //                         {
+    //                             $sort: { exp_completion_time: 1, exp_completion_time: 1 }
+    //                         }
+    //                     ],
+    //                     as: 'assign_works'
+    //                 }
+    //             },        
+    //             {
+    //                 $project: {
+    //                     role_id: 1,
+    //                     user_id: 1,
+    //                     user_role:"$userrole_collection.user_role",
+    //                     user_name:"$users_collection.name",
+    //                     assign_works: {
+    //                         _id: 1,
+    //                         assign_work_id: 1,
+    //                         work: 1,
+    //                         work_code: 1,
+    //                         work_percent: 1,
+    //                         exp_completion_date:1, 
+    //                         exp_completion_time:1, 
+    //                         work_status: 1,
+    //                         status: 1
+    //                     },
+    //                 }
+    //             }
+    //         ])
+    //     } catch (error) {
+    //         return next(CustomErrorHandler.serverError());
+    //     }
+    //     return res.json({status:200, data:documents});
+
+    // },
 
     async submitWork(req, res, next){
         let documents;

@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 const userSchema = Joi.object({
-    name: Joi.string().min(5).max(15).required().messages({
+    name: Joi.string().min(5).max(50).required().messages({
         "string.base":`"User Name" should be a type of 'text'`,
         "string.empty":`"User Name" cant be an empty`,
         "string.min":`"User Name" should have a minimum length of {#limit}`,
