@@ -1,5 +1,6 @@
 export { default as User } from './auth/User.js';
 export { default as UserRole } from './company/UserRole.js';
+export { default as UserPrivilege } from './company/UserPrivilege.js';
 export { default as RefreshToken } from './auth/RefreshToken.js';
 export { default as ProductKey } from './auth/ProductKey.js';
 export { default as Company } from './company/Company.js';
@@ -26,6 +27,7 @@ export { default as SubWorkAssign } from './assign-work/SubWorkAssign.js';
 export { default as Unit } from './stock/Unit.js';
 export { default as Item } from './stock/Item.js';
 export { default as ManageStock } from './stock/ManageStock.js';
+export { default as StockEntry } from './stock/StockEntry.js';
 export { default as ManageBoq } from './stock/ManageBoq.js';
 
 //tools machinery
@@ -39,15 +41,22 @@ export {default as Contractor} from './contractor/Contractor.js';
 //reports
 export { default as QuantityReportItem } from './report/quantity-report-item/QuantityReportItem.js';
 
+export { default as ManpowerCategory } from './report/manpower-category/ManpowerCategory.js';
+export { default as ManpowerSubCategory } from './report/manpower-sub-category/ManpowerSubCategory.js';
 export { default as Report } from './report/Report.js';
 export { default as QuantityReport } from './report/QuantityReport.js';
 export { default as QuantityWorkItemReport } from './report/QuantityWorkItemReport.js';
+export { default as QualityType } from './report/quality-type/QualityType.js';
+export { default as ManpowerReport } from './report/ManpowerReport.js';
+export { default as ManpowerMemberReport } from './report/ManpowerMemberReport.js';
 
 
 //supplier
-
 export {default as Supplier } from './supplier/Supplier.js';
 
 //user profile
 export { default as Attendance } from './user-profile/Attendance.js';
+
+// water level
+export { default as WaterLevel } from './water-level/WaterLevel.js';
  

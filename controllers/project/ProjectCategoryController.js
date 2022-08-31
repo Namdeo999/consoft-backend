@@ -1,4 +1,3 @@
-import Joi from "joi";
 import { ProjectCategory } from "../../models/index.js";
 import { projectCategorySchema } from "../../validators/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
@@ -9,7 +8,7 @@ const ProjectCategoryController = {
     async index(req, res, next){
         let documents;
         try {
-            documents = await ProjectCategory.find().select('-createdAt -updatedAt -__v');
+            documents = await ProjectCategory.find({company_id:req.params.company_id}).select('-createdAt -updatedAt -__v');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
@@ -17,22 +16,24 @@ const ProjectCategoryController = {
     },
 
     async store(req, res, next){
-        
+
         const {error} = projectCategorySchema.validate(req.body);
         if(error){
             return next(error);
         }
-
+        const {company_id, category_name} = req.body;
         try {
-            const exist = await ProjectCategory.exists({category_name:req.body.category_name});
+            // const exist = await ProjectCategory.exists({company_id:company_id, category_name:category_name});
+            // const exist = await ProjectCategory.find( { company_id:company_id, category_name:category_name } ).collation( { locale: 'en', strength: 1 } )
+            const exist = await ProjectCategory.exists( { company_id:company_id, category_name:category_name } ).collation( { locale: 'en', strength: 1 } )
             if (exist) {
-                return next(CustomErrorHandler.alreadyExist('This category is already exist'));
+                return next(CustomErrorHandler.alreadyExist('This project category is already exist'));
             }
+
         } catch (err) {
             return next(err);
         }
 
-        const {company_id, category_name} = req.body;
         const project_category = new ProjectCategory({
             company_id,
             category_name,
@@ -40,7 +41,7 @@ const ProjectCategoryController = {
 
         try {
             const result = await project_category.save();
-            res.send(CustomSuccessHandler.success('Category created successfully'));
+            res.send(CustomSuccessHandler.success('Project category created successfully'));
         } catch (err) {
             return next(err);
         }
@@ -67,12 +68,18 @@ const ProjectCategoryController = {
         const {company_id, category_name} = req.body;
         let document;
         try {
+            // const exist = await ProjectCategory.exists({company_id:company_id, category_name:category_name});
+            const exist = await ProjectCategory.exists({company_id:company_id, category_name:category_name}).collation({locale:'en', strength:1});
+            if (exist) {
+                return next(CustomErrorHandler.alreadyExist('This project category is already exist'));
+            }
+
             document = await ProjectCategory.findOneAndUpdate({ _id: req.params.id},{company_id, category_name},{new: true});
         } catch (err) {
             return next(err);
         }
         // res.status(201).json(document);
-        return res.send(CustomSuccessHandler.success("Category updated successfully"))
+        return res.send(CustomSuccessHandler.success("Project category updated successfully"))
     },
 
     async destroy(req, res, next) {

@@ -4,6 +4,7 @@ import CustomErrorHandler from '../../services/CustomErrorHandler.js'
 import CustomSuccessHandler from '../../services/CustomSuccessHandler.js'
 import { ObjectId } from 'mongodb'
 import CustomFunction from '../../services/CustomFunction.js';
+
 const AssignWorkController = {
 
     async assignWork(req, res, next) {
@@ -12,6 +13,18 @@ const AssignWorkController = {
         try {
             documents = await AssignWork.aggregate([
                 // { "$match" : { "assign_works.user_id" : { "$exists" : false } } },
+                {
+                    $match:{
+                        $and:[
+                            {
+                                "company_id": ObjectId(req.params.company_id),
+                            }
+                            // { "work_status":false },
+                            // { "revert_status":false },
+                            // { "verify":false }
+                        ]
+                    },
+                },
                 {
                     $lookup: {
                         from: "userRoles",
@@ -39,17 +52,34 @@ const AssignWorkController = {
                     $lookup: {
                         from: "subWorkAssigns",
                         let: { "user_id": "$user_id" },
-                       pipeline:[
-                        {
-                            $match:{
-                                $expr:{$eq:["$user_id","$$user_id"]}
-                                
+                        pipeline:[
+                            {
+                                // $match:{
+                                //     $expr:{$eq:["$user_id","$$user_id"]},
+                                // }
+
+                                $match:{
+                                    $and:[
+                                        {
+                                            $expr: { $eq: ["$user_id", "$$user_id"] },
+                                        },
+                                        {"work_status":false},
+                                        // {"verify":false},
+
+                                        // {
+                                        //     $or: [
+                                        //         { "verify":false },
+                                        //         { "work_status":true },
+                                        //     ]
+                                        // },
+                                    ]
+                                }
+
+                            },
+                            {
+                                $sort: { exp_completion_time: 1, exp_completion_time: 1 }
                             }
-                        },
-                        {
-                            $sort: { exp_completion_time: 1, exp_completion_time: 1 }
-                        }
-                       ],
+                        ],
                         as: 'assign_works'
                     }
                 },        
@@ -66,6 +96,7 @@ const AssignWorkController = {
                             work_code: 1,
                             exp_completion_date:1, 
                             exp_completion_time:1, 
+                            work_status: 1,
                             status: 1
                         },
                     }
@@ -74,7 +105,7 @@ const AssignWorkController = {
         } catch (error) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json(documents);
+        return res.json({status:200, data:documents});
 
     },
 
@@ -144,7 +175,7 @@ const AssignWorkController = {
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json(documents);
+        return res.json({status:200, data:documents});
     },
 
     async store(req, res, next) {
@@ -209,6 +240,26 @@ const AssignWorkController = {
             res.send("There is no work assigned")
         }
 
+    },
+
+    async changeWorkCompletionTime(req, res, next){
+        try {
+            const { exp_completion_date, exp_completion_time } = req.body;
+            const exp_date = CustomFunction.dateFormat(exp_completion_date);
+            const expectedTime = await SubWorkAssign.findByIdAndUpdate(
+                { _id: req.params.work_id },
+                {
+                    exp_completion_date:exp_date,
+                    exp_completion_time,
+                    // comment_status:false
+                },
+                { new: true }
+
+            ).select('-__v');
+        } catch (error) {
+            return next(CustomErrorHandler.serverError());
+        }
+        res.send(CustomSuccessHandler.success("Change work completion date & time successfully!"))
     },
 
     async edit(req, res, next) {

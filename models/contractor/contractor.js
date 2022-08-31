@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { ObjectId } from 'mongodb'
 
 const contractorSchema = mongoose.Schema({
+    company_id: { type: ObjectId, required:true }, 
     project_id: { type: ObjectId, required:true }, 
     contractor_name: { type: String, required:true },
     phone_no:{type:Number, required:true},

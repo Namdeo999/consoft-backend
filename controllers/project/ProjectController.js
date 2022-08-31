@@ -18,9 +18,7 @@ const ProjectController = {
     },
 
     async store(req, res, next){
-
         const {error} = projectSchema.validate(req.body);
-
         if(error){
             return next(error);
         }
@@ -105,13 +103,14 @@ const ProjectController = {
     async userByProjects(req, res, next){
         let projects;
         try {
-
             // projects = await ProjectTeam.find({ users: {$elemMatch: {user_id: ObjectId(req.params.user_id)}}});
-
             projects =  await ProjectTeam.aggregate([
                 {
+                    // $match: {
+                    //     users: {$elemMatch: {user_id: ObjectId(req.params.user_id)}}
+                    // }
                     $match: {
-                        users: {$elemMatch: {user_id: ObjectId(req.params.user_id)}}
+                        "user_id": ObjectId(req.params.user_id)
                     }
                 },
                 {
@@ -130,15 +129,23 @@ const ProjectController = {
                         project_id:'$project_data._id',
                         project_name:'$project_data.project_name',
                     }
-            
                 } 
-                
             ])
 
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
         return res.json(projects);
+    },
+
+    async projectAtGlance(req, res, next){
+        let documents;
+        try {
+            documents = await Project.find({company_id:req.params.company_id}).select('-createdAt -updatedAt -__v');
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+        return res.json({"status":200, data:documents});
     }
 
 

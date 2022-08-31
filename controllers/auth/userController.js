@@ -32,9 +32,14 @@ const userController ={
         }
         
         try {
-            const exist = await User.exists({mobile:req.body.mobile});
-            if (exist) {
+            const mobile_exist = await User.exists({company_id:ObjectId(req.body.company_id), mobile:req.body.mobile});
+            if (mobile_exist) {
                 return next(CustomErrorHandler.alreadyExist('This mobile is already taken.'));
+            }
+
+            const email_exist = await User.exists({company_id:ObjectId(req.body.company_id), email:req.body.email});
+            if (email_exist) {
+                return next(CustomErrorHandler.alreadyExist('This email is already taken.'));
             }
 
         } catch (err) {
@@ -42,39 +47,45 @@ const userController ={
         }
 
         const password = CustomFunction.stringPassword(6);
-
-        const { name, email, mobile, role_id, company_id, project_id } = req.body;
+        const { name, email, mobile, role_id, user_privilege, company_id, assign_project, project_id } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
         
-        const user = new User({
-            name,
-            email,
-            mobile,
-            role_id,
-            password: hashedPassword,
-            company_id,
-        });
         // let access_token;
         // let refresh_token;
         try {
-            const result = await user.save();  
-            if(result) {
-
-
-                const projectTeam = new ProjectTeam({
-                    project_id:project_id,
-                    user_id:result._id,
-                });
-
-                const data = await projectTeam.save();
-
-                let info = transporter.sendMail({
-                    from: EMAIL_FROM, // sender address
-                    to: email, // list of receivers
-                    subject: "Login Password ", // Subject line
-                    text: " Password  " + password, // plain text body
-                });
-            } 
+            const user = new User({
+                name,
+                email,
+                mobile,
+                role_id,
+                user_privilege,
+                password: hashedPassword,
+                company_id,
+            });
+            const result = await user.save();
+            
+            //assign to project
+            if(assign_project === true){
+                if (result) {
+                    const exist = await ProjectTeam.exists({ company_id:ObjectId(company_id), project_id: ObjectId(project_id), user_id:ObjectId(result._id)});
+                    if (exist) {
+                        return next(CustomErrorHandler.alreadyExist('User is already assined on this project'));
+                    }
+                    const project_team = new ProjectTeam({
+                        company_id,
+                        project_id,
+                        user_id:result._id
+                    });
+                    await project_team.save();
+                }
+            }
+             
+            let info = transporter.sendMail({
+                from: EMAIL_FROM, // sender address
+                to: email, // list of receivers
+                subject: "Product key & login password ", // Subject line
+                text: " Password  " + password, // plain text body
+            });
             // Token
             // access_token = JwtService.sign({ _id: result._id }); //used
             // access_token = JwtService.sign({ _id: result._id, role_id: result.role_id }); //used
@@ -135,19 +146,22 @@ const userController ={
     async index(req, res, next){
         let users;
         try {
-            // users = await User.find().select('-password -createdAt -updatedAt -__v');
-
             users = await User.aggregate([
+                {
+                    $match: {
+                        "company_id":ObjectId(req.params.company_id)
+                    }
+                },
                 {
                     $lookup: {
                         from: "userRoles",
                         localField: 'role_id',
                         foreignField: "_id",
-                        as: 'data'
+                        as: 'userRoleData'
                     }
                 },
                 {
-                    $unwind: "$data"
+                    $unwind: "$userRoleData"
                 },
                 {
                     $project: {
@@ -155,7 +169,8 @@ const userController ={
                         name: 1,
                         email: 1,
                         mobile: 1,
-                        user_role: "$data.user_role"
+                        company_id: 1,
+                        user_role: "$userRoleData.user_role"
                     }
                 }
             ])
@@ -163,7 +178,7 @@ const userController ={
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json(users);
+        return res.json({status:200, data:users});
     },
 
     async roleByUsers(req, res, next){

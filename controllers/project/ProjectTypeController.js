@@ -8,7 +8,17 @@ const ProjectTypeController = {
     async index(req, res, next){
         let documents;
         try {
-            documents = await ProjectType.find().select('-createdAt -updatedAt -__v');
+            documents = await ProjectType.find({company_id:req.params.company_id}).select('-__v');
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+        return res.json({"status":200, data:documents});
+    },
+
+    async getProjectTypeByCategory(req, res, next){
+        let documents;
+        try {
+            documents = await ProjectType.find({category_id:req.params.category_id}).select('-__v');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
@@ -22,16 +32,16 @@ const ProjectTypeController = {
             return next(error);
         }
 
+        const {company_id, category_id, project_type} = req.body;
         try {
-            const exist = await ProjectType.exists({project_type:req.body.project_type});
+            const exist = await ProjectType.exists({company_id:company_id, project_type:project_type});
             if(exist){
-                return next(CustomErrorHandler.alreadyExist('Project type is already axist'));
+                return next(CustomErrorHandler.alreadyExist('Project type is already exist'));
             }
         } catch (err) {
             return next(err);
         }
 
-        const {company_id, category_id, project_type} = req.body;
         const projectType = new ProjectType({
             company_id,
             category_id,
@@ -66,9 +76,12 @@ const ProjectTypeController = {
         }
 
         const {company_id, category_id, project_type} = req.body;
-        let document;
         try {
-            document = await ProjectType.findOneAndUpdate(
+            const exist = await ProjectType.exists({company_id:company_id, project_type:project_type});
+            if(exist){
+                return next(CustomErrorHandler.alreadyExist('Project type is already exist'));
+            }
+            const document = await ProjectType.findOneAndUpdate(
                 { _id: req.params.id},
                 {
                     company_id,
@@ -81,7 +94,7 @@ const ProjectTypeController = {
             return next(err);
         }
         // res.status(201).json(document);
-        return res.send(CustomSuccessHandler.success("Category type updated successfully"))
+        return res.send(CustomSuccessHandler.success("Project type updated successfully"))
     },
 
     async destroy(req, res, next) {
@@ -90,7 +103,7 @@ const ProjectTypeController = {
             return next(new Error('Nothing to delete'));
         }
         // return res.json(document);
-        return res.send(CustomSuccessHandler.success("Category type deleted successfully"))
+        return res.send(CustomSuccessHandler.success("Project type deleted successfully"))
     },
 
 

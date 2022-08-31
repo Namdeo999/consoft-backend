@@ -8,7 +8,7 @@ const UserRoleController = {
     async index(req, res, next){
         let documents;
         try {
-            documents = await UserRole.find().select('-createdAt -updatedAt -__v');
+            documents = await UserRole.find({company_id:req.params.company_id}).select('-createdAt -updatedAt -__v');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
@@ -21,9 +21,10 @@ const UserRoleController = {
         if(error){
             return next(error);
         }
+        const {company_id, user_role} = req.body;
 
         try {
-            const exist = await UserRole.exists({user_role:req.body.user_role});
+            const exist = await UserRole.exists({company_id:company_id, user_role:user_role}).collation({locale:'en', strength:1});
             if (exist) {
                 return next(CustomErrorHandler.alreadyExist('This user role is already exist'));
             }
@@ -31,7 +32,6 @@ const UserRoleController = {
             return next(err);
         }
 
-        const {company_id, user_role} = req.body;
         const role = new UserRole({
             company_id,
             user_role,
@@ -67,6 +67,11 @@ const UserRoleController = {
         const {company_id, user_role} = req.body;
         let document;
         try {
+            const exist = await UserRole.exists({company_id:company_id, user_role:user_role}).collation({locale:'en', strength:1});
+            if (exist) {
+                return next(CustomErrorHandler.alreadyExist('This user role is already exist'));
+            }
+
             document = await UserRole.findOneAndUpdate({ _id: req.params.id},{company_id, user_role},{new: true});
         } catch (err) {
             return next(err);

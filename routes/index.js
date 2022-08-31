@@ -6,7 +6,7 @@ import {
     loginController, refreshController, userController,
 
     //company
-    CompanyController, ProductKeyController, UserRoleController,
+    CompanyController, ProductKeyController, UserRoleController, UserPrivilegeController,
 
     //project
     ProjectCategoryController, ProjectTypeController, ProjectController, ProjectTeamController,
@@ -21,13 +21,16 @@ import {
     ChecklistOptionTypeController, ChecklistOptionController, ChecklistController, ToolsMachineryController,
 
     //report 
-    ReportController, QuantityReportController, QuantityReportItemController,
+    ReportController, QuantityReportController, QuantityReportItemController, QualityTypeController, ManpowerCategoryController, ManpowerSubCategoryController, ManpowerReportController,
 
     //supplier
     SupplierController,
 
     //revert
-    RevertController, VerifyController, AttendanceController
+    RevertController, VerifyController, AttendanceController,
+
+    //water level
+    WaterLevelController
 
 
 } from '../controllers/index.js';
@@ -52,7 +55,7 @@ router.post('/verify-product-key', ProductKeyController.verifyProductKey);
 
 router.post('/register', userController.register);
 router.get('/user', user_auth, userController.user);
-router.get('/users', userController.index);
+router.get('/users/:company_id', userController.index);
 
 router.get('/role-by-users/:role_id', userController.roleByUsers);
 
@@ -60,20 +63,28 @@ router.post('/refresh', refreshController.refresh);
 router.post('/logout', auth, loginController.logout);
 
 //role
-router.get('/role', UserRoleController.index);
+router.get('/role/:company_id', UserRoleController.index);
 router.post('/role', UserRoleController.store);
-router.get('/role/:id', UserRoleController.edit);
-router.put('/role/:id', UserRoleController.update);
-router.delete('/role/:id', UserRoleController.destroy);
+router.get('/edit-role/:id', UserRoleController.edit);
+router.put('/update-role/:id', UserRoleController.update);
+router.delete('/delete-role/:id', UserRoleController.destroy);
+
+// user privilege
+router.get('/privilege', UserPrivilegeController.index);
+router.post('/privilege', UserPrivilegeController.store);
+router.get('/privilege/:id', UserPrivilegeController.edit);
+router.put('/privilege/:id', UserPrivilegeController.update);
+router.delete('/privilege/:id', UserPrivilegeController.destroy);
 
 //project category
-router.get('/project-category', ProjectCategoryController.index);
+router.get('/project-category/:company_id', ProjectCategoryController.index);
 router.post('/project-category', ProjectCategoryController.store);
 router.get('/project-category/:id', ProjectCategoryController.edit);
 router.put('/project-category/:id', ProjectCategoryController.update);
 router.delete('/project-category/:id', ProjectCategoryController.destroy);
 
-router.get('/project-type', ProjectTypeController.index);
+router.get('/project-type/:company_id', ProjectTypeController.index);
+router.get('/project-type-by-category/:category_id', ProjectTypeController.getProjectTypeByCategory);
 router.post('/project-type', ProjectTypeController.store);
 router.get('/project-type/:id', ProjectTypeController.edit);
 router.put('/project-type/:id', ProjectTypeController.update);
@@ -82,17 +93,20 @@ router.delete('/project-type/:id', ProjectTypeController.destroy);
 //project 
 router.get('/projects/:company_id', ProjectController.index);
 router.post('/projects', ProjectController.store);
-router.get('/projects/:id', ProjectController.edit);
+router.get('/edit-projects/:id', ProjectController.edit);
 router.put('/projects/:id', ProjectController.update);
 router.delete('/projects/:id', ProjectController.destroy);
+
+router.get('/projects-at-glance/:company_id', ProjectController.projectAtGlance);
 
 router.get('/user-by-projects/:user_id', ProjectController.userByProjects);
 
 
 //project team
-router.get('/project-team/:id', ProjectTeamController.index);
+router.get('/project-team/:project_id', ProjectTeamController.index);
 router.post('/project-team', ProjectTeamController.store);
-router.delete('/project-team/:project_id/:user_id', ProjectTeamController.destroy);
+router.delete('/project-team/:id', ProjectTeamController.destroy);
+// router.delete('/project-team/:project_id/:user_id', ProjectTeamController.destroy);
 
 router.get('/project-team-role-wise/:project_id', ProjectTeamController.projectTeamRoleWise);//pending
 
@@ -115,10 +129,13 @@ router.get('/stock-entry/:id', ManageStockController.edit);
 router.put('/stock-entry/:id', ManageStockController.update);
 
 //boq
-router.get('/manage-boq/:company_id/:project_id?', ManageBoqController.index);
+// router.get('/manage-boq/:company_id/:project_id?', ManageBoqController.index);
+router.get('/manage-boq/:company_id/:project_id', ManageBoqController.index);
 router.post('/manage-boq', ManageBoqController.store);
-router.get('/edit-manage-boq/:id/:item_id', ManageBoqController.edit);//pending
-router.put('/manage-boq/:id/:item_id', ManageBoqController.update);
+router.get('/edit-manage-boq/:id', ManageBoqController.edit);//pending
+router.put('/update-manage-boq/:id', ManageBoqController.update);
+
+router.get('/boq-cal', ManageBoqController.boqcal);
 
 // router.put('/products/:id', [auth, admin], productController.update);
 // router.delete('/products/:id', [auth, admin], productController.destroy);
@@ -150,7 +167,7 @@ router.put('/checklists/:id', ChecklistController.update);
 router.delete('/checklists/:id', ChecklistController.destroy);
 
 //AssignWork
-router.get('/assign-works', AssignWorkController.assignWork);
+router.get('/assign-works/:company_id', AssignWorkController.assignWork);
 router.get('/submit-works/:company_id', AssignWorkController.submitWork);
 router.post('/assign-works', AssignWorkController.store);
 router.get('/assign-works/:id', AssignWorkController.edit);
@@ -158,6 +175,8 @@ router.put('/assign-works/:id', AssignWorkController.update);
 // router.delete('/assign-works/:id',AssignWorkController.destroy);
 router.get('/verify-revert-works/:company_id', AssignWorkController.verifyRevertWorks);
 router.delete('/sub-assign-work/:id', AssignWorkController.destroySubAssignWork);
+
+router.put('/change-work-completion-time/:work_id', AssignWorkController.changeWorkCompletionTime);
 
 //user-end assignwork
 router.get('/user-assign-works/:user_id', UserAssignWorkController.index)
@@ -181,19 +200,52 @@ router.delete('/contractor/:contractor_id', ContractorController.destroy);
 
 //report
 router.post('/report/:type', ReportController.saveReport);
-router.get('/quantity-report/:user_id/:project_id/:user_date', QuantityReportController.index);
-// router.delete('/quantity-report/:id/:item_id/:date', QuantityReportController.destroy);
-router.get('/edit-quantity-report/:id', QuantityReportController.edit);
-router.put('/quantity-report/:id', QuantityReportController.update);
-router.get('/quantity-item-exist/:project_id/:user_id', QuantityReportController.quantityItemExist);
-router.put('/quantity-report/:id', QuantityReportController.update);
 
+    //admin
+    router.get('/report/:project_id', ReportController.index);
 
+    router.get('/manpower-report/:project_id/:user_id/:date', ManpowerReportController.index);    
+    router.get('/manpower-report-by-report-id/:report_id', ManpowerReportController.manpowerReportByReportId);
 
-// report item
-router.get('/quantity-report-item/:company_id', QuantityReportItemController.index);
-router.post('/quantity-report-item', QuantityReportItemController.store);
+    router.get('/quantity-report/:project_id/:user_id/:date', QuantityReportController.index);    
+    router.get('/quantity-report-by-report-id/:report_id', QuantityReportController.quantityReportByReportId);    
 
+    router.get('/edit-quantity-report/:id', QuantityReportController.edit);
+    router.put('/quantity-report/:id', QuantityReportController.update);
+
+    // router.post('/quantity-report',QuantityReportController.store);
+    router.get('/quantity-item-exist/:project_id/:user_id', QuantityReportController .quantityItemExist);
+
+    // report item
+    router.get('/quantity-report-item/:company_id', QuantityReportItemController.index);
+    router.post('/quantity-report-item', QuantityReportItemController.store);
+    router.get('/edit-quantity-report-item/:id', QuantityReportItemController.edit);
+    router.put('/update-quantity-report-item/:id', QuantityReportItemController.update);
+    router.delete('/delete-quantity-report-item/:id', QuantityReportItemController.destroy);
+
+    //quality type
+    router.get('/quality-type/', QualityTypeController.index);
+    router.post('/quality-type/', QualityTypeController.store);
+    router.get('/quality-type/:id', QualityTypeController.edit);
+    router.put('/quality-type/:id', QualityTypeController.update);
+    router.delete('/quality-type/:id', QualityTypeController.destroy);
+
+    //manpower category
+    router.get('/manpower-category/:company_id/:project_id', ManpowerCategoryController.index);
+    router.post('/manpower-category', ManpowerCategoryController.store);
+    router.get('/edit-manpower-category/:id', ManpowerCategoryController.edit);
+    router.put('/manpower-category/:id', ManpowerCategoryController.update);
+    router.delete('/manpower-category/:id', ManpowerCategoryController.destroy);
+
+    router.get('/manpower-category/:company_id/:project_id/:contractor_id', ManpowerCategoryController.getManpowerCategoryByContractor);
+
+    //manpower sub category
+    // router.get('/manpower-sub-category/:manpower_category_id', ManpowerSubCategoryController.index);
+    router.get('/manpower-sub-category/:company_id', ManpowerSubCategoryController.index);
+    router.post('/manpower-sub-category', ManpowerSubCategoryController.store);
+    router.get('/edit-manpower-sub-category/:id', ManpowerSubCategoryController.edit);
+    router.put('/manpower-sub-category/:id', ManpowerSubCategoryController.update);
+    router.delete('/manpower-sub-category/:id', ManpowerSubCategoryController.destroy);
 
 router.get('/supplier', SupplierController.index);
 router.post('/supplier', SupplierController.store);
@@ -208,13 +260,17 @@ router.put('/revert-submit-work/:work_id', RevertController.revertSubmitWork);
 router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
 
 //user profile
-router.get('/attendance/:user_id', AttendanceController.index);
-router.post('/attendance', AttendanceController.store);
+router.get('/attendance/:user_id', AttendanceController.attendance);
+// router.post('/attendance', AttendanceController.attendance);
 
 router.get('/leaves', AttendanceController.getLeaves);
+router.post('/apply-leaves', AttendanceController.applyLeaves);
 router.put('/approve-leaves/:id', AttendanceController.approveLeaves);
 
-
+//water level
+// router.get('/water-level/:led_status', WaterLevelController.waterLevel);
+router.get('/water-level', WaterLevelController.index);
+router.post('/water-level', WaterLevelController.waterLevel);
 
 
 

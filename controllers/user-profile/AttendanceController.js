@@ -21,13 +21,9 @@ const AttendanceController = {
         let documents; 
         try {
             documents = await Attendance.aggregate([
-                // {
-                //     $match: { 
-                //         $and:[
-                //             {"user_id": ObjectId(req.params.user_id)}
-                //         ]
-                //     },
-                // },
+                {$unwind:'$leavedates'},
+                {$match:{'leavedates.approved':false}},
+                
                 {
                     $lookup: {
                         from: 'users',
@@ -40,36 +36,89 @@ const AttendanceController = {
                     $unwind:"$userData"
                 },
                 {
+                    $group:{
+                        _id:'$_id', 
+                        "user_id": { "$first": "$user_id" },
+                        "user_name": { "$first": "$userData.name" },
+                        leavedates:{$push:'$leavedates'}
+                    }
+                },
+                {
                     $project:{
                         _id:1,
                         user_id:1,
-                        user_name:"$userData.name",
-                        // year:1,
-                        // months:{
-                        //     // month:1,
-                        //     month_name:1,
-                        //     // _id:1,
-                        // },
-                        // "months.presentdays":{},
+                        user_name:"$user_name",
                         "presentdates": {$ifNull: ["$presentdates", []]},
-                        "leavedates":{
-                            _id:1,
-                            leave_date:1,
-                            approved:1,
-                        }
-
+                        // "leavedates":{
+                        //     _id:1,
+                        //     leave_date:1,
+                        //     approved:1,
+                        // }
+                        leavedates:"$leavedates"
                     }
                 }
-
             ]);
-
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json({ "status":200, data:documents });
+        return res.json({ status:200, data:documents });
     },
 
-    async store(req, res, next){
+    async attendance(req, res, next){
+        // const { user_id} = req.body;
+        let year = CustomFunction.currentYearMonthDay('YYYY');
+        let month = CustomFunction.currentYearMonthDay('MM')
+        let month_name = CustomFunction.monthName();
+        let current_date = CustomFunction.currentDate();
+        let current_time = CustomFunction.currentTime();
+        let attendance_main_id;
+        const exist = await Attendance.exists({user_id: req.params.user_id, year:year, month:month});
+        try {
+            if (!exist) {
+                const attendance = new Attendance({
+                    user_id,
+                    year:year,
+                    month:month,
+                    month_name:month_name,
+                });
+                const result = await attendance.save();
+                attendance_main_id = result._id;
+            }else{
+                attendance_main_id = exist._id;
+            }
+        } catch (err) {
+            return next(err);
+        }
+
+        let present_date_exist;
+        try {
+            present_date_exist = await Attendance.find({
+                _id: attendance_main_id , 
+                "presentdates.present_date": current_date
+            })
+            if (present_date_exist.length > 0) {
+                return;
+            }
+            const presentData = await Attendance.findByIdAndUpdate(
+                {_id: attendance_main_id},
+                {
+                    $push:{
+                        "presentdates": {
+                            present_date : current_date,
+                            in_time : current_time,
+                        }
+                    }
+                },
+                { new: true }
+            );
+        } catch (error) {
+            return next(err);
+        }
+        res.send(CustomSuccessHandler.success('Presented today'));
+        
+    },
+
+    async applyLeaves(req, res, next){
         const { user_id, leavedates } = req.body;
         let year = CustomFunction.currentYearMonthDay('YYYY');
         let month = CustomFunction.currentYearMonthDay('MM')
@@ -90,22 +139,21 @@ const AttendanceController = {
             }else{
                 attendance_main_id = exist._id;
             }
+            
         } catch (err) {
             return next(err);
         }
+
         let leave_date_exist;
         try {
-            console.log(leavedates)
             leavedates.forEach( async (list, key) => {
                 leave_date_exist = await Attendance.find({
                     _id: attendance_main_id , 
                     "leavedates.leave_date": list.leave_date
                 })
-
                 if (leave_date_exist.length > 0) {
                     return;
                 }
-
                 const leaveData = await Attendance.findByIdAndUpdate(
                     {_id: attendance_main_id},
                     {
@@ -117,9 +165,7 @@ const AttendanceController = {
                     },
                     { new: true }
                 );
-
             })
-
         } catch (err) {
             return next(err)
         }
@@ -223,26 +269,21 @@ const AttendanceController = {
 
     async approveLeaves(req, res, next){
         try {
-
             const {leavedates}  = req.body;
             leavedates.forEach( async (list, key) => {
                 await Attendance.findOneAndUpdate(
                     {
-                        _id: req.params.id, "leavedates._id": ObjectId(list.leave_date_id)
+                        _id: req.params.id, "leavedates._id": list.leave_date_id
                     },
                     {
                         $set: 
                         { 
-                            // "leavedates.$.approved" : true, 
-                            approved : true, 
+                            "leavedates.$.approved" : true 
                         }
-
                     },
-                    { new: true }
-    
-                ).select('-__v');
+                );
             })
-            res.send(CustomSuccessHandler.success("Approved successfully!"))
+            res.send(CustomSuccessHandler.success("Leave Approved successfully!"))
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
@@ -250,4 +291,9 @@ const AttendanceController = {
 
 }
 
+// function ddff() {
+//     console.log("object");
+// }
+
 export default AttendanceController;
+

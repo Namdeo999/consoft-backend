@@ -30,15 +30,13 @@ const attendanceSchema = mongoose.Schema({
     presentdates:[{
         present_date:{type:String, default:date},
         in_time:{ type:String, default:time},
-        out_time:{ type:String}
+        out_time:{ type:String, default:null}
     }],
     leavedates:[{
         leave_date:{type:String},
         remark:{type:String},
         approved:{type:Boolean, default:false},
-    }]
-    
-    
+    }] 
 });
 
 export default mongoose.model('Attendance', attendanceSchema, 'attendances');

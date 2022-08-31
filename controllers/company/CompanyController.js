@@ -38,8 +38,8 @@ const CompanyController = {
             const refresh_token = JwtService.sign({ _id: company._id }, '1y', REFRESH_SECRET);
 
             await RefreshToken.create({ token: refresh_token });
-            
-            res.json({status:200, access_token, refresh_token, _id: company._id, company_name: company.company_name, mobile:company.mobile, email:company.email});
+        
+            res.json({status:200, access_token, refresh_token, _id: company._id, company_name: company.company_name, name: company.name, mobile:company.mobile, email:company.email});
             
         } catch (err) {
             return next(err);
@@ -59,7 +59,7 @@ const CompanyController = {
     async store(req, res, next){
         const companySchema = Joi.object({
             company_name:Joi.string().required(),
-            //pan:Joi.string().required(),
+            name:Joi.string().required(),
             mobile:Joi.number().required(),
             email:Joi.string().required(),
             // password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
@@ -73,7 +73,7 @@ const CompanyController = {
         try {
             const exist = await Company.exists({mobile:req.body.mobile});
             if(exist){
-                return next(CustomErrorHandler.alreadyExist('Mobile no is already axist'));                
+                return next(CustomErrorHandler.alreadyExist('Mobile no is already exist'));                
             }
         } catch (err) {
             return next(err);
@@ -82,7 +82,7 @@ const CompanyController = {
         try {
             const exist = await Company.exists({email:req.body.email});
             if(exist){
-                return next(CustomErrorHandler.alreadyExist('Email is already axist'));
+                return next(CustomErrorHandler.alreadyExist('Email is already exist'));
             }
         } catch (err) {
             return next(err);
@@ -94,12 +94,13 @@ const CompanyController = {
         // Hash password
         // const hashedPassword = await bcrypt.hash(data, 10);
         
-        const {company_name, mobile, email} = req.body;
+        const {company_name, name, mobile, email} = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
         // const hashedPassword = await bcrypt.hash(pass.message, 10);
 
         const company = new Company({
             company_name,
+            name,
             mobile,
             email,
             password: hashedPassword,
@@ -137,6 +138,7 @@ const CompanyController = {
                 status:200, 
                 _id:result._id, 
                 company_name:result.company_name, 
+                name:result.name, 
                 mobile:result.mobile, 
                 email:result.email, 
                 message:'Company created successfully'
