@@ -21,13 +21,11 @@ const loginController = {
         try {
             let user_detail;
             // const user = await User.findOne({mobile: req.body.mobile});
-
-           await User.aggregate([
+            const user = await User.aggregate([
                 {
                     $match: {
                         "mobile": req.body.mobile
                     }
-                    
                 },
                 {
                     $lookup: {
@@ -40,7 +38,7 @@ const loginController = {
                 { $unwind: "$companyData" },
                 {
                     $lookup: {
-                        from: 'userPriveleges',
+                        from: 'userPrivileges',
                         localField: 'user_privilege',
                         foreignField: '_id',
                         as: 'userPrivilegeData'
@@ -63,7 +61,7 @@ const loginController = {
             ]).then(function ([res]) {
                 user_detail = res;
             });
-
+            
             if(!user_detail){
                 return next(CustomErrorHandler.wrongCredentials())
             }

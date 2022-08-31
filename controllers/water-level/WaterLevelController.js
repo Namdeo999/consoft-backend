@@ -86,7 +86,20 @@ const WaterLevelController = {
 
         //     const {led_status} = req.body;
             console.log(req.body);
+
+            // console.log(req.body.image.replace('%2F', '/'));
             const {image, led_status, water_level} = req.body;
+
+            // const replace_2F = image.replace(/%2F/g, '/'); // %2F = /
+            // const final_image = replace_2F.replace(/%2B/g, '+'); // %2B = +
+
+            const replace_2F = image.split("%2F").join("/"); // %2F = /
+            const final_image = replace_2F.split("%2B").join("+"); // %2B = +
+            console.log(replace_2F)
+            console.log("new string");
+            console.log(final_image);
+
+            // return ;
             const image_path = "assets/images/water_level/uploads/";
             const image_name = `${Date.now()}_${Math.round(Math.random() * 1e9)}.png`;
 
@@ -94,7 +107,7 @@ const WaterLevelController = {
             //     console.log('File created');
             // });
 
-            fs.writeFileSync(image_path + image_name,image, {encoding: 'base64'}, function(err){
+            fs.writeFileSync(image_path + image_name,final_image, {encoding: 'base64'}, function(err){
                 console.log('File created');
             });
 
