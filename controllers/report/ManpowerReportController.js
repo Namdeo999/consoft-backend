@@ -40,7 +40,6 @@ const ManpowerReportController = {
                         "project_id": ObjectId(req.params.project_id),
                         "user_id": ObjectId(req.params.user_id),
                         "report_date": req.params.date
-                        // "company_id": ObjectId("62ba94b8ea988119bbf13687")
                     }
                 },
                 {
@@ -76,7 +75,15 @@ const ManpowerReportController = {
                     }
                 },
                 {$unwind: "$manpowerMemberReportData"},
-                
+                {
+                    $lookup:{
+                          from:"manpowerCategories",
+                          localField: "manpowerMemberReportData.manpower_category_id",
+                          foreignField: "_id",
+                          as: 'manpowerCategoryData'
+                      }
+                },
+                {$unwind: "$manpowerCategoryData"},
                 {
                     $group:{
                         _id: "$manpowerMemberReportData.manpower_report_id" ,
@@ -85,25 +92,93 @@ const ManpowerReportController = {
                         "user_id": { "$first": "$manpowerReportData.user_id" },
                         "contractor_id": { "$first": "$manpowerReportData.contractor_id" },
                         "contractor_name": { "$first": "$contractorData.contractor_name" },
-                        "manpower_category_id_new": { $addToSet : "$manpowerMemberReportData.manpower_category_id" },
-                        "manpowerCategories":{"$push":'$manpowerMemberReportData'}
+                        // "manpower_category_id_new": { $addToSet : "$manpowerMemberReportData.manpower_category_id" },
+                        // "manpowerCategories":{"$push":'$manpowerMemberReportData'}
+                        "manpowerCategories":{
+                            "$push":{
+                                _id:'$manpowerMemberReportData._id', 
+                                manpower_report_id:'$manpowerMemberReportData.manpower_report_id',
+                                manpower_category_id:'$manpowerMemberReportData.manpower_category_id',
+                                manpower_category_name:'$manpowerCategoryData.manpower_category',
+                                manpower_member:'$manpowerMemberReportData.manpower_member',
+                            }
+                        }
                     }
                 },
-
                 {
                     $project: {
                         _id: 1, 
-                        company_id: 1,     
-                        project_id: 1,
+                        report_id: 1,     
                         user_id: "$user_id",
                         contractor_id: "$contractor_id",
                         contractor_name: "$contractor_name",
-                        manpowerCategories:[{
-                            manpower_category_id: "$manpower_category_id_new",
-                            members:"$manpowerCategories"
-                        }]
+                        manpower_report_date: 1,
+                        manpower_report_time: 1,
+                        manpowerCategories:"$manpowerCategories"
                     }
                 },
+                
+                // {
+                //     $lookup: { 
+                //         from: 'manpowerReports',
+                //         localField: '_id',
+                //         foreignField: 'report_id',
+                //         as: 'manpowerReportData'
+                //     }
+                // },
+                // {$unwind:"$manpowerReportData"},
+                // {
+                //     $lookup: {
+                //         from: "contractors",
+                //         localField: "manpowerReportData.contractor_id",
+                //         foreignField: "_id",
+                //         as: 'contractorData'
+                //     }
+                // },
+                // {$unwind:"$contractorData"},
+                // {
+                //     $lookup: {
+                //         from: "manpowerMemberReports",
+                //         let: { "manpower_report_id": "$manpowerReportData._id" },
+                //         pipeline: [
+                //             {
+                //                 $match: {
+                //                     $expr: { $eq: ["$manpower_report_id", "$$manpower_report_id"] }
+                //                 }
+                //             },
+                //         ],
+                //         as: 'manpowerMemberReportData'
+                //     }
+                // },
+                // {$unwind: "$manpowerMemberReportData"},
+                
+                // {
+                //     $group:{
+                //         _id: "$manpowerMemberReportData.manpower_report_id" ,
+                //         "company_id": { "$first": "$company_id" },
+                //         "project_id": { "$first": "$project_id" },
+                //         "user_id": { "$first": "$manpowerReportData.user_id" },
+                //         "contractor_id": { "$first": "$manpowerReportData.contractor_id" },
+                //         "contractor_name": { "$first": "$contractorData.contractor_name" },
+                //         "manpower_category_id_new": { $addToSet : "$manpowerMemberReportData.manpower_category_id" },
+                //         "manpowerCategories":{"$push":'$manpowerMemberReportData'}
+                //     }
+                // },
+
+                // {
+                //     $project: {
+                //         _id: 1, 
+                //         company_id: 1,     
+                //         project_id: 1,
+                //         user_id: "$user_id",
+                //         contractor_id: "$contractor_id",
+                //         contractor_name: "$contractor_name",
+                //         manpowerCategories:[{
+                //             manpower_category_id: "$manpower_category_id_new",
+                //             members:"$manpowerCategories"
+                //         }]
+                //     }
+                // },
 
             ]);
         } catch (err) {
@@ -219,7 +294,6 @@ const ManpowerReportController = {
 
     
     async store(req, res, next){
-
         const {report_id, user_id, contractor_id, manpowerCategories} = req;
         let current_date = CustomFunction.currentDate();
         let current_time = CustomFunction.currentTime();
@@ -242,27 +316,43 @@ const ManpowerReportController = {
         let manpower_reports_exist;
         try {
             manpowerCategories.forEach( async (list, key) => {
+                manpower_reports_exist = await ManpowerMemberReport.exists({ manpower_report_id: ObjectId(manpower_report_id), manpower_category_id: ObjectId(list.manpower_category_id)  } );  
+                if (manpower_reports_exist) {
+                    return ;
+                }
 
-                list.members.forEach( async (member_list, key) => {
-                    manpower_reports_exist = await ManpowerMemberReport.exists({ manpower_report_id: ObjectId(manpower_report_id), manpower_sub_category_id: ObjectId(member_list.manpower_sub_category_id)  } ); 
-                        
-                    if (manpower_reports_exist) {
-                        return ;
-                    }
-
+                if (list.manpower_member) {
                     const manpower_member_report = new ManpowerMemberReport({
                         manpower_report_id: ObjectId(manpower_report_id),
                         manpower_category_id: ObjectId(list.manpower_category_id),
-                        manpower_sub_category_id : ObjectId(member_list.manpower_sub_category_id),
-                        manpower_member : member_list.manpower_member,
+                        manpower_member : list.manpower_member,
                     });
                     const member_result = await manpower_member_report.save();
-                });
+                }
+
+
+                // list.members.forEach( async (member_list, key) => {
+                //     manpower_reports_exist = await ManpowerMemberReport.exists({ manpower_report_id: ObjectId(manpower_report_id), manpower_sub_category_id: ObjectId(member_list.manpower_sub_category_id)  } ); 
+                        
+                //     if (manpower_reports_exist) {
+                //         return ;
+                //     }
+
+                //     const manpower_member_report = new ManpowerMemberReport({
+                //         manpower_report_id: ObjectId(manpower_report_id),
+                //         manpower_category_id: ObjectId(list.manpower_category_id),
+                //         manpower_sub_category_id : ObjectId(member_list.manpower_sub_category_id),
+                //         manpower_member : member_list.manpower_member,
+                //     });
+                //     const member_result = await manpower_member_report.save();
+                // });
 
             });
         } catch (error) {
             return ({status:400, error:"Something went wrong"});
         }
+
+        //---------------------------------------------
         // try {
         //     manpowerCategories.forEach( async (list, key) => {
         //         const report_exist = await ManpowerMemberReport.exists({manpower_report_id: ObjectId(manpower_report_id), manpower_category_id: ObjectId(list.manpower_category_id)});
@@ -322,6 +412,83 @@ const ManpowerReportController = {
         return ({ status:200 });
     },
 
+    async edit(req, res, next){
+        let document;
+        try {
+            document = await ManpowerReport.aggregate([
+                {
+                    $match: { 
+                        "contractor_id": ObjectId(req.params.contractor_id),
+                        "manpower_report_date": req.params.date
+                        // "user_id": ObjectId("62c827e09c1d4cb814eae193"),
+                        // "company_id": ObjectId("62ba94b8ea988119bbf13687")
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "manpowerMemberReports",
+                        let: { "manpower_report_id": "$_id" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ["$manpower_report_id", "$$manpower_report_id"] }
+                                }
+                            },
+                        ],
+                        as: 'manpowerMemberReportData'
+                    }
+                },
+                {$unwind: "$manpowerMemberReportData"},
+                {
+                    $lookup:{
+                          from:"manpowerCategories",
+                          localField: "manpowerMemberReportData.manpower_category_id",
+                          foreignField: "_id",
+                          as: 'manpowerCategoryData'
+                      }
+                },
+                {$unwind: "$manpowerCategoryData"},
+                {
+                    $group:{
+                        _id: "$manpowerMemberReportData.manpower_report_id" ,
+                        "report_id": { "$first": "$report_id" },
+                        "user_id": { "$first": "$user_id" },
+                        "contractor_id": { "$first": "$contractor_id" },
+                        // "manpower_category_id_new": { $addToSet : "$manpowerMemberReportData.manpower_category_id" },
+                        // "manpowerCategories":{"$push":'$manpowerMemberReportData'}
+                          "manpowerCategories":{"$push":{
+                              _id:'$manpowerMemberReportData._id', 
+                              manpower_report_id:'$manpowerMemberReportData.manpower_report_id',
+                              manpower_category_id:'$manpowerMemberReportData.manpower_category_id',
+                              manpower_category_name:'$manpowerCategoryData.manpower_category',
+                              manpower_member:'$manpowerMemberReportData.manpower_member',
+                          }
+                      }}
+                },
+                {
+                    $project: {
+                        _id: 1, 
+                        report_id: "$report_id",  
+                        user_id: "$user_id",
+                        contractor_id: "$contractor_id",
+                        manpowerCategories:"$manpowerCategories"
+                    }
+                }
+                
+                
+            ]);
+
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+
+        return res.json({"status":200, data:document});
+    },
+
+    async update(req, res, next){
+        
+    },
+
     async manpowerReportByReportId(req, res, next){
         let documents;
         
@@ -364,9 +531,8 @@ const ManpowerReportController = {
                           foreignField: "_id",
                           as: 'manpowerCategoryData'
                       }
-                  },
-                  {$unwind: "$manpowerCategoryData"},
-                  
+                },
+                {$unwind: "$manpowerCategoryData"},
                   {
                       $group:{
                           _id: "$manpowerMemberReportData.manpower_report_id" ,
@@ -382,7 +548,6 @@ const ManpowerReportController = {
                                 manpower_sub_category_id:'$manpowerMemberReportData.manpower_sub_category_id',
                                 manpower_member:'$manpowerMemberReportData.manpower_member',
                             }, 
-                           
                             
                           }
                       }

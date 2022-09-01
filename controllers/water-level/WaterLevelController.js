@@ -28,7 +28,7 @@ const handleMultipartData = multer({
 
 const WaterLevelController = {
 
-    async waterLevel(req, res, next){
+    waterLevel(req, res, next){
         
         
         // fs.writeFileSync(image_path + image_name,image, {encoding: 'base64'}, function(err){
@@ -95,7 +95,7 @@ const WaterLevelController = {
 
             const replace_2F = image.split("%2F").join("/"); // %2F = /
             const final_image = replace_2F.split("%2B").join("+"); // %2B = +
-            console.log(replace_2F)
+
             console.log("new string");
             console.log(final_image);
 
@@ -118,7 +118,8 @@ const WaterLevelController = {
                 image:image_path + image_name,
             });
             try {
-                const result = await waterLevel.save();
+                const result = waterLevel.save();
+
                 // res.send(CustomSuccessHandler.success('Led status updated successfully' + req.body));
                 res.send(CustomSuccessHandler.success('Water level status updated successfully'));
             } catch (err) {
