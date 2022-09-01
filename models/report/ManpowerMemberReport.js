@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 const manpowerMemberReportSchema = mongoose.Schema({
     manpower_report_id:{ type: ObjectId },
     manpower_category_id:{ type: ObjectId },
-    manpower_sub_category_id:{ type: ObjectId },
+    // manpower_sub_category_id:{ type: ObjectId },
     manpower_member:{ type: Number },
 });
 

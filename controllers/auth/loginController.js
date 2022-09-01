@@ -10,6 +10,7 @@ const loginController = {
 
         const loginSchema = Joi.object({
             mobile:Joi.string().pattern(/^[0-9]{10}$/).required(),
+            // mobile:Joi.number().required(),
             // password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required(),
             password: Joi.string().required(),
         });
@@ -19,9 +20,9 @@ const loginController = {
             return next(error);
         }
         try {
-            let user_detail;
-            // const user = await User.findOne({mobile: req.body.mobile});
-            const user = await User.aggregate([
+            var user_detail;
+            // const user_detail = await User.findOne({mobile: req.body.mobile});
+            await User.aggregate([
                 {
                     $match: {
                         "mobile": req.body.mobile
@@ -62,11 +63,19 @@ const loginController = {
                 user_detail = res;
             });
             
+            // const bpass = await bcrypt.hash(req.body.password, 10)
+            // const match = await bcrypt.compare(req.body.password,user_detail.password);
+            // console.log(bpass)
+            // console.log("object")
+            // console.log(user_detail)
+            // console.log(match)
+            // console.log(user_detail.password)
+
             if(!user_detail){
                 return next(CustomErrorHandler.wrongCredentials())
             }
             // compare the password
-            const match = await bcrypt.compare(req.body.password, user_detail.password);
+            const match = await bcrypt.compare(req.body.password,user_detail.password);
             if (!match) {
                 return next(CustomErrorHandler.wrongCredentials());
             }

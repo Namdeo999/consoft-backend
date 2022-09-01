@@ -13,6 +13,7 @@ const userSchema = Joi.object({
         "string.empty":`"Email" cant be an empty`,
         "any.required":`"Email" is a required`,
     }),
+    // mobile:Joi.number().required(),
     mobile: Joi.string().pattern(/^[0-9]{10}$/).required().messages({
         "string.base":`"Mobile Number" should be a type of 'number'`,
         "string.pattern.base": `"Phone Number" must be a 10 digits number`,
