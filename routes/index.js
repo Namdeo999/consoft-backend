@@ -9,7 +9,7 @@ import {
     CompanyController, ProductKeyController, UserRoleController, UserPrivilegeController,
 
     //project
-    ProjectCategoryController, ProjectTypeController, ProjectController, ProjectTeamController,
+    ProjectCategoryController, ProjectTypeController, ProjectController, ProjectTeamController, ProjectReportPathController,
 
     //Assignwork
     AssignWorkController, UserAssignWorkController,
@@ -110,6 +110,10 @@ router.delete('/project-team/:id', ProjectTeamController.destroy);
 
 router.get('/project-team-role-wise/:project_id', ProjectTeamController.projectTeamRoleWise);//pending
 
+//project report path
+router.get('/project-report-path/:company_id/:project_id', ProjectReportPathController.index);
+router.post('/project-report-path', ProjectReportPathController.store);
+
 //stock
 router.get('/unit', UnitController.index);
 router.post('/unit', UnitController.store);
@@ -207,8 +211,7 @@ router.post('/report/:type', ReportController.saveReport);
     router.get('/manpower-report/:project_id/:user_id/:date', ManpowerReportController.index);    
     router.get('/manpower-report-by-report-id/:report_id', ManpowerReportController.manpowerReportByReportId);
     router.get('/edit-manpower-report/:contractor_id/:date', ManpowerReportController.edit);
-    router.put('/manpower-report/:id', ManpowerReportController.update);
-
+    router.put('/manpower-report/:manpower_report_id', ManpowerReportController.update);
 
     router.get('/quantity-report/:project_id/:user_id/:date', QuantityReportController.index);    
     router.get('/quantity-report-by-report-id/:report_id', QuantityReportController.quantityReportByReportId);    

@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 import { ObjectId } from 'mongodb'
+import CustomFunction from "../../services/CustomFunction.js";
+const date = CustomFunction.currentDate();
+const time = CustomFunction.currentTime();
 
 const SubWorkAssign = mongoose.Schema({
     assign_work_id: { type:ObjectId },  
@@ -22,6 +25,8 @@ const SubWorkAssign = mongoose.Schema({
     verify_date: { type: String, default:null },
     verify_time: { type: String, default:null },
     verify: { type: Boolean, default:false },
+    assign_date: { type:String, default:date },
+    assign_time: { type:String, default:time },
     status:{ type:Boolean, default:false }
 })   
 

@@ -9,6 +9,7 @@ export { default as Project } from './project/Project.js';
 export { default as ProjectCategory } from './project/ProjectCategory.js';
 export { default as ProjectType } from './project/ProjectType.js';
 export { default as ProjectTeam } from './project/ProjectTeam.js';
+export { default as ProjectReportPath } from './project/ProjectReportPath.js';
 
 
 //checklist

@@ -9,7 +9,6 @@ const UserAssignWorkController = {
     async index(req, res, next) {
         let documents;
         try {
-
             documents = await AssignWork.aggregate([
                 {
                     $match: { user_id: ObjectId(req.params.user_id) }
@@ -89,6 +88,8 @@ const UserAssignWorkController = {
                             revert_status:1,
                             work_percent:1,
                             work_status:1,
+                            assign_date:1,
+                            assign_time:1,
                             verify:1,
                         }
                     }
@@ -230,6 +231,8 @@ const UserAssignWorkController = {
                                 revert_msg:1,
                                 revert_status:1,
                                 work_status:1,
+                                assign_date:1,
+                                assign_time:1,
                                 verify:1,
                             }
                         }

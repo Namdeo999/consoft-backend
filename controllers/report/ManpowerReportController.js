@@ -375,47 +375,13 @@ const ManpowerReportController = {
         // }
         //---------------------
 
-        // try {
-        //     manpowerCategories.forEach( async (list, key) => {
-                
-        //         const report_exist = await ManpowerReport.exists({report_id: ObjectId(report_id), user_id: ObjectId(user_id), contractor_id: ObjectId(contractor_id),  manpower_report_date: current_date});
-        //         if (report_exist) {
-        //             return ;
-        //         }
-
-        //         const manpower_report = new ManpowerReport({
-        //             report_id,
-        //             user_id,
-        //             contractor_id,
-        //             manpower_report_date:current_date,
-        //             manpower_report_time:current_time
-        //         });
-        //         const result = await manpower_report.save();
-        //         manpower_report_id = result._id;
-
-        //         list.members.forEach( async (member_list, key) => {
-        //             const manpower_member_report = new ManpowerMemberReport({
-        //                 manpower_report_id:ObjectId(manpower_report_id),
-        //                 manpower_category_id: ObjectId(list.manpower_category_id),
-        //                 manpower_sub_category_id : ObjectId(member_list.manpower_sub_category_id),
-        //                 manpower_member : member_list.manpower_member,
-        //             });
-        //             const member_result = await manpower_member_report.save();
-        //         });
-
-        //     });
-
-        // } catch (err) {
-        //     return ({status:400, error:"Something went wrong"});
-        // }
-
         return ({ status:200 });
     },
 
     async edit(req, res, next){
         let document;
         try {
-            document = await ManpowerReport.aggregate([
+            await ManpowerReport.aggregate([
                 {
                     $match: { 
                         "contractor_id": ObjectId(req.params.contractor_id),
@@ -476,7 +442,9 @@ const ManpowerReportController = {
                 }
                 
                 
-            ]);
+            ]).then(function([res]) {
+                document = res
+            });
 
         } catch (err) {
             return next(CustomErrorHandler.serverError());
@@ -486,7 +454,34 @@ const ManpowerReportController = {
     },
 
     async update(req, res, next){
+        const {manpowerCategories} = req.body;
+        const manpower_report_id = req.params.manpower_report_id;
+        try {
+            manpowerCategories.forEach( async (list) => {
+                if (list.manpower_member) {
+                    const document_exist = await ManpowerMemberReport.exists({manpower_report_id: ObjectId(manpower_report_id), manpower_category_id:ObjectId(list.manpower_category_id)});
+                    if (document_exist) {
+                        const document = await ManpowerMemberReport.findByIdAndUpdate(
+                            { _id: document_exist._id},
+                            {manpower_member:list.manpower_member},
+                            {new: true}
+                        );
+                        return ;
+                    }
+
+                    const manpower_member_report = new ManpowerMemberReport({
+                        manpower_report_id: ObjectId(manpower_report_id),
+                        manpower_category_id: ObjectId(list.manpower_category_id),
+                        manpower_member : list.manpower_member,
+                    });
+                    const member_result = await manpower_member_report.save();
+                }
+            });
+        } catch (err) {
+            return next(err);
+        }
         
+        return res.send(CustomSuccessHandler.success("Manpower report updated successfully"));
     },
 
     async manpowerReportByReportId(req, res, next){
