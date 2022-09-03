@@ -458,6 +458,7 @@ const ManpowerReportController = {
         const manpower_report_id = req.params.manpower_report_id;
         try {
             manpowerCategories.forEach( async (list) => {
+
                 if (list.manpower_member) {
                     const document_exist = await ManpowerMemberReport.exists({manpower_report_id: ObjectId(manpower_report_id), manpower_category_id:ObjectId(list.manpower_category_id)});
                     if (document_exist) {

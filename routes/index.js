@@ -105,6 +105,7 @@ router.get('/user-by-projects/:user_id', ProjectController.userByProjects);
 //project team
 router.get('/project-team/:project_id', ProjectTeamController.index);
 router.post('/project-team', ProjectTeamController.store);
+router.put('/project-team/:id', ProjectTeamController.update);
 router.delete('/project-team/:id', ProjectTeamController.destroy);
 // router.delete('/project-team/:project_id/:user_id', ProjectTeamController.destroy);
 
@@ -253,9 +254,9 @@ router.post('/report/:type', ReportController.saveReport);
     router.put('/manpower-sub-category/:id', ManpowerSubCategoryController.update);
     router.delete('/manpower-sub-category/:id', ManpowerSubCategoryController.destroy);
 
-router.get('/supplier', SupplierController.index);
+router.get('/supplier/:company_id', SupplierController.index);
 router.post('/supplier', SupplierController.store);
-router.get('/supplier/:supplier_id', SupplierController.edit);
+router.get('/edit-supplier/:supplier_id', SupplierController.edit);
 router.put('/supplier/:supplier_id', SupplierController.update);
 router.delete('/supplier/:supplier_id', SupplierController.destroy);
 
@@ -269,7 +270,7 @@ router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
 router.get('/attendance/:user_id', AttendanceController.attendance);
 // router.post('/attendance', AttendanceController.attendance);
 
-router.get('/leaves', AttendanceController.getLeaves);
+router.get('/leaves/:company_id', AttendanceController.getLeaves);
 router.post('/apply-leaves', AttendanceController.applyLeaves);
 router.put('/approve-leaves/:id', AttendanceController.approveLeaves);
 

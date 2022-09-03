@@ -23,7 +23,8 @@ const attendanceSchema = mongoose.Schema({
     //     }]
     // }]
 
-    user_id:{ type: ObjectId },
+    company_id:{ type: ObjectId, required:true },
+    user_id:{ type: ObjectId, required:true },
     year: { type:String},
     month: { type: Number },
     month_name: { type: String },
