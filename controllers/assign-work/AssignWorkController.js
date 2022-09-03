@@ -49,6 +49,8 @@ const AssignWorkController = {
                                 work_status:'$work_status', 
                                 comment:'$comment', 
                                 comment_status:'$comment_status', 
+                                assign_date:"$assign_date",
+                                assign_time:"$assign_time",
                             }, 
                           }
                       }
@@ -231,7 +233,11 @@ const AssignWorkController = {
                         submit_work_text:1,
                         submit_work_date:1,
                         submit_work_time:1,
-                        work_status:1
+                        work_status:1,
+                        exp_completion_date:1,
+                        exp_completion_time:1,
+                        assign_date:1,
+                        assign_time:1,
                     }
                 },
             ])
@@ -440,6 +446,10 @@ const AssignWorkController = {
                         verify_date:1,
                         verify_time:1,
                         verify:1,
+                        exp_completion_date:1,
+                        exp_completion_time:1,
+                        assign_date:1,
+                        assign_time:1
                     }
                 },
             ])

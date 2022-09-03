@@ -18,7 +18,6 @@ const storage = multer.diskStorage({
         // console.log(req)
         cb(null, uniqueName);
     }
-    
 });
 
 const handleMultipartData = multer({

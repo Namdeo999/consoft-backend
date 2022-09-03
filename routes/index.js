@@ -9,7 +9,7 @@ import {
     CompanyController, ProductKeyController, UserRoleController, UserPrivilegeController,
 
     //project
-    ProjectCategoryController, ProjectTypeController, ProjectController, ProjectTeamController,
+    ProjectCategoryController, ProjectTypeController, ProjectController, ProjectTeamController, ProjectReportPathController,
 
     //Assignwork
     AssignWorkController, UserAssignWorkController,
@@ -105,10 +105,15 @@ router.get('/user-by-projects/:user_id', ProjectController.userByProjects);
 //project team
 router.get('/project-team/:project_id', ProjectTeamController.index);
 router.post('/project-team', ProjectTeamController.store);
+router.put('/project-team/:id', ProjectTeamController.update);
 router.delete('/project-team/:id', ProjectTeamController.destroy);
 // router.delete('/project-team/:project_id/:user_id', ProjectTeamController.destroy);
 
 router.get('/project-team-role-wise/:project_id', ProjectTeamController.projectTeamRoleWise);//pending
+
+//project report path
+router.get('/project-report-path/:company_id/:project_id', ProjectReportPathController.index);
+router.post('/project-report-path', ProjectReportPathController.store);
 
 //stock
 router.get('/unit', UnitController.index);
@@ -207,8 +212,7 @@ router.post('/report/:type', ReportController.saveReport);
     router.get('/manpower-report/:project_id/:user_id/:date', ManpowerReportController.index);    
     router.get('/manpower-report-by-report-id/:report_id', ManpowerReportController.manpowerReportByReportId);
     router.get('/edit-manpower-report/:contractor_id/:date', ManpowerReportController.edit);
-    router.put('/manpower-report/:id', ManpowerReportController.update);
-
+    router.put('/manpower-report/:manpower_report_id', ManpowerReportController.update);
 
     router.get('/quantity-report/:project_id/:user_id/:date', QuantityReportController.index);    
     router.get('/quantity-report-by-report-id/:report_id', QuantityReportController.quantityReportByReportId);    
@@ -250,9 +254,9 @@ router.post('/report/:type', ReportController.saveReport);
     router.put('/manpower-sub-category/:id', ManpowerSubCategoryController.update);
     router.delete('/manpower-sub-category/:id', ManpowerSubCategoryController.destroy);
 
-router.get('/supplier', SupplierController.index);
+router.get('/supplier/:company_id', SupplierController.index);
 router.post('/supplier', SupplierController.store);
-router.get('/supplier/:supplier_id', SupplierController.edit);
+router.get('/edit-supplier/:supplier_id', SupplierController.edit);
 router.put('/supplier/:supplier_id', SupplierController.update);
 router.delete('/supplier/:supplier_id', SupplierController.destroy);
 
@@ -266,7 +270,7 @@ router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
 router.get('/attendance/:user_id', AttendanceController.attendance);
 // router.post('/attendance', AttendanceController.attendance);
 
-router.get('/leaves', AttendanceController.getLeaves);
+router.get('/leaves/:company_id', AttendanceController.getLeaves);
 router.post('/apply-leaves', AttendanceController.applyLeaves);
 router.put('/approve-leaves/:id', AttendanceController.approveLeaves);
 

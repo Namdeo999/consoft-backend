@@ -13,6 +13,7 @@ export { default as projectCategorySchema } from './project/ProjectCategoryValid
 export { default as projectTypeSchema } from './project/ProjectTypeValidator.js';
 
 export { default as projectTeamSchema } from './project/ProjectTeamValidator.js';
+export { default as projectReportPathSchema } from './project/ProjectReportPathValidator.js';
 
 //stock
 export { default as manageStockSchema } from './stock/manageStockValidator.js';

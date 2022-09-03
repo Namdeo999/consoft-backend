@@ -71,7 +71,6 @@ const projectTeamController = {
         }
 
         const teamExist = [];
-        
         try {
 
             const { company_id, project_id, user_id } = req.body;
@@ -99,11 +98,38 @@ const projectTeamController = {
                 const result = await project_team.save();
             });
         } catch (err) {
-            // console.log("object")
             return next(err);
-            // if (err == breakError) throw err;
         }
         res.send(CustomSuccessHandler.success('Project team created successfully'));
+    },
+
+    async update(req, res, next){
+        const { error } = projectTeamSchema.validate(req.body);
+        if (error) {
+            return next(error);
+        }  
+        const { company_id, project_id, user_id } = req.body;
+        try {
+            for (const item of user_id) {
+                
+                const exist = await ProjectTeam.exists({ company_id:ObjectId(company_id), project_id: ObjectId(project_id), user_id:ObjectId(item)})
+                if (exist) {
+                    return next(CustomErrorHandler.alreadyExist('User is already exist in this project'));
+                }
+                await ProjectTeam.findByIdAndUpdate(
+                    {_id:req.params.id},
+                    {
+                        project_id,
+                        user_id
+                    },
+                    {new: true}
+                );
+            }
+
+        } catch (err) {
+            return next(err);
+        }
+        res.send(CustomSuccessHandler.success('Project team updated successfully'));
     },
 
     async destroy(req, res, next) {
