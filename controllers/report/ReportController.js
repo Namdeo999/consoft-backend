@@ -447,6 +447,32 @@ const ReportController = {
                         user_name: "$userData.name",
                         report_date: 1,
                         report_time: 1,
+                        verify_1_status: 1,
+                        verify_1_date: 1,
+                        verify_1_time: 1,
+                        verify_1_revert: 1,
+                        verify_1_revert_msg: 1,
+                        verify_2_status: 1,
+                        verify_2_date: 1,
+                        verify_2_time: 1,
+                        verify_2_revert: 1,
+                        verify_2_revert_msg: 1,
+                        admin_3_status: 1,
+                        admin_3_date: 1,
+                        admin_3_time: 1,
+                        admin_3_revert: 1,
+                        admin_3_revert_msg: 1,
+                        admin_2_status: 1,
+                        admin_2_date: 1,
+                        admin_2_time: 1,
+                        admin_2_revert: 1,
+                        admin_2_revert_msg: 1,
+                        admin_1_status: 1,
+                        admin_1_date: 1,
+                        admin_1_time: 1,
+                        admin_1_revert: 1,
+                        admin_1_revert_msg: 1,
+                        report_status: 1
                         // contractor_id: "$contractor_id",
                         // contractor_name: "$contractor_name",
                         // manpowerReport:[{
@@ -461,6 +487,19 @@ const ReportController = {
         }
         return res.json({ "status": 200, data:documents });
 
+    },
+
+    async verifyReport(req, res, next){
+        let current_date = CustomFunction.currentDate();
+        let current_time = CustomFunction.currentTime();
+
+        try {
+            const document = await Report.findById({_id:req.params.id});
+            console.log(document)
+        } catch (err) {
+            return next(err);
+        }
+        
     },
 
 }

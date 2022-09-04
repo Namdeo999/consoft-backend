@@ -4,32 +4,31 @@ import CustomErrorHandler from '../../services/CustomErrorHandler.js';
 import CustomFunction from '../../services/CustomFunction.js';
 import multer from 'multer';
 import path from 'path';
-import Joi from 'joi';
 import fs from 'fs';
 import { encode, decode } from 'node-base64-image';
+import { ObjectId } from 'mongodb';
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, 'assets/images/water_level/uploads/'),
-    filename: (req, file, cb) => {
-        const uniqueName = `${Date.now()}-${Math.round(
-            Math.random() * 1e9
-        )}${path.extname(file.originalname)}`;
-        // 3746674586-836534453.png
-        // console.log(req)
-        cb(null, uniqueName);
-    }
-    
-});
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => cb(null, 'assets/images/water_level/uploads/'),
+//     filename: (req, file, cb) => {
+//         const uniqueName = `${Date.now()}-${Math.round(
+//             Math.random() * 1e9
+//         )}${path.extname(file.originalname)}`;
+//         // 3746674586-836534453.png
+//         // console.log(req)
+//         cb(null, uniqueName);
+//     }
+// });
 
-const handleMultipartData = multer({
-    storage,
-    limits: { fileSize: 1000000 * 1 },
-}).single('image'); // 1mb
+// const handleMultipartData = multer({
+//     storage,
+//     limits: { fileSize: 1000000 * 1 },
+// }).single('image'); // 1mb
 
 const WaterLevelController = {
 
     async waterLevel(req, res, next){
-        
+
         
         // fs.writeFileSync(image_path + image_name,image, {encoding: 'base64'}, function(err){
         //     console.log('File created');
@@ -83,45 +82,65 @@ const WaterLevelController = {
         //         return next(error);
         //         // rootfolder/uploads/filename.png
         //     }
-
-        //     const {led_status} = req.body;
-            console.log(req.body);
+            // console.log(req.body);
             const {image, led_status, water_level} = req.body;
-            const image_path = "assets/images/water_level/uploads/";
-            const image_name = `${Date.now()}_${Math.round(Math.random() * 1e9)}.png`;
+            let document ;
 
-            // fs.writeFileSync('assets/images/water_level/uploads/image2.png',image, {encoding: 'base64'}, function(err){
-            //     console.log('File created');
-            // });
-
-            fs.writeFileSync(image_path + image_name,image, {encoding: 'base64'}, function(err){
-                console.log('File created');
-            });
-
-            // await decode(image, { fname: image_path + image_name, ext: 'png' });
-            const waterLevel = new WaterLevel({
-                led_status:led_status,
-                water_level:water_level,
-                image:image_path + image_name,
-            });
             try {
-                const result = await waterLevel.save();
-                // res.send(CustomSuccessHandler.success('Led status updated successfully' + req.body));
-                res.send(CustomSuccessHandler.success('Water level status updated successfully'));
+
+                // const replace_2F = image.replace(/%2F/g, '/'); // %2F = /
+                // const final_image = replace_2F.replace(/%2B/g, '+'); // %2B = +
+
+                const replace_2F = image.split("%2F").join("/"); // %2F = /
+                const final_image = replace_2F.split("%2B").join("+"); // %2B = +
+                
+                // return ;
+                // const image_path = "uploads/water_level/";
+                const image_path = "uploads/";
+                const image_name = `${Date.now()}_${Math.round(Math.random() * 1e9)}.png`;
+
+                fs.writeFileSync(image_path + image_name,final_image, {encoding: 'base64'}, function(err){
+                    console.log('File created');
+                });
+
+                await WaterLevel.find().then(function([response]) {
+                    document = response;
+                });
+
+                if(document){
+                    await WaterLevel.findByIdAndUpdate(
+                    { _id: ObjectId(document._id)},
+                    {
+                        led_status:led_status,
+                        water_level:water_level,
+                        image:image_path + image_name,
+                    },
+                    {new: true});
+                    res.send(CustomSuccessHandler.success('Water updated successfully'));
+                }else{
+                    const waterLevel = new WaterLevel({
+                        led_status:led_status,
+                        water_level:water_level,
+                        image:image_path + image_name,
+                    });
+                    const result = await waterLevel.save();
+                    res.send(CustomSuccessHandler.success('Water level status updated successfully'));
+                }
+
             } catch (err) {
                 return next(err);
             }
-            
-        // });
-        
-        // return res.json({status:200,message:"Led status updated successfully",  re_body:req.body, req_file:req.file});
 
+            // await decode(image, { fname: image_path + image_name, ext: 'png' });
+ 
+        // });
+    
     },
 
     async index(req, res, next){
         let documents;
         try {
-            documents = await WaterLevel.find().select('led_status');
+            documents = await WaterLevel.find().select('led_status image');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }

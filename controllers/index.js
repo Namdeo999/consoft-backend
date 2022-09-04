@@ -18,6 +18,7 @@ export { default as ProjectController } from './project/ProjectController.js';
 export { default as ProjectCategoryController } from './project/ProjectCategoryController.js';
 export { default as ProjectTypeController } from './project/ProjectTypeController.js';
 export { default as ProjectTeamController } from './project/ProjectTeamController.js';
+export { default as ProjectReportPathController } from './project/ProjectReportPathController.js';
 
 //stock controller 
 export { default as UnitController } from './stock/UnitController.js';

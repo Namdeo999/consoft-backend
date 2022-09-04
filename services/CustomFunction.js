@@ -56,7 +56,7 @@ const CustomFunction  = {
 
     stringPassword(len){
         var gen_pass = "";
-        var charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        var charset = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         for( var i=0; i < len; i++ ){
             gen_pass +=charset.charAt(Math.floor(Math.random()*charset.length));
         }

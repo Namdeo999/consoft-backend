@@ -2,13 +2,14 @@ import { Supplier } from "../../models/index.js";
 import { supplierSchema } from "../../validators/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
+import { ObjectId } from "mongodb";
 
 const SupplierController = {
 
     async index(req, res, next){
         let documents
         try {
-            documents = await Supplier.find();
+            documents = await Supplier.find({company_id:ObjectId(req.params.company_id)});
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
@@ -22,8 +23,9 @@ const SupplierController = {
             return next(error);
         }
 
+        const {company_id, supplier_name, supplier_mobile, supplier_location} = req.body;
         try {
-            const exist = await Supplier.exists({supplier_mobile:req.body.supplier_mobile});
+            const exist = await Supplier.exists({ company_id:ObjectId(company_id), supplier_mobile:supplier_mobile });
             if (exist) {
                 return next(CustomErrorHandler.alreadyExist('This supplier is already exist'));
             }
@@ -31,11 +33,10 @@ const SupplierController = {
             return next(err);
         }
 
-        const {supplier_name, supplier_mobile, supplier_email, supplier_location} = req.body;
         const supplier = new Supplier({
+            company_id, 
             supplier_name, 
             supplier_mobile, 
-            supplier_email, 
             supplier_location
         });
 
@@ -65,7 +66,7 @@ const SupplierController = {
             return next(error);
         }
 
-        const {supplier_name, supplier_mobile, supplier_email, supplier_location} = req.body;
+        const { supplier_name, supplier_mobile, supplier_location} = req.body;
         let document;
         try {
             document = await Supplier.findOneAndUpdate(
@@ -73,7 +74,6 @@ const SupplierController = {
                 {
                     supplier_name,
                     supplier_mobile,
-                    supplier_email,
                     supplier_location
                 },
                 {new: true});

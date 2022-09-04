@@ -21,9 +21,13 @@ const AttendanceController = {
         let documents; 
         try {
             documents = await Attendance.aggregate([
+                {
+                    $match:{
+                        "company_id":ObjectId(req.params.company_id)
+                    }
+                },
                 {$unwind:'$leavedates'},
                 {$match:{'leavedates.approved':false}},
-                
                 {
                     $lookup: {
                         from: 'users',
@@ -119,16 +123,17 @@ const AttendanceController = {
     },
 
     async applyLeaves(req, res, next){
-        const { user_id, leavedates } = req.body;
+        const { company_id, user_id, leavedates } = req.body;
         let year = CustomFunction.currentYearMonthDay('YYYY');
         let month = CustomFunction.currentYearMonthDay('MM')
         let month_name = CustomFunction.monthName();
         let attendance_main_id;
 
-        const exist = await Attendance.exists({user_id: ObjectId(user_id), year:year, month:month});
+        const exist = await Attendance.exists({company_id:ObjectId(company_id), user_id: ObjectId(user_id), year:year, month:month});
         try {
             if (!exist) {
                 const attendance = new Attendance({
+                    company_id,
                     user_id,
                     year:year,
                     month:month,

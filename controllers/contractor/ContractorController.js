@@ -23,7 +23,7 @@ const ContractorController = {
         } 
 
         try {
-            const exist = await Contractor.exists({project_id: req.body.project_id , contractor_name: req.body.contractor_name});
+            const exist = await Contractor.exists({project_id: req.body.project_id, contractor_name: req.body.contractor_name});
             
             if(exist){
                 return next(CustomErrorHandler.alreadyExist('Contractor already exist in this project'));

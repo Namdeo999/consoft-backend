@@ -2,7 +2,6 @@ import { UserPrivilege } from "../../models/index.js";
 import { userPrivilegeSchema } from "../../validators/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
-import CustomFunction from "../../services/CustomFunction.js";
 
 const UserPrivilegeController = {
     async index(req, res, next){
@@ -25,7 +24,7 @@ const UserPrivilegeController = {
         try {
             const exist = await UserPrivilege.exists({ privilege:privilege});
             if (exist) {
-                return next(CustomErrorHandler.alreadyExist(CustomFunction.capitalize(`${privilege} is already exist`)));
+                return next(CustomErrorHandler.alreadyExist('Privilege is already exist' ));
             }
         } catch (err) {
             return next(err);
@@ -37,7 +36,7 @@ const UserPrivilegeController = {
 
         try {
             const result = await user_privilege.save();
-            res.send(CustomSuccessHandler.success(CustomFunction.capitalize(`${privilege} created successfully`)));
+            res.send(CustomSuccessHandler.success( 'Privilege created successfully' ));
         } catch (err) {
             return next(err);
         }
@@ -65,14 +64,14 @@ const UserPrivilegeController = {
         try {
             const exist = await UserPrivilege.exists({ privilege:privilege });
             if (exist) {
-                return next(CustomErrorHandler.alreadyExist(CustomFunction.capitalize(`${privilege} is already exist`)));
+                return next(CustomErrorHandler.alreadyExist( 'Privilege is already exist'));
             }
             document = await UserPrivilege.findOneAndUpdate({ _id: req.params.id},{privilege},{new:true});
         } catch (err) {
             return next(err);
         }
         // res.status(201).json(document);
-        return res.send(CustomSuccessHandler.success(CustomFunction.capitalize(`${privilege} updated successfully`)))
+        return res.send(CustomSuccessHandler.success( 'Privilege updated successfully'))
     },
 
     async destroy(req, res, next) {
@@ -81,7 +80,7 @@ const UserPrivilegeController = {
             return next(new Error('Nothing to delete'));
         }
         // return res.send({"status":200,"message": "Category deleted successfully" })
-        return res.send(CustomSuccessHandler.success(CustomFunction.capitalize(`${document.privilege} deleted successfully`)))
+        return res.send(CustomSuccessHandler.success( 'Privilege deleted successfully'))
     },
 
 }

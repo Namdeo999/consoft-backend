@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 const userSchema = Joi.object({
-    name: Joi.string().min(5).max(15).required().messages({
+    name: Joi.string().min(5).max(50).required().messages({
         "string.base":`"User Name" should be a type of 'text'`,
         "string.empty":`"User Name" cant be an empty`,
         "string.min":`"User Name" should have a minimum length of {#limit}`,
@@ -13,6 +13,7 @@ const userSchema = Joi.object({
         "string.empty":`"Email" cant be an empty`,
         "any.required":`"Email" is a required`,
     }),
+    // mobile:Joi.number().required(),
     mobile: Joi.string().pattern(/^[0-9]{10}$/).required().messages({
         "string.base":`"Mobile Number" should be a type of 'number'`,
         "string.pattern.base": `"Phone Number" must be a 10 digits number`,
