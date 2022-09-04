@@ -30,7 +30,7 @@ app.use(express.json({ limit: '5mb' }))
 
 // Load Routes
 app.use('/api', routes);
-
+app.use('/uploads', express.static('uploads'));
 
 app.use(errorHandler);
 
