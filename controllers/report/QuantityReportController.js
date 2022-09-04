@@ -3,7 +3,10 @@ import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import CustomFunction from "../../services/CustomFunction.js";
 
+import ReportController from "./ReportController.js";
 import { ObjectId } from "mongodb";
+
+
 
 const QuantityReportController = {
 
@@ -52,9 +55,9 @@ const QuantityReportController = {
                     }
                 },
 
-            {
-                $unwind: "$quantityReport"
-            },
+                {
+                    $unwind: "$quantityReport"
+                },
 
             {
                 $lookup: {
@@ -120,29 +123,30 @@ const QuantityReportController = {
         return res.json({ "status": 200, data:documents });
     },
 
-    async store(req, res, next){
-        const { report_id, user_id, inputs} = req;
+    async store(req, res, next) {
+        const { report_id, user_id, inputs } = req;
         let current_date = CustomFunction.currentDate();
         let current_time = CustomFunction.currentTime();
-        const report_exist = await QuantityReport.exists({report_id: ObjectId(report_id), user_id: ObjectId(user_id),quantity_report_date: current_date});
+        const report_exist = await QuantityReport.exists({ report_id: ObjectId(report_id), user_id: ObjectId(user_id), quantity_report_date: current_date });
         let quantity_report_id
         try {
             if (!report_exist) {
                 const quantity_report = new QuantityReport({
                     report_id,
                     user_id,
-                    quantity_report_date:current_date,
-                    quantity_report_time:current_time
+                    quantity_report_date: current_date,
+                    quantity_report_time: current_time
                 });
                 const result = await quantity_report.save();
                 quantity_report_id = result._id;
-            }else{
+            } else {
                 quantity_report_id = report_exist._id;
             }
         } catch (err) {
             return next(err);
         }
 
+        let quantity_reports;
         let quantity_reports_exist;
         try {
             inputs.forEach( async (list, key) => {
@@ -150,8 +154,7 @@ const QuantityReportController = {
                 if (quantity_reports_exist) {
                     return;
                 }
-                const quantity_work_item_report = new QuantityWorkItemReport({
-                    quantity_report_id:ObjectId(quantity_report_id),
+                const quantity_work_report = new QuantityWorkItemReport({
 
                     item_id : ObjectId(list.item_id),
                     unit_name : list.unit_name,
@@ -262,6 +265,7 @@ const QuantityReportController = {
                 }
             });
 
+>>>>>>> a9566b5e47c9357c8b482907ee37828a0bcb4a1b
         } catch (err) {
             return next(err);
         }
