@@ -21,7 +21,7 @@ const ToolsMachineryController = {
         if (error) {
             return next(error);
         }
-
+        console.log("🚀 ~ file: ToolsMachineryController.js ~ line 25 ~ store ~ req.body", req.body)
         try {
             const company_exist = await ToolsMachinery.exists({company_id:req.body.company_id});
             if (company_exist) {

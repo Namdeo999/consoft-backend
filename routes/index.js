@@ -223,6 +223,9 @@ router.post('/report/:type', ReportController.saveReport);
     // router.post('/quantity-report',QuantityReportController.store);
     router.get('/quantity-item-exist/:project_id/:user_id', QuantityReportController .quantityItemExist);
 
+    //report verify
+    router.put('/verify-report/:id', ReportController.verifyReport);
+
     // report item
     router.get('/quantity-report-item/:company_id', QuantityReportItemController.index);
     router.post('/quantity-report-item', QuantityReportItemController.store);
@@ -253,6 +256,8 @@ router.post('/report/:type', ReportController.saveReport);
     router.get('/edit-manpower-sub-category/:id', ManpowerSubCategoryController.edit);
     router.put('/manpower-sub-category/:id', ManpowerSubCategoryController.update);
     router.delete('/manpower-sub-category/:id', ManpowerSubCategoryController.destroy);
+
+    
 
 router.get('/supplier/:company_id', SupplierController.index);
 router.post('/supplier', SupplierController.store);
