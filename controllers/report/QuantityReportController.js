@@ -165,7 +165,7 @@ const QuantityReportController = {
                     remark : list.remark,
                     quality_type : list.quality_type,
                 });
-                const item_result = await quantity_work_item_report.save();
+                const item_result = await quantity_work_report.save();
                 
                 if (list.subquantityitems.length > 0) {
                     list.subquantityitems.forEach(async (sub_list, key1) => {
@@ -265,7 +265,7 @@ const QuantityReportController = {
                 }
             });
 
->>>>>>> a9566b5e47c9357c8b482907ee37828a0bcb4a1b
+
         } catch (err) {
             return next(err);
         }

@@ -1,8 +1,10 @@
 
-import { ToolsMachinery } from '../../models/index.js'
+import { Report, ToolsMachinery, ToolsMachineryReport } from '../../models/index.js'
 import { toolsMachinerySchema } from '../../validators/index.js';
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
+import CustomFunction from '../../services/CustomFunction.js';
+import { ObjectId } from "mongodb";
 
 const ToolsMachineryController = {
     async index(req, res, next) {
@@ -17,15 +19,14 @@ const ToolsMachineryController = {
 
     async store(req, res, next) {
 
-        const {error} = toolsMachinerySchema.validate(req.body)
+        const { error } = toolsMachinerySchema.validate(req.body)
         if (error) {
             return next(error);
         }
-        console.log("🚀 ~ file: ToolsMachineryController.js ~ line 25 ~ store ~ req.body", req.body)
         try {
-            const company_exist = await ToolsMachinery.exists({company_id:req.body.company_id});
+            const company_exist = await ToolsMachinery.exists({ company_id: req.body.company_id });
             if (company_exist) {
-                const machinery_name_exist = await ToolsMachinery.exists({tools_machinery_name:req.body.tools_machinery_name});
+                const machinery_name_exist = await ToolsMachinery.exists({ tools_machinery_name: req.body.tools_machinery_name });
                 if (machinery_name_exist) {
                     return next(CustomErrorHandler.alreadyExist('This machinery is already exist'));
                 }
@@ -50,6 +51,41 @@ const ToolsMachineryController = {
         }
 
     },
+    async tAndPReport(req, res, next) {
+                 
+        let current_date = CustomFunction.currentDate();
+        let current_time = CustomFunction.currentTime();
+
+        const { report_id, user_id, equipmentField } = req;        
+        
+        const report_exist = await ToolsMachineryReport.exists({ report_id: ObjectId(report_id), user_id: user_id, equipment_report_date: current_date });
+        // console.log("🚀 ~ file: toolsMachineryController.js ~ line 62 ~ tAndPReport ~ report_exist", report_exist)
+
+        try {
+            let Tools;
+
+            if (!report_exist) {                
+                equipmentField.forEach(list => {
+                    Tools = new ToolsMachineryReport({
+                        report_id,
+                        user_id,
+                        equipment_id: list.equipment_id,
+                        qty: list.qty,
+                        onDateChange: list.onDateChange,
+                        equipment_report_date:current_date,
+                        equipment_report_time:current_time
+                    });
+                });
+                Tools.save();
+                return ({ status: 200 });
+
+            }
+        } catch (err) {
+            return next(err);
+        }
+
+    },
+
     async edit(req, res, next) {
         let document;
         try {
@@ -61,7 +97,7 @@ const ToolsMachineryController = {
         return res.json(document);
     },
     async update(req, res, next) {
-        const {error} = toolsMachinerySchema.validate(req.body)
+        const { error } = toolsMachinerySchema.validate(req.body)
         if (error) {
             return next(error);
         }

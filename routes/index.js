@@ -206,58 +206,58 @@ router.delete('/contractor/:contractor_id', ContractorController.destroy);
 //report
 router.post('/report/:type', ReportController.saveReport);
 
-    //admin
-    router.get('/report/:project_id', ReportController.index);
+//admin
+router.get('/report/:project_id', ReportController.index);
 
-    router.get('/manpower-report/:project_id/:user_id/:date', ManpowerReportController.index);    
-    router.get('/manpower-report-by-report-id/:report_id', ManpowerReportController.manpowerReportByReportId);
-    router.get('/edit-manpower-report/:contractor_id/:date', ManpowerReportController.edit);
-    router.put('/manpower-report/:manpower_report_id', ManpowerReportController.update);
+router.get('/manpower-report/:project_id/:user_id/:date', ManpowerReportController.index);
+router.get('/manpower-report-by-report-id/:report_id', ManpowerReportController.manpowerReportByReportId);
+router.get('/edit-manpower-report/:contractor_id/:date', ManpowerReportController.edit);
+router.put('/manpower-report/:manpower_report_id', ManpowerReportController.update);
 
-    router.get('/quantity-report/:project_id/:user_id/:date', QuantityReportController.index);    
-    router.get('/quantity-report-by-report-id/:report_id', QuantityReportController.quantityReportByReportId);    
+router.get('/quantity-report/:project_id/:user_id/:date', QuantityReportController.index);
+router.get('/quantity-report-by-report-id/:report_id', QuantityReportController.quantityReportByReportId);
 
-    router.get('/edit-quantity-report/:id', QuantityReportController.edit);
-    router.put('/quantity-report/:id', QuantityReportController.update);
+router.get('/edit-quantity-report/:id', QuantityReportController.edit);
+router.put('/quantity-report/:id', QuantityReportController.update);
 
-    // router.post('/quantity-report',QuantityReportController.store);
-    router.get('/quantity-item-exist/:project_id/:user_id', QuantityReportController .quantityItemExist);
+// router.post('/quantity-report',QuantityReportController.store);
+router.get('/quantity-item-exist/:project_id/:user_id', QuantityReportController.quantityItemExist);
 
-    //report verify
-    router.put('/verify-report/:id', ReportController.verifyReport);
+//report verify
+router.put('/verify-report/:id', ReportController.verifyReport);
 
-    // report item
-    router.get('/quantity-report-item/:company_id', QuantityReportItemController.index);
-    router.post('/quantity-report-item', QuantityReportItemController.store);
-    router.get('/edit-quantity-report-item/:id', QuantityReportItemController.edit);
-    router.put('/update-quantity-report-item/:id', QuantityReportItemController.update);
-    router.delete('/delete-quantity-report-item/:id', QuantityReportItemController.destroy);
+// report item
+router.get('/quantity-report-item/:company_id', QuantityReportItemController.index);
+router.post('/quantity-report-item', QuantityReportItemController.store);
+router.get('/edit-quantity-report-item/:id', QuantityReportItemController.edit);
+router.put('/update-quantity-report-item/:id', QuantityReportItemController.update);
+router.delete('/delete-quantity-report-item/:id', QuantityReportItemController.destroy);
 
-    //quality type
-    router.get('/quality-type/', QualityTypeController.index);
-    router.post('/quality-type/', QualityTypeController.store);
-    router.get('/quality-type/:id', QualityTypeController.edit);
-    router.put('/quality-type/:id', QualityTypeController.update);
-    router.delete('/quality-type/:id', QualityTypeController.destroy);
+//quality type
+router.get('/quality-type/', QualityTypeController.index);
+router.post('/quality-type/', QualityTypeController.store);
+router.get('/quality-type/:id', QualityTypeController.edit);
+router.put('/quality-type/:id', QualityTypeController.update);
+router.delete('/quality-type/:id', QualityTypeController.destroy);
 
-    //manpower category
-    router.get('/manpower-category/:company_id/:project_id', ManpowerCategoryController.index);
-    router.post('/manpower-category', ManpowerCategoryController.store);
-    router.get('/edit-manpower-category/:id', ManpowerCategoryController.edit);
-    router.put('/manpower-category/:id', ManpowerCategoryController.update);
-    router.delete('/manpower-category/:id', ManpowerCategoryController.destroy);
+//manpower category
+router.get('/manpower-category/:company_id/:project_id', ManpowerCategoryController.index);
+router.post('/manpower-category', ManpowerCategoryController.store);
+router.get('/edit-manpower-category/:id', ManpowerCategoryController.edit);
+router.put('/manpower-category/:id', ManpowerCategoryController.update);
+router.delete('/manpower-category/:id', ManpowerCategoryController.destroy);
 
-    router.get('/manpower-category/:company_id/:project_id/:contractor_id', ManpowerCategoryController.getManpowerCategoryByContractor);
+router.get('/manpower-category/:company_id/:project_id/:contractor_id', ManpowerCategoryController.getManpowerCategoryByContractor);
 
-    //manpower sub category
-    // router.get('/manpower-sub-category/:manpower_category_id', ManpowerSubCategoryController.index);
-    router.get('/manpower-sub-category/:company_id', ManpowerSubCategoryController.index);
-    router.post('/manpower-sub-category', ManpowerSubCategoryController.store);
-    router.get('/edit-manpower-sub-category/:id', ManpowerSubCategoryController.edit);
-    router.put('/manpower-sub-category/:id', ManpowerSubCategoryController.update);
-    router.delete('/manpower-sub-category/:id', ManpowerSubCategoryController.destroy);
+//manpower sub category
+// router.get('/manpower-sub-category/:manpower_category_id', ManpowerSubCategoryController.index);
+router.get('/manpower-sub-category/:company_id', ManpowerSubCategoryController.index);
+router.post('/manpower-sub-category', ManpowerSubCategoryController.store);
+router.get('/edit-manpower-sub-category/:id', ManpowerSubCategoryController.edit);
+router.put('/manpower-sub-category/:id', ManpowerSubCategoryController.update);
+router.delete('/manpower-sub-category/:id', ManpowerSubCategoryController.destroy);
 
-    
+
 
 router.get('/supplier/:company_id', SupplierController.index);
 router.post('/supplier', SupplierController.store);
