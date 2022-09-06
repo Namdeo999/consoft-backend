@@ -1,7 +1,7 @@
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import CustomFunction from "../../services/CustomFunction.js";
-import { SubWorkAssign } from "../../models/index.js";
+import { SubWorkAssign, Report, ProjectReportPath } from "../../models/index.js";
 import Joi from "joi";
 
 const RevertController = {
@@ -33,6 +33,25 @@ const RevertController = {
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
+    },
+
+    async revertReport(req, res, next){
+        const revertSchema = Joi.object({
+            revert_msg:Joi.string().required()
+        });
+
+        const {error} = revertSchema.validate(req.body);
+        if (error) {
+            return next(error);
+        }
+
+        try {
+            const { revert_msg } = req.body;
+            
+        } catch (err) {
+            return next(err)
+        }
+
     }
 
 }
