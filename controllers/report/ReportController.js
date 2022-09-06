@@ -87,7 +87,6 @@ const ReportController = {
                     });
                     break;
                 case Constants.TANDP:
-
                     const { equipmentField } = req.body;
                     bodyData = {
                         report_id: report_id,
@@ -101,7 +100,6 @@ const ReportController = {
                             return (err);
                         }
                     });                    
-
                     break;
 
                 default:

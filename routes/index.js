@@ -211,7 +211,6 @@ router.delete('/contractor/:contractor_id', ContractorController.destroy);
 //report
 router.post('/report/:type', ReportController.saveReport);
 
-
     //admin
     router.get('/report/:project_id', ReportController.index);
 
@@ -264,7 +263,6 @@ router.post('/report/:type', ReportController.saveReport);
     router.delete('/manpower-sub-category/:id', ManpowerSubCategoryController.destroy);
 
     
-
 
 router.get('/supplier/:company_id', SupplierController.index);
 router.post('/supplier', SupplierController.store);
