@@ -34,6 +34,8 @@ export { default as ManageBoq } from './stock/ManageBoq.js';
 //tools machinery
 
 export { default as ToolsMachinery } from './tools-machinery/ToolsMachinery.js';
+export {default as ToolsMachineryReport} from './tools-machinery/ToolsMachineryReport.js'
+export {default as ToolsMachineryReportItem} from './tools-machinery/ToolsMachineryReportItem.js'
 
 //contractor
 export {default as Contractor} from './contractor/Contractor.js';
