@@ -54,10 +54,12 @@ router.post('/company', CompanyController.store);
 router.post('/verify-product-key', ProductKeyController.verifyProductKey);
 
 router.post('/register', userController.register);
-router.get('/user', user_auth, userController.user);
+// router.get('/user', user_auth, userController.user);
+router.get('/user/:user_id', userController.user);
 router.get('/users/:company_id', userController.index);
 
-router.get('/role-by-users/:role_id', userController.roleByUsers);
+router.get('/role-by-users/:company_id/:role_id', userController.roleByUsers);
+router.get('/privilege-by-users/:company_id/:privilege_id', userController.privilegeByUsers);
 
 router.post('/refresh', refreshController.refresh);
 router.post('/logout', auth, loginController.logout);
@@ -224,7 +226,7 @@ router.post('/report/:type', ReportController.saveReport);
     router.get('/quantity-item-exist/:project_id/:user_id', QuantityReportController .quantityItemExist);
 
     //report verify
-    router.put('/verify-report/:id', ReportController.verifyReport);
+    router.put('/verify-report/:project_id/:report_id/:user_id', VerifyController.verifyReport);
 
     // report item
     router.get('/quantity-report-item/:company_id', QuantityReportItemController.index);
@@ -267,6 +269,7 @@ router.delete('/supplier/:supplier_id', SupplierController.destroy);
 
 //revert
 router.put('/revert-submit-work/:work_id', RevertController.revertSubmitWork);
+router.put('/revert-report/:project_id/:report_id/:user_id', RevertController.revertReport);
 
 //verify
 router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
