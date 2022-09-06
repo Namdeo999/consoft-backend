@@ -1,13 +1,14 @@
 
-import { Report, ToolsMachinery, ToolsMachineryReport } from '../../models/index.js'
+import { Report, ToolsMachinery, ToolsMachineryReport, ToolsMachineryReportItem } from '../../models/index.js'
 import { toolsMachinerySchema } from '../../validators/index.js';
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import CustomFunction from '../../services/CustomFunction.js';
 import { ObjectId } from "mongodb";
 
+
 const ToolsMachineryController = {
-    async index(req, res, next) {
+    async index(req, res, next) { 
         let Tools;
         try {
             Tools = await ToolsMachinery.find().select('-createdAt -updatedAt -__v');
@@ -51,41 +52,170 @@ const ToolsMachineryController = {
         }
 
     },
+    async getTAndPReport(req, res, next) {
+        let documents;
+        try {
+            documents = await Report.aggregate([
+                {
+                    $match: {
+                        "project_id": ObjectId(req.params.project_id),
+                        "user_id": ObjectId(req.params.user_id),
+                        "report_date": req.params.date
+                    }
+
+                },
+                {
+                    $lookup: {
+                        from: 'toolsMachineryReport',
+                        localField: '_id',
+                        foreignField: 'report_id',
+                        as: 'toolsAndMachineryReport'
+                    }
+                },
+
+                {
+                    $unwind: "$toolsAndMachineryReport"
+                },
+                {
+                    $lookup: {
+                        from: "toolsMachineryReportItem",
+                        let: { "equipment_report_Id": "$toolsAndMachineryReport._id" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ["$equipment_report_Id", "$$equipment_report_Id"] }
+                                }
+                            },
+                        ],
+                        as: 'toolsAndMachineryReportItem'
+                    }
+                },
+                {
+                    $unwind: "$toolsAndMachineryReportItem"
+                },
+                {
+                    $lookup: {
+                        from: 'toolsMachineries',
+                        localField: 'toolsAndMachineryReportItem.equipment_id',
+                        foreignField: '_id',
+                        as: 'toolsAndMachineryName'
+                    }
+                },
+                {
+                    $unwind: "$toolsAndMachineryName"
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        company_id: 1,
+                        project_id: 1,
+                        toolsAndMachineryReport: {
+                            _id: 1,
+                            user_id: 1,
+                            report_id: 1,
+                            equipment_report_date: 1,
+                            equipment_report_time: 1,
+                        },
+                        toolsAndMachineryReportItem: {
+                            _id: 1,
+                            equipment_report_Id: 1,
+                            equipment_id: 1,
+                            qty: 1,
+                            equipment_name: "$toolsAndMachineryName.tools_machinery_name",
+                            onDateChange: 1,
+                        }
+                    }
+                }
+            ])
+
+        } catch (error) {
+            return next(CustomErrorHandler.serverError());
+        }
+        return res.json({ "status": 200, data: documents });
+    },
     async tAndPReport(req, res, next) {
-                 
+
         let current_date = CustomFunction.currentDate();
         let current_time = CustomFunction.currentTime();
 
-        const { report_id, user_id, equipmentField } = req;        
-        
+        const { report_id, user_id, equipmentField } = req;
+
         const report_exist = await ToolsMachineryReport.exists({ report_id: ObjectId(report_id), user_id: user_id, equipment_report_date: current_date });
-        // console.log("🚀 ~ file: toolsMachineryController.js ~ line 62 ~ tAndPReport ~ report_exist", report_exist)
+
+        let equipment_report_Id;
+        let equipment_report_exist;
+
 
         try {
             let Tools;
-
-            if (!report_exist) {                
-                equipmentField.forEach(list => {
-                    Tools = new ToolsMachineryReport({
-                        report_id,
-                        user_id,
-                        equipment_id: list.equipment_id,
-                        qty: list.qty,
-                        onDateChange: list.onDateChange,
-                        equipment_report_date:current_date,
-                        equipment_report_time:current_time
-                    });
+            if (!report_exist) {
+                Tools = new ToolsMachineryReport({
+                    report_id,
+                    user_id,
+                    equipment_report_date: current_date,
+                    equipment_report_time: current_time
                 });
-                Tools.save();
-                return ({ status: 200 });
 
+                const result = await Tools.save();
+                equipment_report_Id = result._id;
+            }
+            else {
+                equipment_report_Id = report_exist._id;
             }
         } catch (err) {
             return next(err);
         }
 
-    },
+        try {
+            equipmentField.forEach(async (list) => {
+                equipment_report_exist = await ToolsMachineryReportItem.exists({ equipment_report_Id: ObjectId(equipment_report_Id), equipment_id: list.equipment_id })
+                if (equipment_report_exist) {
+                    return;
+                }
+                const equipment_item_report = new ToolsMachineryReportItem({
+                    equipment_report_Id: ObjectId(equipment_report_Id),
+                    equipment_id: list.equipment_id,
+                    qty: list.qty,
+                    onDateChange: list.onDateChange
+                })
+                const res = await equipment_item_report.save();
+            });
+            return ({ status: 200 });
+        } catch (error) {
+            return next(err);
+        }
 
+    },
+    async tAndPEditReport(req, res, next) {
+        let document;
+        try {
+            document = await ToolsMachineryReportItem.findOne({ _id: req.params.id }).select('-createdAt -updatedAt -__v');
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+
+        return res.json(document);
+    },
+    async tAndPUpdateReport(req, res, next) {
+        let documents;
+        const { equipmentField } = req.body;
+        try {
+            equipmentField.forEach(async (list) => {
+                documents = await ToolsMachineryReportItem.findByIdAndUpdate(
+                    { _id: req.params.id },
+                    {
+                        equipment_id: ObjectId(list.equipment_id),
+                        qty: list.qty,
+                        onDateChange: list.onDateChange
+                    },
+                    { new: true }
+                );
+            })
+        } catch (error) {
+            return next(error);
+        }
+        return res.send(CustomSuccessHandler.success("Equipment Report Updated Successfully!"));
+    },
     async edit(req, res, next) {
         let document;
         try {

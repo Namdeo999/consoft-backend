@@ -8,10 +8,7 @@ const time = CustomFunction.currentTime();
 const toolsMachineryReportSchema = mongoose.Schema({
     
     report_id:{ type: ObjectId },
-    user_id:{ type: ObjectId },
-    equipment_id: { type: String },
-    qty: { type: Number },
-    onDateChange: { type: String, default: date },
+    user_id:{ type: ObjectId },   
     equipment_report_date: { type: String, default: date },
     equipment_report_time: { type: String, default: time },
     
