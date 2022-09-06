@@ -194,8 +194,11 @@ router.put('/user-work-comment/:work_id', UserAssignWorkController.userWorkComme
 
 //Tools And Machinery
 router.get('/tools-machinery', ToolsMachineryController.index);
-router.post('/tools-machinery', ToolsMachineryController.store);
+router.get('/tools-machinery-report/:project_id/:user_id/:date',ToolsMachineryController.getTAndPReport);
+router.get('/edit-tools-machinery-report/:id', ToolsMachineryController.tAndPEditReport);
 router.get('/tools-machinery/:id', ToolsMachineryController.edit);
+router.post('/tools-machinery', ToolsMachineryController.store);
+router.put('/tools-machinery-report/:id',ToolsMachineryController.tAndPUpdateReport);
 router.put('/tools-machinery/:id', ToolsMachineryController.update);
 router.delete('/tools-machinery/:id', ToolsMachineryController.destroy);
 
@@ -207,6 +210,7 @@ router.delete('/contractor/:contractor_id', ContractorController.destroy);
 
 //report
 router.post('/report/:type', ReportController.saveReport);
+
 
     //admin
     router.get('/report/:project_id', ReportController.index);
@@ -260,6 +264,7 @@ router.post('/report/:type', ReportController.saveReport);
     router.delete('/manpower-sub-category/:id', ManpowerSubCategoryController.destroy);
 
     
+
 
 router.get('/supplier/:company_id', SupplierController.index);
 router.post('/supplier', SupplierController.store);

@@ -7,11 +7,12 @@ import Constants from "../../constants/index.js";
 import QuantityReportController from './QuantityReportController.js';
 import ManpowerReportController from "./ManpowerReportController.js";
 import { ObjectId } from "mongodb";
+import ToolsMachineryController from "../tools-machinery/toolsMachineryController.js";
 
 
 const ReportController = {
 
-    async saveReport(req, res, next){
+    async saveReport(req, res, next) {
 
         // const {error} = reportSchema.validate(req.body);
         // if(error){
@@ -31,37 +32,37 @@ const ReportController = {
             let current_date = CustomFunction.currentDate();
             let current_time = CustomFunction.currentTime();
             // let sta_date = "2022/08/23"
-            const {company_id, project_id, user_id} = req.body;
-            const exist = await Report.exists({company_id:company_id, project_id:project_id, user_id:user_id, report_date:current_date});
-            let report_id ;
-           
+            const { company_id, project_id, user_id } = req.body;
+            const exist = await Report.exists({ company_id: company_id, project_id: project_id, user_id: user_id, report_date: current_date });
+            let report_id;
+
             if (!exist) {
                 const report = new Report({
-                    company_id:company_id,
-                    project_id:project_id,
-                    user_id:user_id,
-                    report_date:current_date,
-                    report_time:current_time,
-                }) ;
+                    company_id: company_id,
+                    project_id: project_id,
+                    user_id: user_id,
+                    report_date: current_date,
+                    report_time: current_time,
+                });
                 const result = await report.save();
                 report_id = result._id;
-            }else{
+            } else {
                 report_id = exist._id;
             }
             let bodyData;
             switch (req.params.type) {
                 case Constants.MANPOWER:
-                    const {contractor_id,manpowerCategories} = req.body;
+                    const { contractor_id, manpowerCategories } = req.body;
                     bodyData = {
-                        report_id:report_id,
-                        user_id:user_id,
-                        contractor_id:contractor_id,
-                        manpowerCategories:manpowerCategories,
+                        report_id: report_id,
+                        user_id: user_id,
+                        contractor_id: contractor_id,
+                        manpowerCategories: manpowerCategories,
                     }
-                    ManpowerReportController.store(bodyData).then((result)=>{
+                    ManpowerReportController.store(bodyData).then((result) => {
                         if (result.status === Constants.RES_SUCCESS) {
                             res.send(CustomSuccessHandler.success('Manpower report created successfully'))
-                        }else{
+                        } else {
                             return (result.error);
                         }
                     });
@@ -70,24 +71,37 @@ const ReportController = {
                     console.log("Stock")
                     break;
                 case Constants.QUANTITY:
-                    const {inputs} = req.body;
+                    const { inputs } = req.body;
                     bodyData = {
-                        report_id:report_id,
-                        user_id:user_id,
-                        inputs:inputs,
+                        report_id: report_id,
+                        user_id: user_id,
+                        inputs: inputs,
                     }
-                    
-                    QuantityReportController.store(bodyData).then((result, err)=>{
+
+                    QuantityReportController.store(bodyData).then((result, err) => {
                         if (result.status === Constants.RES_SUCCESS) {
                             res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
-                        }else{
+                        } else {
                             return (err);
                         }
                     });
                     break;
                 case Constants.TANDP:
-                    console.log("TAndP")
-                    
+
+                    const { equipmentField } = req.body;
+                    bodyData = {
+                        report_id: report_id,
+                        user_id: user_id,
+                        equipmentField
+                    }                    
+                    ToolsMachineryController.tAndPReport(bodyData).then((result, err) => {
+                        if (result.status===Constants.RES_SUCCESS) {
+                            res.send(CustomSuccessHandler.success('Equipment report created successfully'))
+                        } else {
+                            return (err);
+                        }
+                    });                    
+
                     break;
 
                 default:
@@ -100,8 +114,8 @@ const ReportController = {
             return next(err);
         }
 
-        
-        
+
+
 
         // try {
         //     // res.status(200).send({ "status": "success", "message": "Project created" })
@@ -131,7 +145,7 @@ const ReportController = {
     //             }
     //         },
     //         {$unwind:"$manpowerReportsData"},
-         
+
     //         {
     //             $lookup: {
     //                 from: "manpowerMemberReports",
@@ -147,7 +161,7 @@ const ReportController = {
     //             }
     //         },
     //         {$unwind: "$manpowerMemberReportData"},
-        
+
     //         {
     //             $lookup: {
     //                 from: "contractors",
@@ -169,12 +183,12 @@ const ReportController = {
     //                                               },
     //                                           ],
     //                                   as: 'manpowerCateg'
-                            
+
     //                                   }
     //         },
-            
+
     //         {$unwind: "$manpowerCateg"},
-        
+
     //         {
     //             $lookup:{ 
     //                       from:"manpowerSubCategories",
@@ -229,7 +243,7 @@ const ReportController = {
     //             {
     //                 $unwind: "$itemsName"
     //             },
-        
+
     //         {
     //               $group:{
     //                   _id: "$_id" ,
@@ -247,12 +261,12 @@ const ReportController = {
     //                   } },        
     //                   "quantityReport":{$addToSet:"$quantityReport"},            
     //                   "quantityWorkItems":{$addToSet:"$quantityWorkItems"}            
-             
+
     //               }
     //           },
-        
-        
-          
+
+
+
     //           {
     //               $project: {
     //                   _id: "$_id",
@@ -300,7 +314,7 @@ const ReportController = {
     //                           }
     //                         }
     //                   }],
-                      
+
     //                   "quantityReport":{
     //                     "$map": {
     //                         "input": "$quantityReport", 
@@ -329,7 +343,7 @@ const ReportController = {
     //                               "$mergeObjects": [
     //                                 "$$this",
     //                                 {
-                                      
+
     //                                   "quality_type": "$$m.quality_type",
     //                                   "item_name":"$$m.item_name",
     //                                   "quantity_report_id":"$$m.quantity_report_id",
@@ -341,7 +355,7 @@ const ReportController = {
     //                                   "num_total":"$$m.num_total",
     //                                   "remark":"$$m.remark",
     //                                   "subquantityitems":"$$m.subquantityitems"
-        
+
     //                                 }
     //                               ]
     //                             }
@@ -349,7 +363,7 @@ const ReportController = {
     //                         }
     //                       }
     //                   },
-        
+
     //               }
     //           }
     //         ]);
@@ -358,10 +372,10 @@ const ReportController = {
 
     // },
 
-    async index(req, res, next){
+    async index(req, res, next) {
         let documents
         try {
-            
+
             documents = await Report.aggregate([
                 {
                     $match: {
@@ -372,26 +386,26 @@ const ReportController = {
                         // "user_id": ObjectId(req.params.user_id),
                         // "report_date": req.params.date
                     }
-                    
+
                 },
                 {
-                    $lookup: { 
+                    $lookup: {
                         from: 'users',
                         localField: 'user_id',
                         foreignField: '_id',
                         as: 'userData'
                     }
                 },
-                {$unwind:"$userData"},
+                { $unwind: "$userData" },
                 {
-                    $lookup: { 
+                    $lookup: {
                         from: 'projects',
                         localField: 'project_id',
                         foreignField: '_id',
                         as: 'projectData'
                     }
                 },
-                {$unwind:"$projectData"},
+                { $unwind: "$projectData" },
                 // {
                 //     $lookup: { 
                 //         from: 'manpowerReports',
@@ -440,8 +454,8 @@ const ReportController = {
                 // },
                 {
                     $project: {
-                        _id: 1, 
-                        company_id: 1,     
+                        _id: 1,
+                        company_id: 1,
                         project_id: 1,
                         project_name: "$projectData.project_name",
                         user_id: "$user_id",
@@ -482,11 +496,10 @@ const ReportController = {
         } catch (err) {
             return next(err);
         }
-        return res.json({ "status": 200, data:documents });
+        return res.json({ "status": 200, data: documents });
 
     },
 
-    
 
 }
 
