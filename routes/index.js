@@ -224,7 +224,7 @@ router.get('/edit-quantity-report/:id', QuantityReportController.edit);
 router.put('/quantity-report/:id', QuantityReportController.update);
 
 // router.post('/quantity-report',QuantityReportController.store);
-router.get('/quantity-item-exist/:project_id/:user_id', QuantityReportController.quantityItemExist);
+router.get('/quantity-item-exist/:project_id/:user_id/:date', QuantityReportController.quantityItemExist);
 
 //report verify
 router.put('/verify-report/:id', ReportController.verifyReport);
