@@ -272,7 +272,7 @@ const QuantityReportController = {
         let current_date = CustomFunction.currentDate();
         let item_ids = [];
         try {
-            const report_id = await Report.exists({ project_id: req.params.project_id });
+            const report_id = await Report.exists({ project_id: req.params.project_id ,report_date:req.params.date });
             if (!report_id) {
                 return res.json({"status":401});
             }
