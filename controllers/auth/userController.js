@@ -30,7 +30,7 @@ const userController ={
         if (error) {
             return next(error);
         }
-        
+        let unique_id ; //unique, user_id
         try {
             const mobile_exist = await User.exists({company_id:ObjectId(req.body.company_id), mobile:req.body.mobile});
             if (mobile_exist) {
@@ -41,6 +41,8 @@ const userController ={
             if (email_exist) {
                 return next(CustomErrorHandler.alreadyExist('This email is already taken.'));
             }
+            
+            unique_id = await generateRandomUserId();
 
         } catch (err) {
             return next(err);
@@ -54,6 +56,7 @@ const userController ={
         // let refresh_token;
         try {
             const user = new User({
+                u_id:unique_id,
                 name,
                 email,
                 mobile,
@@ -208,5 +211,19 @@ const userController ={
     },
 
 }
+
+async function generateRandomUserId(){
+    const unique_id = CustomFunction.randomUserId();
+    try {
+        const unique_id_exist = await User.exists({u_id:unique_id});
+        if (unique_id_exist) {
+            generateRandomUserId();
+        }
+    } catch (err) {
+        return next(err)
+    }
+    return unique_id;
+}
+
 
 export default userController;

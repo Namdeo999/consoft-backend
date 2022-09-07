@@ -140,7 +140,7 @@ const WaterLevelController = {
     async index(req, res, next){
         let documents;
         try {
-            documents = await WaterLevel.find().select('led_status image');
+            documents = await WaterLevel.find();
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }

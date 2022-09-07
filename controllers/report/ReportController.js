@@ -371,6 +371,9 @@ const ReportController = {
     // },
 
     async index(req, res, next) {
+        // console.log(CustomFunction.randomUserId())
+        
+
         let documents
         try {
 
@@ -385,6 +388,9 @@ const ReportController = {
                         // "report_date": req.params.date
                     }
 
+                },
+                {
+                    $sort: { report_date: -1, report_time: -1 }
                 },
                 {
                     $lookup: {
@@ -500,5 +506,11 @@ const ReportController = {
 
 
 }
+
+// function generateRandomUserId(){
+//     return CustomFunction.randomUserId();
+// }
+
+
 
 export default ReportController;
