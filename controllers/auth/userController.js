@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { User, ProjectTeam } from "../../models/index.js";
+import { User, ProjectTeam, UserPrivilege } from "../../models/index.js";
 import { userSchema } from "../../validators/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import bcrypt from 'bcrypt';
@@ -107,7 +107,8 @@ const userController ={
             await User.aggregate([
                 {
                     $match: {
-                        "_id": ObjectId(req.user._id)
+                        // "_id": ObjectId(req.user.id)
+                        "_id": ObjectId(req.params.user_id)
                     }
                 },
                 {
@@ -126,6 +127,7 @@ const userController ={
                         email:1,
                         mobile:1,
                         role_id:1,
+                        user_privilege: 1,
                         role:"$data.user_role",
                     }
                 } 
@@ -170,6 +172,8 @@ const userController ={
                         email: 1,
                         mobile: 1,
                         company_id: 1,
+                        user_privilege: 1,
+                        role_id: 1,
                         user_role: "$userRoleData.user_role"
                     }
                 }
@@ -184,7 +188,18 @@ const userController ={
     async roleByUsers(req, res, next){
         let documents;
         try {
-            documents = await User.find({ role_id:req.params.role_id }).select('-createdAt -updatedAt -__v');
+            documents = await User.find({ company_id:req.params.company_id, role_id:req.params.role_id }).select('-createdAt -updatedAt -__v');
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+
+        return res.json({status:200, data:documents});
+    },
+
+    async privilegeByUsers(req, res, next){
+        let documents;
+        try {
+            documents = await User.find({ company_id:req.params.company_id, user_privilege:req.params.privilege_id }).select('_id name');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }

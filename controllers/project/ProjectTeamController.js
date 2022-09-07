@@ -53,6 +53,7 @@ const projectTeamController = {
                         project_name: '$project_data.project_name',
                         user_id: 1,
                         user_name: '$userData.name',
+                        role_id: '$userRoleData._id',
                         user_role: '$userRoleData.user_role',
                     }
                 }
