@@ -210,7 +210,7 @@ router.delete('/contractor/:contractor_id', ContractorController.destroy);
 router.post('/report/:type', ReportController.saveReport);
 
 //admin
-router.get('/report/:project_id', ReportController.index);
+router.get('/report/:project_id/:user_id?', ReportController.index);
 
 router.get('/manpower-report/:project_id/:user_id/:date', ManpowerReportController.index);
 router.get('/manpower-report-by-report-id/:report_id', ManpowerReportController.manpowerReportByReportId);
