@@ -7,7 +7,7 @@ import Constants from "../../constants/index.js";
 import QuantityReportController from './QuantityReportController.js';
 import ManpowerReportController from "./ManpowerReportController.js";
 import { ObjectId } from "mongodb";
-import ToolsMachineryController from "../tools-machinery/toolsMachineryController.js";
+import ToolsMachineryController from "../tools-machinery/ToolsMachineryController.js";
 
 
 const ReportController = {
