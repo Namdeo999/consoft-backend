@@ -371,23 +371,22 @@ const ReportController = {
     // },
 
     async index(req, res, next) {
-        // console.log(CustomFunction.randomUserId())
-        
+        let documents;
+        let condition;
 
-        let documents
         try {
-
+            if ( req.params.user_id ) {
+                condition = {"project_id": ObjectId(req.params.project_id),"user_id": ObjectId(req.params.user_id)}
+            }else{
+                condition = {"project_id": ObjectId(req.params.project_id)}
+            }
             documents = await Report.aggregate([
                 {
                     $match: {
-                        // $and: [
-                        //     { "project_id": ObjectId(req.params.project_id) },
-                        // ]
-                        "project_id": ObjectId(req.params.project_id),
-                        // "user_id": ObjectId(req.params.user_id),
-                        // "report_date": req.params.date
+                        $and: [
+                            condition
+                        ]
                     }
-
                 },
                 {
                     $sort: { report_date: -1, report_time: -1 }

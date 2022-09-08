@@ -42,10 +42,32 @@ const ContractorController = {
 
         try {
             const cont_result = await contractor.save();
-            res.send(CustomSuccessHandler.success("Contractor added successfully!"))
+            res.send(CustomSuccessHandler.success("Contractor added successfully"))
         } catch (error) {
             return next(error)
         }
+    },
+
+    async update(req, res, next){
+        const {error} = contractorSchema.validate(req.body);
+        if(error){
+            return next(error);
+        } 
+        try {
+            const { company_id, project_id, contractor_name, phone_no } = req.body;
+            const exist = await Contractor.exists({project_id: project_id, contractor_name: contractor_name}).collation({locale:'en', strength:1});
+            if(exist){
+                return next(CustomErrorHandler.alreadyExist('Contractor already exist in this project'));
+            }
+            await Contractor.findByIdAndUpdate(
+                { _id: req.params.id},
+                {contractor_name, phone_no},
+                {new: true}
+            );
+        } catch (err) {
+            return next(err);
+        }
+        return res.send(CustomSuccessHandler.success("Contractor updated successfully"))
     },
 
     async projectByContractor(req, res, next) {
