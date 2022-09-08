@@ -6,7 +6,8 @@ const manageBoqSchema = mongoose.Schema({
     project_id:{ type: ObjectId, required:true },
     item_id:{ type: ObjectId, required:true },
     unit_name:{ type: String, required:true },
-    qty:{ type: String, required:true }
+    qty:{ type: Number, required:true },
+    completed_qty:{ type: Number, default:null }
 
     // company_id:{ type: ObjectId },
     // project_id:{ type: ObjectId },
