@@ -82,17 +82,17 @@ const WaterLevelController = {
         //         return next(error);
         //         // rootfolder/uploads/filename.png
         //     }
-            // console.log(req.body);
+            console.log(req.body);
             const {image, led_status, water_level} = req.body;
             let document ;
 
             try {
 
-                // const replace_2F = image.replace(/%2F/g, '/'); // %2F = /
-                // const final_image = replace_2F.replace(/%2B/g, '+'); // %2B = +
+                const replace_2F = image.replace(/%2F/g, '/'); // %2F = /
+                const final_image = replace_2F.replace(/%2B/g, '+'); // %2B = +
 
-                const replace_2F = image.split("%2F").join("/"); // %2F = /
-                const final_image = replace_2F.split("%2B").join("+"); // %2B = +
+                // const replace_2F = image.split("%2F").join("/"); // %2F = /
+                // const final_image = replace_2F.split("%2B").join("+"); // %2B = +
                 
                 // return ;
                 // const image_path = "uploads/water_level/";
@@ -140,7 +140,7 @@ const WaterLevelController = {
     async index(req, res, next){
         let documents;
         try {
-            documents = await WaterLevel.find().select('led_status image');
+            documents = await WaterLevel.find();
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }

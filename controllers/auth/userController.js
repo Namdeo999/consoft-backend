@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { User, ProjectTeam } from "../../models/index.js";
+import { User, ProjectTeam, UserPrivilege } from "../../models/index.js";
 import { userSchema } from "../../validators/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import bcrypt from 'bcrypt';
@@ -30,7 +30,7 @@ const userController ={
         if (error) {
             return next(error);
         }
-        
+        let unique_id ; //unique, user_id
         try {
             const mobile_exist = await User.exists({company_id:ObjectId(req.body.company_id), mobile:req.body.mobile});
             if (mobile_exist) {
@@ -41,6 +41,8 @@ const userController ={
             if (email_exist) {
                 return next(CustomErrorHandler.alreadyExist('This email is already taken.'));
             }
+            
+            unique_id = await generateRandomUserId();
 
         } catch (err) {
             return next(err);
@@ -54,6 +56,7 @@ const userController ={
         // let refresh_token;
         try {
             const user = new User({
+                u_id:unique_id,
                 name,
                 email,
                 mobile,
@@ -107,7 +110,8 @@ const userController ={
             await User.aggregate([
                 {
                     $match: {
-                        "_id": ObjectId(req.user._id)
+                        // "_id": ObjectId(req.user.id)
+                        "_id": ObjectId(req.params.user_id)
                     }
                 },
                 {
@@ -126,6 +130,7 @@ const userController ={
                         email:1,
                         mobile:1,
                         role_id:1,
+                        user_privilege: 1,
                         role:"$data.user_role",
                     }
                 } 
@@ -170,6 +175,8 @@ const userController ={
                         email: 1,
                         mobile: 1,
                         company_id: 1,
+                        user_privilege: 1,
+                        role_id: 1,
                         user_role: "$userRoleData.user_role"
                     }
                 }
@@ -184,7 +191,18 @@ const userController ={
     async roleByUsers(req, res, next){
         let documents;
         try {
-            documents = await User.find({ role_id:req.params.role_id }).select('-createdAt -updatedAt -__v');
+            documents = await User.find({ company_id:req.params.company_id, role_id:req.params.role_id }).select('-createdAt -updatedAt -__v');
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+
+        return res.json({status:200, data:documents});
+    },
+
+    async privilegeByUsers(req, res, next){
+        let documents;
+        try {
+            documents = await User.find({ company_id:req.params.company_id, user_privilege:req.params.privilege_id }).select('_id name');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
@@ -193,5 +211,19 @@ const userController ={
     },
 
 }
+
+async function generateRandomUserId(){
+    const unique_id = CustomFunction.randomUserId();
+    try {
+        const unique_id_exist = await User.exists({u_id:unique_id});
+        if (unique_id_exist) {
+            generateRandomUserId();
+        }
+    } catch (err) {
+        return next(err)
+    }
+    return unique_id;
+}
+
 
 export default userController;

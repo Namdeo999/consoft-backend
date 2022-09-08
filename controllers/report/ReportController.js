@@ -7,7 +7,7 @@ import Constants from "../../constants/index.js";
 import QuantityReportController from './QuantityReportController.js';
 import ManpowerReportController from "./ManpowerReportController.js";
 import { ObjectId } from "mongodb";
-import ToolsMachineryController from "../tools-machinery/toolsMachineryController.js";
+import ToolsMachineryController from "../tools-machinery/ToolsMachineryController.js";
 
 
 const ReportController = {
@@ -371,20 +371,25 @@ const ReportController = {
     // },
 
     async index(req, res, next) {
-        let documents
-        try {
+        let documents;
+        let condition;
 
+        try {
+            if ( req.params.user_id ) {
+                condition = {"project_id": ObjectId(req.params.project_id),"user_id": ObjectId(req.params.user_id)}
+            }else{
+                condition = {"project_id": ObjectId(req.params.project_id)}
+            }
             documents = await Report.aggregate([
                 {
                     $match: {
-                        // $and: [
-                        //     { "project_id": ObjectId(req.params.project_id) },
-                        // ]
-                        "project_id": ObjectId(req.params.project_id),
-                        // "user_id": ObjectId(req.params.user_id),
-                        // "report_date": req.params.date
+                        $and: [
+                            condition
+                        ]
                     }
-
+                },
+                {
+                    $sort: { report_date: -1, report_time: -1 }
                 },
                 {
                     $lookup: {
@@ -464,27 +469,23 @@ const ReportController = {
                         verify_1_date: 1,
                         verify_1_time: 1,
                         verify_1_revert: 1,
+                        verify_1_revert_date: 1,
+                        verify_1_revert_time: 1,
                         verify_1_revert_msg: 1,
-                        verify_2_status: 1,
-                        verify_2_date: 1,
-                        verify_2_time: 1,
-                        verify_2_revert: 1,
-                        verify_2_revert_msg: 1,
-                        admin_3_status: 1,
-                        admin_3_date: 1,
-                        admin_3_time: 1,
-                        admin_3_revert: 1,
-                        admin_3_revert_msg: 1,
-                        admin_2_status: 1,
-                        admin_2_date: 1,
-                        admin_2_time: 1,
-                        admin_2_revert: 1,
-                        admin_2_revert_msg: 1,
                         admin_1_status: 1,
                         admin_1_date: 1,
                         admin_1_time: 1,
                         admin_1_revert: 1,
+                        admin_1_revert_date: 1,
+                        admin_1_revert_time: 1,
                         admin_1_revert_msg: 1,
+                        admin_2_status: 1,
+                        admin_2_date: 1,
+                        admin_2_time: 1,
+                        admin_2_revert: 1,
+                        admin_2_revert_date: 1,
+                        admin_2_revert_time: 1,
+                        admin_2_revert_msg: 1,
                         report_status: 1
                         // contractor_id: "$contractor_id",
                         // contractor_name: "$contractor_name",
@@ -502,19 +503,13 @@ const ReportController = {
 
     },
 
-    async verifyReport(req, res, next) {
-        let current_date = CustomFunction.currentDate();
-        let current_time = CustomFunction.currentTime();
-
-        try {
-            const document = await Report.findById({ _id: req.params.id });
-            console.log(document)
-        } catch (err) {
-            return next(err);
-        }
-
-    },
 
 }
+
+// function generateRandomUserId(){
+//     return CustomFunction.randomUserId();
+// }
+
+
 
 export default ReportController;
