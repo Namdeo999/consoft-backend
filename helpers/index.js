@@ -1,6 +1,5 @@
 export default{
-    
-    completedBoqQuantity(){
-        return "ok";
+    completedBoqQuantity(company_id, project_id){
+        
     }
 }
