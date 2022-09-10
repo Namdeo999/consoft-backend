@@ -87,7 +87,7 @@ const ManpowerReportController = {
                 {
                     $group:{
                         _id: "$manpowerMemberReportData.manpower_report_id" ,
-                        "main_report_id":{ "$first": "$_id" },
+                        "main_report_id": { "$first": "$_id" },
                         "company_id": { "$first": "$company_id" },
                         "project_id": { "$first": "$project_id" },
                         "user_id": { "$first": "$manpowerReportData.user_id" },
@@ -108,8 +108,7 @@ const ManpowerReportController = {
                 },
                 {
                     $project: {
-                        _id: 1, 
-                        // report_id: 1,     
+                        _id: 1,                         
                         report_id:"$main_report_id",     
                         user_id: "$user_id",
                         contractor_id: "$contractor_id",
