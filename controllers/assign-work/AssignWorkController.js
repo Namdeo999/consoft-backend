@@ -2,6 +2,7 @@ import { AssignWork, SubWorkAssign } from '../../models/index.js'
 import { assignWorkSchema } from '../../validators/index.js';
 import CustomErrorHandler from '../../services/CustomErrorHandler.js'
 import CustomSuccessHandler from '../../services/CustomSuccessHandler.js'
+import helpers from '../../helpers/index.js';
 import { ObjectId } from 'mongodb'
 import CustomFunction from '../../services/CustomFunction.js';
 
@@ -233,6 +234,7 @@ const AssignWorkController = {
                         submit_work_text:1,
                         submit_work_date:1,
                         submit_work_time:1,
+                        work_percent:1,
                         work_status:1,
                         exp_completion_date:1,
                         exp_completion_time:1,
@@ -308,22 +310,20 @@ const AssignWorkController = {
         } else {
             res.send("There is no work assigned")
         }
-
     },
 
     async changeWorkCompletionTime(req, res, next){
         try {
             const { exp_completion_date, exp_completion_time } = req.body;
-            const exp_date = CustomFunction.dateFormat(exp_completion_date);
+            // const exp_date = CustomFunction.dateFormat(exp_completion_date);
             const expectedTime = await SubWorkAssign.findByIdAndUpdate(
                 { _id: req.params.work_id },
                 {
-                    exp_completion_date:exp_date,
+                    exp_completion_date,
                     exp_completion_time,
                     // comment_status:false
                 },
                 { new: true }
-
             ).select('-__v');
         } catch (error) {
             return next(CustomErrorHandler.serverError());

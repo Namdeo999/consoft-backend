@@ -9,7 +9,8 @@ const RevertController = {
 
     async revertSubmitWork(req, res, next){
         const revertSchema = Joi.object({
-            revert_msg:Joi.string().required()
+            revert_msg:Joi.string().required(),
+            work_percent:Joi.number().required()
         });
 
         const {error} = revertSchema.validate(req.body);
@@ -18,11 +19,12 @@ const RevertController = {
         }
 
         try {
-            const { revert_msg } = req.body;
+            const { revert_msg, work_percent } = req.body;
             const subwork_assign = await SubWorkAssign.findByIdAndUpdate(
                 { _id: req.params.work_id },
                 {
                     revert_msg:revert_msg,
+                    work_percent:work_percent,
                     revert_status:true,
                     work_status:false,
                 },
@@ -30,10 +32,10 @@ const RevertController = {
 
             ).select('-__v');
 
-            res.send(CustomSuccessHandler.success("Revert successfully!"))
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
+        res.send(CustomSuccessHandler.success("Revert successfully!"))
     },
 
     async revertReport(req, res, next){
@@ -70,6 +72,7 @@ const RevertController = {
                                 verify_1_revert_date:current_date,
                                 verify_1_revert_time:current_time,
                                 verify_1_revert_msg:revert_msg,
+                                report_status:false,
                             },
                             {new: true}
                         ).select('-__v');

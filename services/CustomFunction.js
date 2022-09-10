@@ -10,7 +10,8 @@ const CustomFunction  = {
     },
 
     currentTime(){
-        const now = new Date();
+        const time_zone = new Date().toLocaleString("en-US", {timeZone: "Asia/kolkata"});
+        const now = new Date(time_zone);
         const current_time = date.format(now, 'hh:mm A'); // => '11:14 PM
         return current_time;
     },
@@ -43,7 +44,6 @@ const CustomFunction  = {
         if(month < 10) {
             month='0'+month;
         }
-
         return `${year}/${month}/${day}`; 
     },
 
