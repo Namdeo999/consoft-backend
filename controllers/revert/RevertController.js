@@ -72,6 +72,7 @@ const RevertController = {
                                 verify_1_revert_date:current_date,
                                 verify_1_revert_time:current_time,
                                 verify_1_revert_msg:revert_msg,
+                                report_status:false,
                             },
                             {new: true}
                         ).select('-__v');

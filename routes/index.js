@@ -214,18 +214,19 @@ router.post('/report/:type', ReportController.saveReport);
 
     //admin
     router.get('/report/:project_id/:user_id?', ReportController.index);
-
+    
     router.get('/manpower-report/:project_id/:user_id/:date', ManpowerReportController.index);    
     router.get('/manpower-report-by-report-id/:report_id', ManpowerReportController.manpowerReportByReportId);
     router.get('/edit-manpower-report/:contractor_id/:date', ManpowerReportController.edit);
     router.put('/manpower-report/:manpower_report_id', ManpowerReportController.update);
-
+    
     router.get('/quantity-report/:project_id/:user_id/:date', QuantityReportController.index);    
     router.get('/quantity-report-by-report-id/:report_id', QuantityReportController.quantityReportByReportId);    
-
+    
     router.get('/edit-quantity-report/:id', QuantityReportController.edit);
     router.put('/quantity-report/:id', QuantityReportController.update);
-
+    
+    router.put('/final-submit-report/:company_id/:project_id/:user_id/:date', ReportController.finalSubmitReport);
 // router.post('/quantity-report',QuantityReportController.store);
 router.get('/quantity-item-exist/:project_id/:user_id/:date', QuantityReportController.quantityItemExist);
 

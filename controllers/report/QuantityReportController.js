@@ -2,7 +2,7 @@ import { QuantityReport, QuantityWorkItemReport, Report } from "../../models/ind
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import CustomFunction from "../../services/CustomFunction.js";
-
+import helpers from "../../helpers/index.js";
 import { ObjectId } from "mongodb";
 
 const QuantityReportController = {
@@ -121,7 +121,9 @@ const QuantityReportController = {
     },
 
     async store(req, res, next){
-        const { report_id, user_id, inputs} = req;
+        const {report_id, user_id, inputs} = req;
+        helpers.completedBoqQuantity(report_id, item_id, unit_name, completed_qty)
+        return ({ status:200 });
         let current_date = CustomFunction.currentDate();
         let current_time = CustomFunction.currentTime();
         const report_exist = await QuantityReport.exists({report_id: ObjectId(report_id), user_id: ObjectId(user_id),quantity_report_date: current_date});
