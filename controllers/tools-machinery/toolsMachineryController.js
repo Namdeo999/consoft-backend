@@ -16,7 +16,7 @@ const ToolsMachineryController = {
             return next(CustomErrorHandler.serverError());
         }
         return res.json(Tools);
-    },
+    },   
 
     async store(req, res, next) {
 
