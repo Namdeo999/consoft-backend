@@ -207,7 +207,8 @@ router.get('/contractor', ContractorController.index);
 router.get('/project-by-contractor/:project_id', ContractorController.projectByContractor);
 router.post('/contractor', ContractorController.store);
 router.put('/contractor/:id', ContractorController.update);
-router.delete('/contractor/:contractor_id', ContractorController.destroy);
+router.delete('/contractor/:contractor_id', ContractorController.destroy);  
+
 
 //report
 router.post('/report/:type', ReportController.saveReport);
