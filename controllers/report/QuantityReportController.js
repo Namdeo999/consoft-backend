@@ -312,6 +312,24 @@ const QuantityReportController = {
         return res.send(CustomSuccessHandler.success(" updated successfully"))
     },
 
+    async destroy(req, res, next){
+        const document = await helpers.totalQuantityItemWotk(req.params.id);
+        const quantity_report_id = document.quantity_report_id
+        const item_id = document.item_id
+        const pre_total_qty = document.total_quantity;
+        try {
+            const result = await QuantityWorkItemReport.findOneAndRemove({ _id: req.params.id });
+            if (!result) {
+                return next(new Error('Nothing to delete'));
+            }
+            await helpers.deleteCompletedBoqQuantity(quantity_report_id, item_id, pre_total_qty );
+        } catch (err) {
+            return next(err)
+        }
+
+        return res.send(CustomSuccessHandler.success("Quantity report deleted successfully"))
+    },
+
     async quantityItemExist(req, res, next){
         let current_date = CustomFunction.currentDate();
         let item_ids = [];

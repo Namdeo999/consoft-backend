@@ -187,6 +187,7 @@ const ManageBoqController = {
                         item_name:"$quantityReportItemData.item_name",
                         unit_name:1,
                         qty:1,
+                        completed_qty:1,
                     }
                 }
             ]);
