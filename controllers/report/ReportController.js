@@ -64,8 +64,11 @@ const ReportController = {
                             res.send(CustomSuccessHandler.success('Manpower report created successfully'))
                         } else {
                             return (result.error);
+                            // res.send(CustomErrorHandler.alreadyExist('Manpower report item is already exist'))
                         }
                     });
+                   
+                    
                     break;
                 case Constants.STOCK:
                     console.log("Stock")
@@ -78,13 +81,20 @@ const ReportController = {
                         inputs: inputs,
                     }
 
-                    QuantityReportController.store(bodyData).then((result, err) => {
-                        if (result.status === Constants.RES_SUCCESS) {
-                            res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
-                        } else {
-                            return (err);
-                        }
-                    });
+                    // QuantityReportController.store(bodyData).then((result) => {
+                    //     if (result.status === Constants.RES_SUCCESS) {
+                    //         res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
+                    //     } else {
+                    //         return (result.error);
+                    //     }
+                    // });
+                    const result = await QuantityReportController.store(bodyData);
+                    if (result.status === Constants.RES_SUCCESS) {
+                        res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
+                    } else {
+                        res.send(CustomErrorHandler.alreadyExist('Quantity item is already exist'))
+                    }
+
                     break;
                 case Constants.TANDP:
                     const { equipmentField } = req.body;
@@ -370,6 +380,27 @@ const ReportController = {
 
     // },
 
+    async finalSubmitReport(req, res, next){
+        const {company_id, project_id, user_id, date} = req.params;
+        try {
+            const exist = await Report.exists({company_id: ObjectId(company_id), project_id: ObjectId(project_id), user_id:ObjectId(user_id), report_date:date})
+            if (!exist) {
+                return next(CustomErrorHandler.notExist('Report not exist'));
+            }
+            await Report.findOneAndUpdate(
+                { _id:exist },
+                {
+                    verify_1_revert:false,
+                    report_status:true
+                },
+                { new: true }
+            ).select('-__v');
+        } catch (err) {
+            return next(err);
+        }
+        res.send(CustomSuccessHandler.success("Report final submited successfully"))
+    },
+
     async index(req, res, next) {
         let documents;
         let condition;
@@ -384,7 +415,8 @@ const ReportController = {
                 {
                     $match: {
                         $and: [
-                            condition
+                            condition,
+                            {"report_status": true}
                         ]
                     }
                 },
@@ -409,52 +441,6 @@ const ReportController = {
                     }
                 },
                 { $unwind: "$projectData" },
-                // {
-                //     $lookup: { 
-                //         from: 'manpowerReports',
-                //         localField: '_id',
-                //         foreignField: 'report_id',
-                //         as: 'manpowerReportData'
-                //     }
-                // },
-                // {$unwind:"$manpowerReportData"},
-                // {
-                //     $lookup: {
-                //         from: "contractors",
-                //         localField: "manpowerReportData.contractor_id",
-                //         foreignField: "_id",
-                //         as: 'contractorData'
-                //     }
-                // },
-                // {$unwind:"$contractorData"},
-                // {
-                //     $lookup: {
-                //         from: "manpowerMemberReports",
-                //         let: { "manpower_report_id": "$manpowerReportData._id" },
-                //         pipeline: [
-                //             {
-                //                 $match: {
-                //                     $expr: { $eq: ["$manpower_report_id", "$$manpower_report_id"] }
-                //                 }
-                //             },
-                //         ],
-                //         as: 'manpowerMemberReportData'
-                //     }
-                // },
-                // {$unwind: "$manpowerMemberReportData"},
-                // {
-                //     $group:{
-                //         _id: "$manpowerMemberReportData.manpower_report_id" ,
-                //         "company_id": { "$first": "$company_id" },
-                //         "project_id": { "$first": "$project_id" },
-                //         "user_id": { "$first": "$manpowerReportData.user_id" },
-                //         "user_name": { "$first": "$userData.name" },
-                //         "contractor_id": { "$first": "$manpowerReportData.contractor_id" },
-                //         "contractor_name": { "$first": "$contractorData.contractor_name" },
-                //         "manpower_category_id_new": { $addToSet : "$manpowerMemberReportData.manpower_category_id" },
-                //         "manpowerCategories":{"$push":'$manpowerMemberReportData'}
-                //     }
-                // },
                 {
                     $project: {
                         _id: 1,
@@ -487,12 +473,6 @@ const ReportController = {
                         admin_2_revert_time: 1,
                         admin_2_revert_msg: 1,
                         report_status: 1
-                        // contractor_id: "$contractor_id",
-                        // contractor_name: "$contractor_name",
-                        // manpowerReport:[{
-                        //     manpower_category_id: "$manpower_category_id_new",
-                        //     members:"$manpowerCategories"
-                        // }]
                     }
                 },
             ]);
@@ -524,11 +504,6 @@ const ReportController = {
     },
 
 }
-
-// function generateRandomUserId(){
-//     return CustomFunction.randomUserId();
-// }
-
 
 
 export default ReportController;

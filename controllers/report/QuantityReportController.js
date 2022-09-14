@@ -2,7 +2,7 @@ import { QuantityReport, QuantityWorkItemReport, Report } from "../../models/ind
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import CustomFunction from "../../services/CustomFunction.js";
-
+import helpers from "../../helpers/index.js";
 import { ObjectId } from "mongodb";
 
 const QuantityReportController = {
@@ -121,11 +121,13 @@ const QuantityReportController = {
     },
 
     async store(req, res, next){
-        const { report_id, user_id, inputs} = req;
+        const {report_id, user_id, inputs} = req;
+        
         let current_date = CustomFunction.currentDate();
         let current_time = CustomFunction.currentTime();
         const report_exist = await QuantityReport.exists({report_id: ObjectId(report_id), user_id: ObjectId(user_id),quantity_report_date: current_date});
         let quantity_report_id
+        
         try {
             if (!report_exist) {
                 const quantity_report = new QuantityReport({
@@ -139,17 +141,23 @@ const QuantityReportController = {
             }else{
                 quantity_report_id = report_exist._id;
             }
+            
         } catch (err) {
             return next(err);
+            // return ({ status:400});
         }
 
         let quantity_reports_exist;
         try {
-            inputs.forEach( async (list, key) => {
+            let completed_qty;
+            let sub_total;
+            // inputs.forEach( async (list, key) => {
+            for (const list of inputs) {
                 quantity_reports_exist = await QuantityWorkItemReport.exists({quantity_report_id: ObjectId(quantity_report_id), item_id:list.item_id });
                 if (quantity_reports_exist) {
-                    return;
+                    return ({ status:400});
                 }
+                completed_qty = 0;
                 const quantity_work_item_report = new QuantityWorkItemReport({
                     quantity_report_id:ObjectId(quantity_report_id),
 
@@ -163,9 +171,11 @@ const QuantityReportController = {
                     quality_type : list.quality_type,
                 });
                 const item_result = await quantity_work_item_report.save();
+                completed_qty = parseFloat(completed_qty) + parseFloat(list.num_total);
                 
                 if (list.subquantityitems.length > 0) {
-                    list.subquantityitems.forEach(async (sub_list, key1) => {
+                    sub_total = 0;
+                    for (const sub_list of list.subquantityitems) {
                         const quantity_work_sub_item_report = await QuantityWorkItemReport.findByIdAndUpdate(
                             { _id:  item_result._id },
                             {
@@ -182,13 +192,35 @@ const QuantityReportController = {
                             },
                             { new: true }
                         );
-                    })
-                }
-            });
+                        sub_total = parseFloat(sub_total) + parseFloat(sub_list.sub_total);
+                    }
 
+                    // list.subquantityitems.forEach(async (sub_list) => {
+                    //     const quantity_work_sub_item_report = await QuantityWorkItemReport.findByIdAndUpdate(
+                    //         // { _id:  item_result._id },
+                    //         // {
+                    //         //     $push:{
+                    //         //         "subquantityitems": {
+                    //         //             sub_length : sub_list.sub_length,
+                    //         //             sub_width : sub_list.sub_width,
+                    //         //             sub_height : sub_list.sub_height,
+                    //         //             sub_total : sub_list.sub_total,
+                    //         //             sub_remark : sub_list.sub_remark,
+                    //         //             sub_quality_type : sub_list.sub_quality_type
+                    //         //         }
+                    //         //     }
+                    //         // },
+                    //         // { new: true }
+                    //     );
+                    // })
+                }
+                completed_qty = parseFloat(completed_qty) + parseFloat(sub_total);
+                await helpers.saveCompletedBoqQuantity(report_id, list.item_id, list.unit_name, completed_qty);
+            };
             return ({ status:200 });
         } catch (err) {
-            return next(err)
+            // return next(err)
+            return ({ status:400 });
         }
 
     },
@@ -207,9 +239,17 @@ const QuantityReportController = {
     async update(req, res, next){
 
         const {inputs} = req.body;
+        const document = await helpers.totalQuantityItemWotk(req.params.id);
+        const pre_total_qty = document.total_quantity
         try {
+            let completed_qty;
+            let sub_total;
 
-            inputs.forEach( async (list, key) => {
+            // inputs.forEach( async (list, key) => {
+
+            for (const list of inputs) {
+                    
+                completed_qty = 0;
                 const quantity_work_item_report = await QuantityWorkItemReport.findByIdAndUpdate(
                     { _id: req.params.id},
                     {
@@ -224,7 +264,7 @@ const QuantityReportController = {
                     },
                     {new: true}
                 );
-
+                completed_qty = parseFloat(completed_qty) + parseFloat(list.num_total);
                 if (list.subquantityitems.length > 0) {
                     const sub_quantity_items = await QuantityWorkItemReport.find({ _id:req.params.id}).select(' _id subquantityitems._id');
                     if(sub_quantity_items.length > 0){
@@ -235,13 +275,14 @@ const QuantityReportController = {
                                     $pull: {subquantityitems: {_id : ObjectId(list._id)} } 
                                 },
                                 { new: true }
-                                // false, // Upsert
-                                // true, // Multi
                             )
                         })
                     }
 
-                    list.subquantityitems.forEach(async (sub_list, key1) => {
+                    // list.subquantityitems.forEach(async (sub_list, key1) => {
+                    sub_total = 0;
+                    for (const sub_list of list.subquantityitems) {
+                            
                         await QuantityWorkItemReport.findByIdAndUpdate(
                             { _id:req.params.id },
                             {
@@ -258,9 +299,12 @@ const QuantityReportController = {
                             },
                             { new: true }
                         );
-                    })
+                        sub_total = parseFloat(sub_total) + parseFloat(sub_list.sub_total);
+                    }
                 }
-            });
+                completed_qty = parseFloat(completed_qty) + parseFloat(sub_total);
+                await helpers.updateCompletedBoqQuantity(document.quantity_report_id, list.item_id, completed_qty, pre_total_qty )
+            }
 
         } catch (err) {
             return next(err);

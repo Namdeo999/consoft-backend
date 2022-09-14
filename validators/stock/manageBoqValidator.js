@@ -5,7 +5,7 @@ const manageBoqSchema = Joi.object({
     project_id: Joi.string().required(),
     item_id: Joi.string().required(),
     unit_name: Joi.string().required(),
-    qty: Joi.string().required(),
+    qty: Joi.number().required(),
 });
 
 export default manageBoqSchema;
