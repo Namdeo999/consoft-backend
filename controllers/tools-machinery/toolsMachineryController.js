@@ -19,25 +19,19 @@ const ToolsMachineryController = {
     },   
 
     async store(req, res, next) {
-
         const { error } = toolsMachinerySchema.validate(req.body)
         if (error) {
             return next(error);
         }
+        const { company_id, tools_machinery_name, qty } = req.body;
         try {
-            const company_exist = await ToolsMachinery.exists({ company_id: req.body.company_id });
-            if (company_exist) {
-                const machinery_name_exist = await ToolsMachinery.exists({ tools_machinery_name: req.body.tools_machinery_name });
-                if (machinery_name_exist) {
-                    return next(CustomErrorHandler.alreadyExist('This machinery is already exist'));
-                }
+            const exist = await ToolsMachinery.exists({ company_id: company_id, tools_machinery_name: tools_machinery_name }).collation({ locale:'en', strength:1});
+            if (exist) {
+                return next(CustomErrorHandler.alreadyExist('This machinery is already exist'));
             }
         } catch (err) {
             return next(err);
         }
-
-        const { company_id, tools_machinery_name, qty } = req.body;
-
         const ToolsMachine = new ToolsMachinery({
             company_id,
             tools_machinery_name,
