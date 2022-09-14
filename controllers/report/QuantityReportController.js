@@ -464,7 +464,6 @@ const QuantityReportController = {
         }
         return res.json({"status":200, data:documents});
     }
-
     // async storeOld(req, res, next){
 
     //     const { report_id, user_id, inputs} = req;

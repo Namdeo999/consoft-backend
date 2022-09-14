@@ -102,14 +102,14 @@ const ReportController = {
                         report_id: report_id,
                         user_id: user_id,
                         equipmentField
-                    }                    
+                    }
                     ToolsMachineryController.tAndPReport(bodyData).then((result, err) => {
-                        if (result.status===Constants.RES_SUCCESS) {
+                        if (result.status === Constants.RES_SUCCESS) {
                             res.send(CustomSuccessHandler.success('Equipment report created successfully'))
                         } else {
                             return (err);
                         }
-                    });                    
+                    });
                     break;
 
                 default:
@@ -406,10 +406,10 @@ const ReportController = {
         let condition;
 
         try {
-            if ( req.params.user_id ) {
-                condition = {"project_id": ObjectId(req.params.project_id),"user_id": ObjectId(req.params.user_id)}
-            }else{
-                condition = {"project_id": ObjectId(req.params.project_id)}
+            if (req.params.user_id) {
+                condition = { "project_id": ObjectId(req.params.project_id), "user_id": ObjectId(req.params.user_id) }
+            } else {
+                condition = { "project_id": ObjectId(req.params.project_id) }
             }
             documents = await Report.aggregate([
                 {
@@ -482,7 +482,26 @@ const ReportController = {
         return res.json({ "status": 200, data: documents });
 
     },
-
+    async finalSubmitReport(req, res, next) {
+        const { company_id, project_id, user_id, date } = req.params;
+        try {
+            const exist = await Report.exists({ company_id: ObjectId(company_id), project_id: ObjectId(project_id), user_id: ObjectId(user_id), report_date: date })
+            if (!exist) {
+                return next(CustomErrorHandler.notExist('Report not exist'));
+            }
+            await Report.findOneAndUpdate(
+                { _id: exist },
+                {
+                    verify_1_revert: false,
+                    report_status: true
+                },
+                { new: true }
+            ).select('-__v');
+        } catch (err) {
+            return next(err);
+        }
+        res.send(CustomSuccessHandler.success("Report final submited successfully"))
+    },
 
 }
 
