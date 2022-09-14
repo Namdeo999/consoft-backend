@@ -64,8 +64,11 @@ const ReportController = {
                             res.send(CustomSuccessHandler.success('Manpower report created successfully'))
                         } else {
                             return (result.error);
+                            // res.send(CustomErrorHandler.alreadyExist('Manpower report item is already exist'))
                         }
                     });
+                   
+                    
                     break;
                 case Constants.STOCK:
                     console.log("Stock")
@@ -78,13 +81,20 @@ const ReportController = {
                         inputs: inputs,
                     }
 
-                    QuantityReportController.store(bodyData).then((result, err) => {
-                        if (result.status === Constants.RES_SUCCESS) {
-                            res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
-                        } else {
-                            return (err);
-                        }
-                    });
+                    // QuantityReportController.store(bodyData).then((result) => {
+                    //     if (result.status === Constants.RES_SUCCESS) {
+                    //         res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
+                    //     } else {
+                    //         return (result.error);
+                    //     }
+                    // });
+                    const result = await QuantityReportController.store(bodyData);
+                    if (result.status === Constants.RES_SUCCESS) {
+                        res.send(CustomSuccessHandler.success('Quantity item report created successfully'))
+                    } else {
+                        res.send(CustomErrorHandler.alreadyExist('Quantity item is already exist'))
+                    }
+
                     break;
                 case Constants.TANDP:
                     const { equipmentField } = req.body;
