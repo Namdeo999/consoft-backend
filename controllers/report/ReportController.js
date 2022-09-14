@@ -380,26 +380,26 @@ const ReportController = {
 
     // },
 
-    async finalSubmitReport(req, res, next){
-        const {company_id, project_id, user_id, date} = req.params;
-        try {
-            const exist = await Report.exists({company_id: ObjectId(company_id), project_id: ObjectId(project_id), user_id:ObjectId(user_id), report_date:date})
-            if (!exist) {
-                return next(CustomErrorHandler.notExist('Report not exist'));
-            }
-            await Report.findOneAndUpdate(
-                { _id:exist },
-                {
-                    verify_1_revert:false,
-                    report_status:true
-                },
-                { new: true }
-            ).select('-__v');
-        } catch (err) {
-            return next(err);
-        }
-        res.send(CustomSuccessHandler.success("Report final submited successfully"))
-    },
+    // async finalSubmitReport(req, res, next){
+    //     const {company_id, project_id, user_id, date} = req.params;
+    //     try {
+    //         const exist = await Report.exists({company_id: ObjectId(company_id), project_id: ObjectId(project_id), user_id:ObjectId(user_id), report_date:date})
+    //         if (!exist) {
+    //             return next(CustomErrorHandler.notExist('Report not exist'));
+    //         }
+    //         await Report.findOneAndUpdate(
+    //             { _id:exist },
+    //             {
+    //                 verify_1_revert:false,
+    //                 report_status:true
+    //             },
+    //             { new: true }
+    //         ).select('-__v');
+    //     } catch (err) {
+    //         return next(err);
+    //     }
+    //     res.send(CustomSuccessHandler.success("Report final submited successfully"))
+    // },
 
     async index(req, res, next) {
         let documents;
