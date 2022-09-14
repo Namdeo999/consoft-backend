@@ -207,13 +207,15 @@ router.get('/contractor', ContractorController.index);
 router.get('/project-by-contractor/:project_id', ContractorController.projectByContractor);
 router.post('/contractor', ContractorController.store);
 router.put('/contractor/:id', ContractorController.update);
-router.delete('/contractor/:contractor_id', ContractorController.destroy);
+router.delete('/contractor/:contractor_id', ContractorController.destroy);  
+
 
 //report
 router.post('/report/:type', ReportController.saveReport);
 
 //admin
 router.get('/report/:project_id/:user_id?', ReportController.index);
+router.put('/final-submit-report/:company_id/:project_id/:user_id/:date', ReportController.finalSubmitReport);
 
 router.get('/manpower-report/:project_id/:user_id/:date', ManpowerReportController.index);
 router.get('/manpower-report-by-report-id/:report_id', ManpowerReportController.manpowerReportByReportId);
