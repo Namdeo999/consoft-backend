@@ -225,6 +225,7 @@ router.post('/report/:type', ReportController.saveReport);
     
     router.get('/edit-quantity-report/:id', QuantityReportController.edit);
     router.put('/quantity-report/:id', QuantityReportController.update);
+    router.delete('/quantity-report/:id', QuantityReportController.destroy);
     
     router.put('/final-submit-report/:company_id/:project_id/:user_id/:date', ReportController.finalSubmitReport);
 // router.post('/quantity-report',QuantityReportController.store);

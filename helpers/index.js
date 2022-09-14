@@ -8,6 +8,7 @@ export default{
 
     async totalQuantityItemWotk(quantity_work_item_report_id){
         let total_qty_work ;
+        console.log(quantity_work_item_report_id)
         try {
             await QuantityWorkItemReport.aggregate([
                 {
@@ -15,7 +16,9 @@ export default{
                         "_id": ObjectId(quantity_work_item_report_id)
                     }
                 },
-                { $unwind: "$subquantityitems" },
+                
+                // { $unwind: "$subquantityitems" },
+                { $unwind: { path: "$subquantityitems", preserveNullAndEmptyArrays: true } },
                 {
                     $group:
                     {
@@ -31,10 +34,7 @@ export default{
                     $project: {
                         _id:"$main_id",
                         item_id:"$_id",
-                        // num_total:"$num_total",
                         quantity_report_id:"$quantity_report_id",
-                        // subtotalAmount:"$subtotalAmount",
-                        // count:"$count",
                         total_quantity : { '$add' : [ '$subtotalAmount', '$num_total' ] },
                     }
                 }
@@ -96,6 +96,31 @@ export default{
                         },
                         {new:true}
                     );
+                }
+            } catch (err) {
+                return (err)
+            }
+            return ({status:200});
+        }
+    },
+
+    async deleteCompletedBoqQuantity(quantity_report_id, item_id, pre_total_qty){
+        const quantity_report = await QuantityReport.exists({_id: ObjectId(quantity_report_id) }).select('report_id');
+        let total_qty;
+        if (quantity_report) {
+            const report = await Report.findOne({_id: ObjectId(quantity_report.report_id) }).select('company_id project_id');
+            try {
+                const exist = await ManageBoq.findOne({ company_id: ObjectId(report.company_id), project_id: ObjectId(report.project_id), item_id: ObjectId(item_id) }).select('_id completed_qty');
+                if (exist) {
+                    total_qty = parseFloat(exist.completed_qty) - parseFloat(pre_total_qty);
+                    const updateBoq = await ManageBoq.findByIdAndUpdate(
+                        {_id:exist._id},
+                        {
+                            completed_qty:total_qty,
+                        },
+                        {new:true}
+                    );
+                    console.log(total_qty)
                 }
             } catch (err) {
                 return (err)
