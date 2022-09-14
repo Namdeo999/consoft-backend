@@ -485,9 +485,12 @@ const ReportController = {
     async finalSubmitReport(req, res, next) {
         const { company_id, project_id, user_id, date } = req.params;
         try {
-            const exist = await Report.exists({ company_id: ObjectId(company_id), project_id: ObjectId(project_id), user_id: ObjectId(user_id), report_date: date })
+            const exist = await Report.exists({ company_id: ObjectId(company_id), project_id: ObjectId(project_id), user_id: ObjectId(user_id), report_date: date }).select('report_status')
             if (!exist) {
                 return next(CustomErrorHandler.notExist('Report not exist'));
+            }
+            if (exist.report_status === true) {
+                return next(CustomErrorHandler.alreadyExist('Report already final submited'));
             }
             await Report.findOneAndUpdate(
                 { _id: exist },
