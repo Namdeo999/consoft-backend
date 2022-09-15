@@ -8,7 +8,7 @@ export default{
 
     async totalQuantityItemWotk(quantity_work_item_report_id){
         let total_qty_work ;
-        console.log(quantity_work_item_report_id)
+        // console.log(quantity_work_item_report_id)
         try {
             await QuantityWorkItemReport.aggregate([
                 {
@@ -120,7 +120,7 @@ export default{
                         },
                         {new:true}
                     );
-                    console.log(total_qty)
+                    // console.log(total_qty)
                 }
             } catch (err) {
                 return (err)

@@ -82,7 +82,7 @@ const WaterLevelController = {
         //         return next(error);
         //         // rootfolder/uploads/filename.png
         //     }
-            console.log(req.body);
+            // console.log(req.body);
             const {image, led_status, water_level} = req.body;
             let document ;
 

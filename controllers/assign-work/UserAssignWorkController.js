@@ -81,6 +81,7 @@ const UserAssignWorkController = {
                             work: 1,
                             comment:1,
                             comment_status:1,
+                            comment_reply_status:1,
                             exp_completion_date:1,
                             exp_completion_time:1,
                             submit_work_text:1,
