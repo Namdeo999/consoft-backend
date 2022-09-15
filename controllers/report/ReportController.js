@@ -416,7 +416,7 @@ const ReportController = {
                     $match: {
                         $and: [
                             condition,
-                            {"report_status": true}
+                            // {"report_status": true}
                         ]
                     }
                 },
@@ -496,6 +496,8 @@ const ReportController = {
                 { _id: exist },
                 {
                     verify_1_revert: false,
+                    admin_1_revert:false,//direct  
+                    admin_2_revert:false,//direct
                     report_status: true
                 },
                 { new: true }

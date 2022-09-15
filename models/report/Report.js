@@ -31,7 +31,8 @@ const reportSchema = mongoose.Schema({
     admin_2_revert_date:{ type:String, default:null},
     admin_2_revert_time:{ type:String, default:null},
     admin_2_revert_msg:{ type:String, default:null},
-    report_status:{ type:Boolean, default:false }
+    report_status:{ type:Boolean, default:false },
+    final_verify_status:{ type:Boolean, default:false }
 }, { timestamps: true });
 
 

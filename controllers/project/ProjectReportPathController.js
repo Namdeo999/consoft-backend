@@ -225,6 +225,24 @@ const ProjectReportPathController = {
             return next(err);
         }
         res.send(CustomSuccessHandler.success('Project report path created successfully'));
+    },
+
+    async update(req, res, next){
+        const { error } = projectReportPathSchema.validate(req.body);
+        if(error){
+            return next(error);
+        }
+        const {company_id, project_id, started_by, verification_1, admin_1, admin_2} = req.body;
+        try {
+            // const exist = await ProjectReportPath.exists({ company_id:ObjectId(company_id), project_id:ObjectId(project_id)});
+            // if (!exist) {
+            //     return next(CustomErrorHandler.alreadyExist('This project report path is already exist'));
+            // }
+            await ProjectReportPath.findOneAndUpdate({ _id: req.params.id},{started_by, verification_1, admin_1, admin_2},{new: true});
+        } catch (err) {
+            return next(err);
+        }
+        return res.send(CustomSuccessHandler.success("Project report path updated successfully"))
     }
 }
 

@@ -2,7 +2,6 @@ import { AssignWork, SubWorkAssign } from '../../models/index.js'
 import { assignWorkSchema } from '../../validators/index.js';
 import CustomErrorHandler from '../../services/CustomErrorHandler.js'
 import CustomSuccessHandler from '../../services/CustomSuccessHandler.js'
-import helpers from '../../helpers/index.js';
 import { ObjectId } from 'mongodb'
 import CustomFunction from '../../services/CustomFunction.js';
 
@@ -50,6 +49,7 @@ const AssignWorkController = {
                                 work_status:'$work_status', 
                                 comment:'$comment', 
                                 comment_status:'$comment_status', 
+                                comment_reply_status:'$comment_reply_status', 
                                 assign_date:"$assign_date",
                                 assign_time:"$assign_time",
                             }, 
@@ -321,7 +321,7 @@ const AssignWorkController = {
                 {
                     exp_completion_date,
                     exp_completion_time,
-                    // comment_status:false
+                    comment_reply_status:true
                 },
                 { new: true }
             ).select('-__v');

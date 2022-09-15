@@ -116,6 +116,7 @@ router.get('/project-team-role-wise/:project_id', ProjectTeamController.projectT
 //project report path
 router.get('/project-report-path/:company_id/:project_id', ProjectReportPathController.index);
 router.post('/project-report-path', ProjectReportPathController.store);
+router.put('/project-report-path/:id', ProjectReportPathController.update);
 
 //stock
 router.get('/unit', UnitController.index);
