@@ -284,7 +284,7 @@ router.put('/revert-report/:project_id/:report_id/:user_id', RevertController.re
 router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
 
 //user profile
-router.get('/attendance/:user_id', AttendanceController.attendance);
+router.get('/attendance/:user_id', AttendanceController.index);
 // router.post('/attendance', AttendanceController.attendance);
 
 router.get('/leaves/:company_id', AttendanceController.getLeaves);
