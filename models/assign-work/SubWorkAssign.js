@@ -20,6 +20,7 @@ const SubWorkAssign = mongoose.Schema({
     submit_work_time:{ type: String, default:null },
     comment:{ type:String, default: null },
     comment_status:{ type:Boolean, default: false },
+    comment_reply_status:{ type:Boolean, default: false },
     revert_msg:{ type:String, default: null },
     revert_status:{ type:Boolean, default:false },
     verify_date: { type: String, default:null },

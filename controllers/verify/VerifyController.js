@@ -36,7 +36,7 @@ const VerifyController = {
 
             const project_path = await ProjectReportPath.findOne({project_id:project_id}).select('-createdAt -updatedAt -__v');
             if (project_path) {
-                
+
                 if (project_path.verification_1.toString() === user_id) {
                     const report_data = await Report.findById({_id:report_id}).select('verify_1_status');
                     if (report_data.verify_1_status === Constants.VERIFY ) {
@@ -76,6 +76,7 @@ const VerifyController = {
                             admin_2_status:Constants.VERIFY,
                             admin_2_date:current_date,
                             admin_2_time:current_time,
+                            final_verify_status:true
                         },
                         {new: true}
                     ).select('-__v');

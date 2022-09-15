@@ -98,6 +98,7 @@ const RevertController = {
                                 admin_1_revert_date:current_date,
                                 admin_1_revert_time:current_time,
                                 admin_1_revert_msg:revert_msg,
+                                report_status:false, // direct return for report creater 
                             },
                             {new: true}
                         ).select('-__v');
@@ -118,11 +119,13 @@ const RevertController = {
                         await Report.findByIdAndUpdate(
                             {_id:report_id},
                             {
+                                verify_1_status:false,//redict
                                 admin_1_status:false,
                                 admin_2_revert:Constants.REVERT,
                                 admin_2_revert_date:current_date,
                                 admin_2_revert_time:current_time,
                                 admin_2_revert_msg:revert_msg,
+                                report_status:false, // direct return for report creater
                             },
                             {new: true}
                         ).select('-__v');
