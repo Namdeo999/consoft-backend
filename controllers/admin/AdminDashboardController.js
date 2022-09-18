@@ -9,6 +9,7 @@ const time = CustomFunction.currentTime();
 const AdminDashboardController = {
 
     async index(req, res, next){
+        //show all companies
         let documents;
         try {
             documents = await Company.find({company_verify:true}).select('-password -createdAt -updatedAt -__v');
