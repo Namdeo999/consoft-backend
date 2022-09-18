@@ -47,7 +47,6 @@ const ProjectReportPathController = {
                                     $expr: { $eq: ["$_id", "$$started_by"] },
                                 }
                             },
-                           
                             {
                                 $project: {
                                     "_id": 0,
@@ -62,7 +61,7 @@ const ProjectReportPathController = {
                 {
                     $lookup: { 
                         from: 'users',
-                        let: { "verification_1":  "$verification_1"  },
+                        let: { "verification_1":"$verification_1"},
                         pipeline: [
                             {
                                 $match: {
@@ -80,50 +79,27 @@ const ProjectReportPathController = {
                     },
                 },
                 {$unwind:"$verification1Data"},
-
-                // {
-                //     $lookup: { 
-                //         from: 'users',
-                //         let: { "verification_2": { "$toObjectId": "$verification_2" } },
-                //         pipeline: [
-                //             {
-                //                 $match: {
-                //                     $expr: { $eq: ["$_id", "$$verification_2"] },
-                //                 }
-                //             },
-                //             {
-                //               $project: {
-                //                     "_id": 0,
-                //                     "name": 1
-                //                 }
-                //             }
-                //         ],
-                //         as: 'verification2Data'
-                //     },
-                // },
-                // {$unwind:"$verification2Data"},
-                // {
-                //     $lookup: { 
-                //         from: 'userPrivileges',
-                //         let: { "admin_3": "$admin_3" } },
-                //         pipeline: [
-                //             {
-                //                 $match: {
-                //                     $expr: { $eq: ["$_id", "$$admin_3"] },
-                //                 }
-                //             },
-                //             {
-                //               $project: {
-                //                     "_id": 0,
-                //                     "privilege": 1
-                //                 }
-                //             }
-                //         ],
-                //         as: 'admin3Data'
-                //     },
-                // },
-                // {$unwind:"$admin3Data"},
-
+                {
+                    $lookup: { 
+                        from: 'users',
+                        let: { "verification_2":"$verification_2" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ["$_id", "$$verification_2"] },
+                                }
+                            },
+                            {
+                              $project: {
+                                    "_id": 0,
+                                    "name": 1
+                                }
+                            }
+                        ],
+                        as: 'verification2Data'
+                    },
+                },
+                {$unwind:"$verification2Data"},
                 {
                     $lookup: { 
                         from: 'users',
@@ -166,7 +142,27 @@ const ProjectReportPathController = {
                     },
                 },
                 {$unwind:"$admin2Data"},
-                
+                {
+                    $lookup: { 
+                        from: 'companies',
+                        let: { "company_id": "$company_id" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: { $eq: ["$_id", "$$company_id"] },
+                                }
+                            },
+                            {
+                              $project: {
+                                    "_id": 0,
+                                    "name": 1
+                                }
+                            }
+                        ],
+                        as: 'companyData'
+                    },
+                },
+                {$unwind:"$companyData"},
                 {
                     $project:{
                         _id:1,
@@ -177,14 +173,13 @@ const ProjectReportPathController = {
                         started_by_name:"$startedByData.name",
                         verification_1:1,
                         verification_1_name:"$verification1Data.name",
-                        // verification_2:1,
-                        // verification_2_name:"$verification2Data.name",
-                        // admin_3:1,
-                        // admin_3_name:"$admin3Data.privilege",
+                        verification_2:1,
+                        verification_2_name:"$verification2Data.name",
                         admin_1:1,
                         admin_1_name:"$admin1Data.name",
                         admin_2:1,
                         admin_2_name:"$admin2Data.name",
+                        final_verify:"$companyData.name",
                     }
                 }
 
@@ -201,7 +196,7 @@ const ProjectReportPathController = {
             return next(error);
         }
 
-        const {company_id, project_id, started_by, verification_1, admin_1, admin_2} = req.body;
+        const {company_id, project_id, started_by, verification_1, verification_2, admin_1, admin_2, final_verify} = req.body;
         try {
             const exist = await ProjectReportPath.exists( { company_id:ObjectId(company_id), project_id:ObjectId(project_id)} );
             if (exist) {
@@ -216,8 +211,10 @@ const ProjectReportPathController = {
             project_id,
             started_by,
             verification_1,
+            verification_2,
             admin_1,
             admin_2,
+            final_verify
         });
         try {
             const result = await project_report_path.save();
@@ -232,18 +229,39 @@ const ProjectReportPathController = {
         if(error){
             return next(error);
         }
-        const {company_id, project_id, started_by, verification_1, admin_1, admin_2} = req.body;
+        const {company_id, project_id, started_by, verification_1, verification_2, admin_1, admin_2, final_verify} = req.body;
         try {
             // const exist = await ProjectReportPath.exists({ company_id:ObjectId(company_id), project_id:ObjectId(project_id)});
             // if (!exist) {
             //     return next(CustomErrorHandler.alreadyExist('This project report path is already exist'));
             // }
-            await ProjectReportPath.findOneAndUpdate({ _id: req.params.id},{started_by, verification_1, admin_1, admin_2},{new: true});
+            await ProjectReportPath.findOneAndUpdate(
+                { _id: req.params.id},
+                {
+                    started_by, 
+                    verification_1, 
+                    verification_2, 
+                    admin_1, 
+                    admin_2,
+                    final_verify 
+                },
+                {new: true}
+            );
         } catch (err) {
             return next(err);
         }
         return res.send(CustomSuccessHandler.success("Project report path updated successfully"))
+    },
+
+    async destroy(req, res,next){
+        const document = await ProjectReportPath.findOneAndRemove({ _id: req.params.id });
+        if (!document) {
+            return next(new Error('Nothing to delete'));
+        }
+        // return res.send({"status":200,"message": "Category deleted successfully" })
+        return res.send(CustomSuccessHandler.success("Project report path deleted successfully"))
     }
+
 }
 
 export default ProjectReportPathController;

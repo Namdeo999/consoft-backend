@@ -34,6 +34,14 @@ class CustomErrorHandler extends Error{
         return new CustomErrorHandler(401, message)
     }
 
+    
+
+    
+
+    // static paymentNotVerify(message){
+    //     return new CustomErrorHandler(403, message)
+    // }
+
 }
 
 export default CustomErrorHandler;

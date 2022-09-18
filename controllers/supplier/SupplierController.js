@@ -13,7 +13,7 @@ const SupplierController = {
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json({"status":200, data:documents});
+        return res.json({status:200, data:documents});
     },
 
     async store(req, res, next){
@@ -23,7 +23,7 @@ const SupplierController = {
             return next(error);
         }
 
-        const {company_id, supplier_name, supplier_mobile, supplier_location} = req.body;
+        const {company_id, supplier_name, concern_person, supplier_mobile, supplier_location} = req.body;
         try {
             const exist = await Supplier.exists({ company_id:ObjectId(company_id), supplier_mobile:supplier_mobile });
             if (exist) {
@@ -36,6 +36,7 @@ const SupplierController = {
         const supplier = new Supplier({
             company_id, 
             supplier_name, 
+            concern_person,
             supplier_mobile, 
             supplier_location
         });
@@ -46,7 +47,6 @@ const SupplierController = {
         } catch (err) {
             return next(err);
         }
-
     },
 
     async edit(req, res, next){
@@ -60,19 +60,18 @@ const SupplierController = {
     },
 
     async update(req, res, next){
-        
         const {error} = supplierSchema.validate(req.body);
         if(error){
             return next(error);
         }
-
-        const { supplier_name, supplier_mobile, supplier_location} = req.body;
+        const { supplier_name, concern_person, supplier_mobile, supplier_location} = req.body;
         let document;
         try {
             document = await Supplier.findOneAndUpdate(
                 { _id: req.params.supplier_id},
                 {
                     supplier_name,
+                    concern_person,
                     supplier_mobile,
                     supplier_location
                 },
@@ -82,7 +81,6 @@ const SupplierController = {
         }
         // res.status(201).json(document);
         return res.send(CustomSuccessHandler.success("Supplier updated successfully"))
-
     },
 
     async destroy(req, res, next) {

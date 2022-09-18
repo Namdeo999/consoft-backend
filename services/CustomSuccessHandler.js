@@ -13,6 +13,14 @@ class CustomSuccessHandler {
         return new CustomSuccessHandler(200, message)
     }
 
+    // static notVerify(message){
+    //     return new CustomSuccessHandler(301, message)
+    // }
+
+    // static paymentNotExist(message){
+    //     return new CustomSuccessHandler(302, message)
+    // }
+
 }
 
 export default CustomSuccessHandler;

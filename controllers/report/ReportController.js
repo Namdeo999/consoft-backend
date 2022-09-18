@@ -451,6 +451,7 @@ const ReportController = {
                         user_name: "$userData.name",
                         report_date: 1,
                         report_time: 1,
+                        report_status: 1,
                         verify_1_status: 1,
                         verify_1_date: 1,
                         verify_1_time: 1,
@@ -458,6 +459,13 @@ const ReportController = {
                         verify_1_revert_date: 1,
                         verify_1_revert_time: 1,
                         verify_1_revert_msg: 1,
+                        verify_2_status: 1,
+                        verify_2_date: 1,
+                        verify_2_time: 1,
+                        verify_2_revert: 1,
+                        verify_2_revert_date: 1,
+                        verify_2_revert_time: 1,
+                        verify_2_revert_msg: 1,
                         admin_1_status: 1,
                         admin_1_date: 1,
                         admin_1_time: 1,
@@ -472,7 +480,13 @@ const ReportController = {
                         admin_2_revert_date: 1,
                         admin_2_revert_time: 1,
                         admin_2_revert_msg: 1,
-                        report_status: 1
+                        final_verify_status: 1,
+                        final_verify_date: 1,
+                        final_verify_time: 1,
+                        final_verify_revert: 1,
+                        final_verify_revert_date: 1,
+                        final_verify_revert_time: 1,
+                        final_verify_revert_msg: 1,
                     }
                 },
             ]);
@@ -482,6 +496,7 @@ const ReportController = {
         return res.json({ "status": 200, data: documents });
 
     },
+    
     async finalSubmitReport(req, res, next) {
         const { company_id, project_id, user_id, date } = req.params;
         try {
@@ -496,8 +511,11 @@ const ReportController = {
                 { _id: exist },
                 {
                     verify_1_revert: false,
+                    verify_2_revert: false,
                     admin_1_revert:false,//direct  
                     admin_2_revert:false,//direct
+                    final_verify_revert:false,//direct
+                    final_verify_status:false,//direct
                     report_status: true
                 },
                 { new: true }

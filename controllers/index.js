@@ -1,3 +1,6 @@
+//admin
+export { default as AdminDashboardController } from './admin/AdminDashboardController.js';
+
 // export { default as registerController } from './auth/demoregisterController.js';
 export { default as loginController } from '../controllers/auth/loginController.js';
 export { default as userController } from '../controllers/auth/userController.js';
@@ -64,6 +67,8 @@ export { default as VerifyController } from './verify/VerifyController.js';
 //user profile
 export { default as AttendanceController } from './user-profile/AttendanceController.js';
 
+//payment 
+export { default as PaymentController } from './payment/PaymentController.js';
 
 //water level
 

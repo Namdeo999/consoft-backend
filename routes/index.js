@@ -2,8 +2,10 @@ import express from "express";
 const router = express.Router();
 
 import {
+    //admin
+    AdminDashboardController,
     //auth
-    loginController, refreshController, userController,
+    loginController, refreshController, userController, PaymentController,
 
     //company
     CompanyController, ProductKeyController, UserRoleController, UserPrivilegeController,
@@ -35,6 +37,7 @@ import {
 
 } from '../controllers/index.js';
 
+
 //company
 import auth from '../middlewares/auth.js';
 import admin from '../middlewares/admin.js';
@@ -43,6 +46,11 @@ import adminEditor from "../middlewares/adminEditor.js";
 
 //user
 import user_auth from '../middlewares/user_auth.js';
+
+//admin
+router.get('/companies', AdminDashboardController.index);
+router.get('/pending-verify-payment', AdminDashboardController.pendingVerifyPayment);
+router.put('/payment-verify', AdminDashboardController.paymentVerify);
 
 // router.get('/me', userController.me);
 router.post('/login', loginController.login);
@@ -63,6 +71,12 @@ router.get('/privilege-by-users/:company_id/:privilege_id', userController.privi
 
 router.post('/refresh', refreshController.refresh);
 router.post('/logout', auth, loginController.logout);
+
+//payment
+router.get('/payment', PaymentController.index);
+router.post('/payment', PaymentController.store);
+
+
 
 //role
 router.get('/role/:company_id', UserRoleController.index);
@@ -117,6 +131,7 @@ router.get('/project-team-role-wise/:project_id', ProjectTeamController.projectT
 router.get('/project-report-path/:company_id/:project_id', ProjectReportPathController.index);
 router.post('/project-report-path', ProjectReportPathController.store);
 router.put('/project-report-path/:id', ProjectReportPathController.update);
+router.delete('/project-report-path/:id', ProjectReportPathController.destroy);
 
 //stock
 router.get('/unit', UnitController.index);
@@ -210,7 +225,6 @@ router.post('/contractor', ContractorController.store);
 router.put('/contractor/:id', ContractorController.update);
 router.delete('/contractor/:contractor_id', ContractorController.destroy);  
 
-
 //report
 router.post('/report/:type', ReportController.saveReport);
 
@@ -236,6 +250,7 @@ router.post('/report/:type', ReportController.saveReport);
 
     //report verify
     router.put('/verify-report/:project_id/:report_id/:user_id', VerifyController.verifyReport);
+    router.put('/final-verify-report/:company_id/:project_id/:report_id', VerifyController.finalVerifyReport);
 
     // report item
     router.get('/quantity-report-item/:company_id', QuantityReportItemController.index);
@@ -268,8 +283,6 @@ router.post('/report/:type', ReportController.saveReport);
     router.put('/manpower-sub-category/:id', ManpowerSubCategoryController.update);
     router.delete('/manpower-sub-category/:id', ManpowerSubCategoryController.destroy);
 
-    
-
 router.get('/supplier/:company_id', SupplierController.index);
 router.post('/supplier', SupplierController.store);
 router.get('/edit-supplier/:supplier_id', SupplierController.edit);
@@ -279,6 +292,7 @@ router.delete('/supplier/:supplier_id', SupplierController.destroy);
 //revert
 router.put('/revert-submit-work/:work_id', RevertController.revertSubmitWork);
 router.put('/revert-report/:project_id/:report_id/:user_id', RevertController.revertReport);
+router.put('/final-revert-report/:company_id/:project_id/:report_id', RevertController.finalRevertReport);
 
 //verify
 router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
@@ -295,7 +309,6 @@ router.put('/approve-leaves/:id', AttendanceController.approveLeaves);
 // router.get('/water-level/:led_status', WaterLevelController.waterLevel);
 router.get('/water-level', WaterLevelController.index);
 router.post('/water-level', WaterLevelController.waterLevel);
-
 
 
 export default router;

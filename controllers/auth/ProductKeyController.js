@@ -22,13 +22,16 @@ const ProductKeyController = {
             if(!data){
                 return next(CustomErrorHandler.notExist('Company not exist'));
             }
-            // compare the password
-            // const match = await compare(req.body.product_key, data.product_key);
-            // const match = data.product_key.match(req.body.product_key);
-
+            
             if(data.product_key !== req.body.product_key){
                 return next(CustomErrorHandler.inValid('Product key invalid enter correct key'));
             }
+
+            await ProductKey.findByIdAndUpdate(
+                {_id:data._id},
+                {product_key_verify:true},
+                {new:true}
+            );
 
             const access_token = JwtService.sign({ _id: data.company_id });
             const refresh_token = JwtService.sign({ _id: data.company_id }, '1y', REFRESH_SECRET);
