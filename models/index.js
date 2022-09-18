@@ -60,6 +60,9 @@ export {default as Supplier } from './supplier/Supplier.js';
 //user profile
 export { default as Attendance } from './user-profile/Attendance.js';
 
+//payment
+export { default as Payment } from './payment/Payment.js';
+
 // water level
 export { default as WaterLevel } from './water-level/WaterLevel.js';
  

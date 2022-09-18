@@ -33,7 +33,7 @@ const ItemController = {
         } catch (error) {
             return next(CustomErrorHandler.serverError());
         }
-        return res.json(documents);
+        return res.json({status:200, data:documents});
     },
 
     async store(req, res, next){
@@ -104,7 +104,8 @@ const ItemController = {
         } catch (err) {
             return next(err);
         }
-        res.status(201).json(document);
+        // res.status(201).json(document);
+        return res.json({status:200, data:document});
     },
 
     async destroy(req, res, next) {

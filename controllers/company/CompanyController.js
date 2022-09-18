@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { Company, RefreshToken, ProductKey } from "../../models/index.js";
+import { Company, RefreshToken, ProductKey, Payment } from "../../models/index.js";
 import bcrypt from 'bcrypt';
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
@@ -23,6 +23,32 @@ const CompanyController = {
             return next(error);
         }
 
+        try {
+            const exist = await Company.exists({mobile: req.body.mobile});
+            if(!exist){
+                return next(CustomErrorHandler.notExist('You are do not exist, please click on "Free Register & Purchase" button for register a new company.'));
+            }
+
+            const product_key = await ProductKey.exists({company_id: exist._id, product_key_verify:false});
+            if(product_key){
+                return res.json({ status:301, company_id:exist._id, message:'Product key not verify.' });
+            }
+            
+            const payment_exist = await Payment.exists({company_id: exist._id});
+            if(!payment_exist){
+                return res.json({ status:302, company_id:exist._id, message:'Payment not exist.' });
+            }
+
+            //check admin verify
+            const check_payment = await Payment.exists({company_id: exist._id, payment_verify:false});
+            if(check_payment){
+                return res.json({ status:303, message:'Please wait until your payment is not verified.' });
+            }
+            
+        } catch (err) {
+            return next(err);
+        }
+        
         try {
             const company = await Company.findOne({mobile: req.body.mobile});
             if(!company){

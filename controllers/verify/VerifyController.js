@@ -51,6 +51,20 @@ const VerifyController = {
                         },
                         {new: true}
                     ).select('-__v');
+                }else if (project_path.verification_2.toString() === user_id) {
+                    const report_data = await Report.findById({_id:report_id}).select('verify_2_status');
+                    if (report_data.verify_2_status === Constants.VERIFY ) {
+                        return next(CustomErrorHandler.inValid('Already verified'));
+                    }
+                    await Report.findByIdAndUpdate(
+                        {_id:report_id},
+                        {
+                            verify_2_status:Constants.VERIFY,
+                            verify_2_date:current_date,
+                            verify_2_time:current_time,
+                        },
+                        {new: true}
+                    ).select('-__v');
                 }else if (project_path.admin_1.toString() === user_id) {
                     const report_data = await Report.findById({_id:report_id}).select('admin_1_status');
                     if (report_data.admin_1_status === Constants.VERIFY ) {
@@ -76,14 +90,14 @@ const VerifyController = {
                             admin_2_status:Constants.VERIFY,
                             admin_2_date:current_date,
                             admin_2_time:current_time,
-                            final_verify_status:true
                         },
                         {new: true}
                     ).select('-__v');
                 }else{
                     return next(CustomErrorHandler.inValid('Out of privilege')); 
                 }
-
+            }else{
+                return next(CustomErrorHandler.inValid('Out of privilege')); 
             }
         } catch (err) {
             return next(err);
@@ -91,7 +105,46 @@ const VerifyController = {
         res.send(CustomSuccessHandler.success("Verified successfully!"))
     },
 
+    async finalVerifyReport(req, res, next){
+        let current_date = CustomFunction.currentDate();
+        let current_time = CustomFunction.currentTime();
+        let {company_id, project_id, report_id} = req.params;
+        
+        try {
+            const project_path = await ProjectReportPath.findOne({project_id:project_id}).select('-createdAt -updatedAt -__v');
+            if (project_path) {
+
+                if (project_path.final_verify.toString() === company_id) {
+                    const report_data = await Report.findById({_id:report_id}).select('final_verify_status');
+                    if (report_data.final_verify_status === Constants.VERIFY ) {
+                        return next(CustomErrorHandler.inValid('Already verified'));
+                    }
+                    await Report.findByIdAndUpdate(
+                        {_id:report_id},
+                        {
+                            final_verify_status:Constants.VERIFY,
+                            final_verify_date:current_date,
+                            final_verify_time:current_time,
+                        },
+                        {new: true}
+                    ).select('-__v');
+                }else{
+                    return next(CustomErrorHandler.inValid('Out of privilege')); 
+                }
+            }else{
+                return next(CustomErrorHandler.inValid('Invalid'));
+            }
+        } catch (err) {
+            return next(err)
+        }
+        res.send(CustomSuccessHandler.success("Report finally Verified successfully"))
+    }
+
+
 }
+
+
+
 
 export default VerifyController;
 

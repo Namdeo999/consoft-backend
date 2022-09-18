@@ -10,6 +10,7 @@ const reportSchema = mongoose.Schema({
     user_id:{ type:ObjectId, required:true },
     report_date:{ type:String, default:date },
     report_time:{ type:String, default:time },
+    report_status:{ type:Boolean, default:false },
     verify_1_status:{ type:Boolean, default:false},
     verify_1_date:{ type:String, default:null},
     verify_1_time:{ type:String, default:null},
@@ -17,6 +18,13 @@ const reportSchema = mongoose.Schema({
     verify_1_revert_date:{ type:String, default:null},
     verify_1_revert_time:{ type:String, default:null},
     verify_1_revert_msg:{ type:String, default:null},
+    verify_2_status:{ type:Boolean, default:false},
+    verify_2_date:{ type:String, default:null},
+    verify_2_time:{ type:String, default:null},
+    verify_2_revert:{ type:Boolean, default:false},
+    verify_2_revert_date:{ type:String, default:null},
+    verify_2_revert_time:{ type:String, default:null},
+    verify_2_revert_msg:{ type:String, default:null},
     admin_1_status:{ type:Boolean, default:false},
     admin_1_date:{ type:String, default:null},
     admin_1_time:{ type:String, default:null},
@@ -31,8 +39,13 @@ const reportSchema = mongoose.Schema({
     admin_2_revert_date:{ type:String, default:null},
     admin_2_revert_time:{ type:String, default:null},
     admin_2_revert_msg:{ type:String, default:null},
-    report_status:{ type:Boolean, default:false },
-    final_verify_status:{ type:Boolean, default:false }
+    final_verify_status:{ type:Boolean, default:false },
+    final_verify_date:{ type:String, default:null},
+    final_verify_time:{ type:String, default:null},
+    final_verify_revert:{ type:Boolean, default:false},
+    final_verify_revert_date:{ type:String, default:null},
+    final_verify_revert_time:{ type:String, default:null},
+    final_verify_revert_msg:{ type:String, default:null},
 }, { timestamps: true });
 
 

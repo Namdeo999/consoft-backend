@@ -2,6 +2,9 @@ export { default as userSchema } from './user/UserValidator.js';
 export { default as userRoleSchema } from './user/UserRoleValidator.js';
 export { default as userPrivilegeSchema } from './user/UserPrivilegeValidator.js';
 
+//payment
+export { default as paymentSchema } from './payment/PaymentValidator.js';
+
 //checklist
 export { default as checklistOptionTypeSchema } from './checklist/ChecklistOptionTypeValidator.js';
 export { default as checklistOptionSchema } from './checklist/ChecklistOptionValidator.js';
