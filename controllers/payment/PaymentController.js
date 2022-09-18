@@ -41,7 +41,6 @@ const PaymentController = {
             return next(err);
         }
         res.send(CustomSuccessHandler.success('Payment success'));
-
     },
 
 }
