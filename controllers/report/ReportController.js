@@ -9,29 +9,13 @@ import ManpowerReportController from "./ManpowerReportController.js";
 import { ObjectId } from "mongodb";
 import ToolsMachineryController from "../tools-machinery/ToolsMachineryController.js";
 
+const current_date = CustomFunction.currentDate();
+const current_time = CustomFunction.currentTime();
 
 const ReportController = {
 
     async saveReport(req, res, next) {
-
-        // const {error} = reportSchema.validate(req.body);
-        // if(error){
-        //     return next(error);
-        // }
-
-        // const company = {
-        //     _id
-        // }
-        // req.company = company;
-        // next()
-
-        // console.log(req.body);
-        // return;
-
         try {
-            let current_date = CustomFunction.currentDate();
-            let current_time = CustomFunction.currentTime();
-            // let sta_date = "2022/08/23"
             const { company_id, project_id, user_id } = req.body;
             const exist = await Report.exists({ company_id: company_id, project_id: project_id, user_id: user_id, report_date: current_date });
             let report_id;
@@ -122,18 +106,6 @@ const ReportController = {
             return next(err);
         }
 
-
-
-
-        // try {
-        //     // res.status(200).send({ "status": "success", "message": "Project created" })
-        //     res.send(CustomSuccessHandler.success('Report created successfully'));
-        // } catch (err) {
-        //     return next(err);
-        // }
-
-        // const data = QuantityReportController.index(); //final call
-        // console.log(data);
     },
 
     // async index(req, res, next){
@@ -404,7 +376,6 @@ const ReportController = {
     async index(req, res, next) {
         let documents;
         let condition;
-
         try {
             if (req.params.user_id) {
                 condition = { "project_id": ObjectId(req.params.project_id), "user_id": ObjectId(req.params.user_id) }
@@ -416,7 +387,7 @@ const ReportController = {
                     $match: {
                         $and: [
                             condition,
-                            // {"report_status": true}
+                            {"report_date":  req.params.date ? req.params.date : current_date },
                         ]
                     }
                 },

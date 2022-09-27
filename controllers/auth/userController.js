@@ -2,9 +2,11 @@ import { ObjectId } from "mongodb";
 import { User, ProjectTeam, UserPrivilege } from "../../models/index.js";
 import { userSchema } from "../../validators/index.js";
 import CustomErrorHandler from "../../services/CustomErrorHandler.js";
+import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import bcrypt from 'bcrypt';
 import JwtService from '../../services/JwtService.js'
 import CustomFunction from "../../services/CustomFunction.js";
+import Constants from "../../constants/index.js";
 
 import transporter from "../../config/emailConfig.js";
 import { EMAIL_FROM } from "../../config/index.js";
@@ -25,19 +27,32 @@ const userController ={
     //     }
     // }
 
-    async register(req, res, next){
+    async userRegister(req, res, next){
         const {error} = userSchema.validate(req.body);
         if (error) {
             return next(error);
         }
+        const { name, email, mobile, role_id, user_privilege, company_id, assign_project, project_id } = req.body;
+        const other_team_id = Constants.PRIVILEGE_OTHER_TEAM; //ObjectId
+        try {
+            if (other_team_id != user_privilege) {
+                const privilege_exist = await User.exists({company_id:ObjectId(company_id), user_privilege:ObjectId(user_privilege)});
+                if (privilege_exist) {
+                    return next(CustomErrorHandler.alreadyExist('!Sorry this admin is already created. multiple not allowed ( admin-1, admin-2, admin-3 ) only create once. if you want to create multiple then select OTHER TEAM option.'));
+                }
+            }
+        } catch (err) {
+            return next(err);
+        }
+        
         let unique_id ; //unique, user_id
         try {
-            const mobile_exist = await User.exists({company_id:ObjectId(req.body.company_id), mobile:req.body.mobile});
+            const mobile_exist = await User.exists({company_id:ObjectId(company_id), mobile:mobile});
             if (mobile_exist) {
                 return next(CustomErrorHandler.alreadyExist('This mobile is already taken.'));
             }
 
-            const email_exist = await User.exists({company_id:ObjectId(req.body.company_id), email:req.body.email});
+            const email_exist = await User.exists({company_id:ObjectId(company_id), email:email}).collation({locale:'en', strength:1});
             if (email_exist) {
                 return next(CustomErrorHandler.alreadyExist('This email is already taken.'));
             }
@@ -49,7 +64,7 @@ const userController ={
         }
 
         const password = CustomFunction.stringPassword(6);
-        const { name, email, mobile, role_id, user_privilege, company_id, assign_project, project_id } = req.body;
+        // const { name, email, mobile, role_id, user_privilege, company_id, assign_project, project_id } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
         
         // let access_token;
@@ -100,7 +115,57 @@ const userController ={
             return next(err);
         }
         // res.json({status:200, access_token:access_token });
-        res.json({status:200 });
+        return res.json({status:200 });
+    },
+
+    async update(req, res, next){
+        const {error} = userSchema.validate(req.body);
+        if (error) {
+            return next(error);
+        }
+
+        const { name, email, mobile, role_id, user_privilege, company_id, assign_project, project_id } = req.body;
+        const other_team_id = Constants.PRIVILEGE_OTHER_TEAM; //ObjectId
+        try {
+            if (other_team_id != user_privilege) {
+                const privilege_exist = await User.exists({company_id:ObjectId(company_id), user_privilege:ObjectId(user_privilege)});
+                if (privilege_exist) {
+                    return next(CustomErrorHandler.alreadyExist('!Sorry this admin is already created. multiple not allowed ( admin-1, admin-2, admin-3 ) only create once. if you want to create multiple then select OTHER TEAM option.'));
+                }
+            }
+        } catch (err) {
+            return next(err);
+        }
+        try {
+            const mobile_exist = await User.exists({ _id : { $ne : req.params.id}, company_id:ObjectId(company_id), mobile:mobile});
+            if (mobile_exist) {
+                return next(CustomErrorHandler.alreadyExist('This mobile is already taken.'));
+            }
+            const email_exist = await User.exists({_id : { $ne : req.params.id}, company_id:ObjectId(company_id), email:email}).collation({locale:'en', strength:1});
+            if (email_exist) {
+                return next(CustomErrorHandler.alreadyExist('This email is already taken.'));
+            }
+        } catch (err) {
+            return next(err);
+        }
+
+        try {
+            const filter = { _id: req.params.id };
+            const updateDocument = {
+                $set: {
+                    name,
+                    email,
+                    mobile,
+                    role_id,
+                    user_privilege,
+                },
+            };
+            const options = { upsert: true };
+            const result = await User.findOneAndUpdate(filter, updateDocument, options);
+        } catch (err) {
+            return next(err);
+        }
+        return res.send(CustomSuccessHandler.success("User detail updated successfully"))
     },
     
     async user(req, res, next){
@@ -169,6 +234,17 @@ const userController ={
                     $unwind: "$userRoleData"
                 },
                 {
+                    $lookup: {
+                        from: "userPrivileges",
+                        localField: 'user_privilege',
+                        foreignField: "_id",
+                        as: 'userPrivilegeData'
+                    }
+                },
+                {
+                    $unwind: "$userPrivilegeData"
+                },
+                {
                     $project: {
                         _id: 1,
                         name: 1,
@@ -177,7 +253,8 @@ const userController ={
                         company_id: 1,
                         user_privilege: 1,
                         role_id: 1,
-                        user_role: "$userRoleData.user_role"
+                        user_role: "$userRoleData.user_role",
+                        privilege: "$userPrivilegeData.privilege"
                     }
                 }
             ])

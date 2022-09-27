@@ -61,10 +61,11 @@ router.post('/company', CompanyController.store);
 
 router.post('/verify-product-key', ProductKeyController.verifyProductKey);
 
-router.post('/register', userController.register);
+router.post('/user-register', userController.userRegister);
 // router.get('/user', user_auth, userController.user);
 router.get('/user/:user_id', userController.user);
 router.get('/users/:company_id', userController.index);
+router.put('/update-user/:id', userController.update);
 
 router.get('/role-by-users/:company_id/:role_id', userController.roleByUsers);
 router.get('/privilege-by-users/:company_id/:privilege_id', userController.privilegeByUsers);
@@ -229,7 +230,7 @@ router.delete('/contractor/:contractor_id', ContractorController.destroy);
 router.post('/report/:type', ReportController.saveReport);
 
     //admin
-    router.get('/report/:project_id/:user_id?', ReportController.index);
+    router.get('/report/:project_id/:date?/:user_id?', ReportController.index);
     
     router.get('/manpower-report/:project_id/:user_id/:date', ManpowerReportController.index);    
     router.get('/manpower-report-by-report-id/:report_id', ManpowerReportController.manpowerReportByReportId);
@@ -258,6 +259,7 @@ router.post('/report/:type', ReportController.saveReport);
     router.get('/edit-quantity-report-item/:id', QuantityReportItemController.edit);
     router.put('/update-quantity-report-item/:id', QuantityReportItemController.update);
     router.delete('/delete-quantity-report-item/:id', QuantityReportItemController.destroy);
+    router.get('/steel-quantity-item/:company_id', QuantityReportItemController.steelQuantityItem);
 
     //quality type
     router.get('/quality-type/', QualityTypeController.index);
@@ -272,6 +274,8 @@ router.post('/report/:type', ReportController.saveReport);
     router.get('/edit-manpower-category/:id', ManpowerCategoryController.edit);
     router.put('/manpower-category/:id', ManpowerCategoryController.update);
     router.delete('/manpower-category/:id', ManpowerCategoryController.destroy);
+
+    
 
     router.get('/manpower-category/:company_id/:project_id/:contractor_id', ManpowerCategoryController.getManpowerCategoryByContractor);
 

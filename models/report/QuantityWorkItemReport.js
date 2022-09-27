@@ -4,7 +4,9 @@ import mongoose from "mongoose";
 const quantityWorkItemReportSchema = mongoose.Schema({
     quantity_report_id:{ type: ObjectId },
     item_id: { type: ObjectId }, 
+    nos: { type: Number, default:null }, 
     unit_name: { type: String }, 
+    steel_mm: { type: Number, default:null }, //for steel  
     num_length: { type: Number }, 
     unit_name:{type:String},
     num_width: { type: Number }, 
@@ -13,6 +15,8 @@ const quantityWorkItemReportSchema = mongoose.Schema({
     remark: { type: String },
     quality_type : { type: String},
     subquantityitems:[{
+        sub_nos: { type: Number, default:null },
+        sub_steel_mm: { type: Number, default:null }, //for steel 
         sub_length: { type: Number }, 
         sub_width: { type: Number }, 
         sub_height: { type: Number }, 
