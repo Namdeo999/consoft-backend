@@ -102,6 +102,7 @@ const ManpowerReportController = {
                                 manpower_category_id:'$manpowerMemberReportData.manpower_category_id',
                                 manpower_category_name:'$manpowerCategoryData.manpower_category',
                                 manpower_member:'$manpowerMemberReportData.manpower_member',
+                                
                             }
                         }
                     }
@@ -530,14 +531,17 @@ const ManpowerReportController = {
                       }
                 },
                 {$unwind: "$manpowerCategoryData"},
-                  {
-                      $group:{
-                          _id: "$manpowerMemberReportData.manpower_report_id" ,
-                          "user_id": { "$first": "$user_id" },
-                          "contractor_id": { "$first": "$contractor_id" },
-                          "contractor_name": { "$first": "$contractorData.contractor_name" },
-                          // "manpower_category_id_new": { $addToSet : "$manpowerMemberReportData.manpower_category_id" },
-                          "manpowerCategories":{"$push":{
+                
+                {
+                    $group:{
+                        _id: "$manpowerMemberReportData.manpower_report_id" ,
+                        "user_id": { "$first": "$user_id" },
+                        "contractor_id": { "$first": "$contractor_id" },
+                        "contractor_name": { "$first": "$contractorData.contractor_name" },
+                        // "manpower_category_id_new": { $addToSet : "$manpowerMemberReportData.manpower_category_id" },
+                        "total_manpower": { $sum: "$manpowerMemberReportData.manpower_member" },
+                        "manpowerCategories":{
+                            "$push":{
                                 _id:'$manpowerMemberReportData._id', 
                                 manpower_report_id:'$manpowerMemberReportData.manpower_report_id',
                                 manpower_category_id:'$manpowerMemberReportData.manpower_category_id',
@@ -545,20 +549,10 @@ const ManpowerReportController = {
                                 manpower_sub_category_id:'$manpowerMemberReportData.manpower_sub_category_id',
                                 manpower_member:'$manpowerMemberReportData.manpower_member',
                             }, 
-                            
-                          }
-                      }
-                  },
-                // {
-                //     $group:{
-                //         _id: "$manpowerMemberReportData.manpower_report_id" ,
-                //         "user_id": { "$first": "$user_id" },
-                //         "contractor_id": { "$first": "$contractor_id" },
-                //         "contractor_name": { "$first": "$contractorData.contractor_name" },
-                //         // "manpower_category_id_new": { $addToSet : "$manpowerMemberReportData.manpower_category_id" },
-                //         "manpowerCategories":{"$push":'$manpowerMemberReportData'}
-                //     }
-                // },
+                        }
+                    }
+                },
+                
                 {
                     $project: {
                         _id: 1, 
@@ -568,8 +562,9 @@ const ManpowerReportController = {
                         contractor_name: "$contractor_name",
                         manpower_report_date: 1,
                         manpower_report_time: 1,
-                        manpowerCategories:"$manpowerCategories"
-                        
+                        manpowerCategories:"$manpowerCategories",
+                        total_manpower:"$total_manpower",
+                        // grand_total_manpower:"$totalBill",
                     }
                 },
              

@@ -15,14 +15,10 @@ const QuantityReportController = {
         documents = await Report.aggregate([
             {
                 $match: {
-                    // $and: [
-                    //     { "project_id": ObjectId(req.params.project_id) },
-                    // ]
                     "project_id": ObjectId(req.params.project_id),
                     "user_id": ObjectId(req.params.user_id),
                     "report_date": req.params.date
                 }
-
             },
             // {
             //     $lookup: { 
@@ -100,7 +96,9 @@ const QuantityReportController = {
                         _id: 1,
                         quantity_report_id: 1,
                         item_id: 1,
+                        nos: 1,
                         item_name: "$itemsName.item_name",
+                        steel_mm: 1,
                         unit_name: 1,
                         num_length: 1,
                         num_width: 1,
@@ -162,7 +160,9 @@ const QuantityReportController = {
                     quantity_report_id:ObjectId(quantity_report_id),
 
                     item_id : ObjectId(list.item_id),
+                    nos : list.nos,
                     unit_name : list.unit_name,
+                    steel_mm : list.steel_mm,
                     num_length : list.num_length,
                     num_width : list.num_width,
                     num_height : list.num_height,
@@ -181,6 +181,8 @@ const QuantityReportController = {
                             {
                                 $push:{
                                     "subquantityitems": {
+                                        sub_nos : sub_list.sub_nos,
+                                        sub_steel_mm : sub_list.sub_steel_mm,
                                         sub_length : sub_list.sub_length,
                                         sub_width : sub_list.sub_width,
                                         sub_height : sub_list.sub_height,
@@ -254,7 +256,9 @@ const QuantityReportController = {
                     { _id: req.params.id},
                     {
                         item_id : ObjectId(list.item_id),
+                        nos : list.nos,
                         unit_name : list.unit_name,
+                        steel_mm : list.steel_mm,
                         num_length : list.num_length,
                         num_width : list.num_width,
                         num_height : list.num_height,
@@ -288,6 +292,8 @@ const QuantityReportController = {
                             {
                                 $push:{
                                     "subquantityitems": {
+                                        sub_nos : sub_list.sub_nos,
+                                        sub_steel_mm : sub_list.sub_steel_mm,
                                         sub_length : sub_list.sub_length,
                                         sub_width : sub_list.sub_width,
                                         sub_height : sub_list.sub_height,
@@ -392,8 +398,10 @@ const QuantityReportController = {
                               _id: "$quantityWorkItemsReportsData._id",
                               quantity_report_id: "$quantityWorkItemsReportsData.quantity_report_id",
                               item_id: "$quantityWorkItemsReportsData.item_id",
+                              nos: "$quantityWorkItemsReportsData.nos",
                               item_name: "$quantityReportItemsData.item_name",
                               unit_name: "$quantityWorkItemsReportsData.unit_name",
+                              steel_mm: "$quantityWorkItemsReportsData.steel_mm",
                               num_length: "$quantityWorkItemsReportsData.num_length",
                               num_width: "$quantityWorkItemsReportsData.num_width",
                               num_height: "$quantityWorkItemsReportsData.num_height",

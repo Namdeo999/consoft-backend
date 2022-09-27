@@ -12,4 +12,6 @@ export default{
     HUNDRED_PERCENT:100,
     VERIFY:true,
     REVERT:true,
+    QUANTITY_ITEM_STEEL:'steel',
+    PRIVILEGE_OTHER_TEAM:'630f4b387acd8cc7dac459b5',
 }

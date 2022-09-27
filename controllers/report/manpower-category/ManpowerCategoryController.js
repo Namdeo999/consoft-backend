@@ -103,6 +103,8 @@ const ManpowerCategoryController = {
         return res.send(CustomSuccessHandler.success(CustomFunction.capitalize(`${document.manpower_category} deleted successfully`) ))
     },
 
+    
+
 }
 
 export default ManpowerCategoryController;
