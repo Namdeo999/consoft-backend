@@ -13,5 +13,5 @@ export default{
     VERIFY:true,
     REVERT:true,
     QUANTITY_ITEM_STEEL:'steel',
-    PRIVILEGE_OTHER_TEAM:'other team',
+    PRIVILEGE_OTHER_TEAM:'630f48bfc2b1adc9c8948a2a',
 }
