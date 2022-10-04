@@ -10,10 +10,15 @@ const CustomFunction  = {
     },
 
     currentTime(){
-        const time_zone = new Date().toLocaleString("en-US", {timeZone: "Asia/kolkata"});
-        const now = new Date(time_zone);
-        const current_time = date.format(now, 'hh:mm A'); // => '11:14 PM
-        return current_time;
+        
+        // let time_zone ;
+        // let now ;
+        // time_zone = new Date().toLocaleString("en-US", {timeZone: "Asia/kolkata"});
+        // now = new Date(time_zone);
+        // return date.format(now, 'hh:mm A'); // => '11:14 PM
+
+        var time = new Date().toLocaleTimeString("en-US", {hour: '2-digit', minute: "2-digit", hour12: true, timeZone: "Asia/kolkata"});
+        return time;
     },
 
     currentYearMonthDay(date_format){

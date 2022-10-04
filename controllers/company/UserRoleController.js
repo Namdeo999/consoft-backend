@@ -72,11 +72,12 @@ const UserRoleController = {
                 return next(CustomErrorHandler.alreadyExist('This user role is already exist'));
             }
 
-            document = await UserRole.findOneAndUpdate({ _id: req.params.id},{company_id, user_role},{new: true});
+            await UserRole.findOneAndUpdate({ _id: req.params.id},{company_id, user_role},{new: true});
         } catch (err) {
             return next(err);
         }
-        res.status(201).json(document);
+        // return res.status(201).json(document);
+        return res.send(CustomSuccessHandler.success("User role updated successfully"))
     },
 
     async destroy(req, res, next) {
