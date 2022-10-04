@@ -7,15 +7,80 @@ import CustomFunction from "../../services/CustomFunction.js";
 
 const AttendanceController = {
 
+    //show attendance all employee
     async index(req, res, next){
         let documents; 
         try {
-            documents = await Attendance.find({user_id: req.params.user_id});
+            // documents = await Attendance.find({user_id: req.params.user_id});
+            // documents = await Attendance.find({company_id: req.params.company_id});
+            documents = await Attendance.aggregate([
+                {
+                    $match:{
+                        "company_id":ObjectId(req.params.company_id),
+                        // "presentdates.present_date":req.params.date
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user_id',
+                        foreignField: '_id',
+                        as: 'userData'
+                    },
+                },
+                {
+                    $unwind:"$userData"
+                },
+                {
+                    $project:{
+                        _id:1,
+                        company_id:1,
+                        user_id:1,
+                        user_name:"$userData.name",
+                        "presentdates": {$ifNull: ["$presentdates", []]},
+                    }
+                }
+
+                //date filter only object
+                // {$unwind:'$presentdates'},
+                // {
+                //     $match:{
+                //         "company_id":ObjectId('62ba94b8ea988119bbf13687'),
+                //         "presentdates.present_date":'2022/10/04'
+                //     }
+                // },
+                // {
+                //     $lookup: {
+                //         from: 'users',
+                //         localField: 'user_id',
+                //         foreignField: '_id',
+                //         as: 'userData'
+                //     },
+                // },
+                // {
+                //     $unwind:"$userData"
+                // },
+                
+                // {
+                //     $project:{
+                //         _id:1,
+                //         company_id:1,
+                //         user_id:1,
+                //         user_name:"$userData.name",
+                //         "presentdates": {$ifNull: ["$presentdates", []]},
+                //     }
+                // }
+
+            ]);
+            
+
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
         return res.json({ "status":200, data:documents });
     },
+
+
 
     async getLeaves(req, res, next){
         let documents; 
@@ -61,6 +126,7 @@ const AttendanceController = {
                         leavedates:"$leavedates"
                     }
                 }
+
             ]);
         } catch (err) {
             return next(CustomErrorHandler.serverError());
@@ -69,18 +135,21 @@ const AttendanceController = {
     },
 
     async attendance(req, res, next){
-        // const { user_id} = req.body;
+        const { company_id, user_id} = req.body;
+        // console.log(req.params.user_id);
+        // return ;
         let year = CustomFunction.currentYearMonthDay('YYYY');
         let month = CustomFunction.currentYearMonthDay('MM')
         let month_name = CustomFunction.monthName();
         let current_date = CustomFunction.currentDate();
         let current_time = CustomFunction.currentTime();
         let attendance_main_id;
-        const exist = await Attendance.exists({user_id: req.params.user_id, year:year, month:month});
+        const exist = await Attendance.exists({user_id: ObjectId(user_id), year:year, month:month});
         try {
             if (!exist) {
                 const attendance = new Attendance({
-                    user_id,
+                    company_id:company_id,
+                    user_id:user_id,
                     year:year,
                     month:month,
                     month_name:month_name,
@@ -100,9 +169,11 @@ const AttendanceController = {
                 _id: attendance_main_id , 
                 "presentdates.present_date": current_date
             })
+
             if (present_date_exist.length > 0) {
-                return;
+                return res.send(CustomErrorHandler.alreadyExist('You are already presented'));
             }
+
             const presentData = await Attendance.findByIdAndUpdate(
                 {_id: attendance_main_id},
                 {
@@ -118,7 +189,7 @@ const AttendanceController = {
         } catch (error) {
             return next(err);
         }
-        res.send(CustomSuccessHandler.success('Presented today'));
+        return res.send(CustomSuccessHandler.success('Presented today'));
         
     },
 
