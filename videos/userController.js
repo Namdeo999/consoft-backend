@@ -33,24 +33,10 @@ const userController ={
             return next(error);
         }
         const { name, email, mobile, role_id, user_privilege, company_id, assign_project, project_id } = req.body;
-        // const other_team = await UserPrivilege.exists({ privilege:Constants.PRIVILEGE_OTHER_TEAM }).select('-__v');
-        // const other_team_id = Constants.PRIVILEGE_OTHER_TEAM; //ObjectId
-        // try {
-        //     if (other_team_id != user_privilege) {
-        //         const privilege_exist = await User.exists({company_id:ObjectId(company_id), user_privilege:ObjectId(user_privilege)});
-        //         if (privilege_exist) {
-        //             return next(CustomErrorHandler.alreadyExist('!Sorry this admin is already created. multiple not allowed ( admin-1, admin-2, admin-3 ) only create once. if you want to create multiple then select OTHER TEAM option.'));
-        //         }
-        //     }
-        // } catch (err) {
-        //     return next(err);
-        // }
-
-        const other_team = await UserPrivilege.exists({ privilege:Constants.PRIVILEGE_OTHER_TEAM }).select('-__v');
-       
+        const other_team_id = Constants.PRIVILEGE_OTHER_TEAM; //ObjectId
         try {
-            if (user_privilege != other_team._id.toString()) {
-                const privilege_exist = await User.exists({ company_id:ObjectId(company_id), user_privilege:ObjectId(user_privilege)});
+            if (other_team_id != user_privilege) {
+                const privilege_exist = await User.exists({company_id:ObjectId(company_id), user_privilege:ObjectId(user_privilege)});
                 if (privilege_exist) {
                     return next(CustomErrorHandler.alreadyExist('!Sorry this admin is already created. multiple not allowed ( admin-1, admin-2, admin-3 ) only create once. if you want to create multiple then select OTHER TEAM option.'));
                 }
@@ -142,6 +128,7 @@ const userController ={
 
         const other_team = await UserPrivilege.exists({ privilege:Constants.PRIVILEGE_OTHER_TEAM }).select('-__v');
        
+        // const other_team_id = Constants.PRIVILEGE_OTHER_TEAM; //ObjectId
         try {
             if (user_privilege != other_team._id.toString()) {
                 const privilege_exist = await User.exists({_id : { $ne : req.params.id}, company_id:ObjectId(company_id), user_privilege:ObjectId(user_privilege)});

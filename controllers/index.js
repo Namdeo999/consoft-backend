@@ -38,12 +38,12 @@ export { default as ChecklistOptionController } from './checklist/ChecklistOptio
 export { default as ChecklistController } from './checklist/ChecklistController.js'
 
 //assign work
-export { default as AssignWorkController} from './assign-work/AssignWorkController.js';
-export { default as UserAssignWorkController} from './assign-work/UserAssignWorkController.js';
+export { default as AssignWorkController } from './assign-work/AssignWorkController.js';
+export { default as UserAssignWorkController } from './assign-work/UserAssignWorkController.js';
 
 //contractor controller
 
-export {default as ContractorController } from './contractor/ContractorController.js';
+export { default as ContractorController } from './contractor/ContractorController.js';
 
 //report 
 
@@ -72,5 +72,5 @@ export { default as PaymentController } from './payment/PaymentController.js';
 
 //water level
 
-export { default as WaterLevelController} from './water-level/WaterLevelController.js';
+export { default as WaterLevelController } from './water-level/WaterLevelController.js';
 

@@ -34,11 +34,11 @@ export { default as ManageBoq } from './stock/ManageBoq.js';
 //tools machinery
 
 export { default as ToolsMachinery } from './tools-machinery/ToolsMachinery.js';
-export {default as ToolsMachineryReport} from './tools-machinery/ToolsMachineryReport.js'
-export {default as ToolsMachineryReportItem} from './tools-machinery/ToolsMachineryReportItem.js'
+export { default as ToolsMachineryReport } from './tools-machinery/ToolsMachineryReport.js'
+export { default as ToolsMachineryReportItem } from './tools-machinery/ToolsMachineryReportItem.js'
 
 //contractor
-export {default as Contractor} from './contractor/Contractor.js';
+export { default as Contractor } from './contractor/Contractor.js';
 
 
 //reports
@@ -55,7 +55,7 @@ export { default as ManpowerMemberReport } from './report/ManpowerMemberReport.j
 
 
 //supplier
-export {default as Supplier } from './supplier/Supplier.js';
+export { default as Supplier } from './supplier/Supplier.js';
 
 //user profile
 export { default as Attendance } from './user-profile/Attendance.js';
@@ -65,4 +65,3 @@ export { default as Payment } from './payment/Payment.js';
 
 // water level
 export { default as WaterLevel } from './water-level/WaterLevel.js';
- 
