@@ -32,7 +32,7 @@ import {
     RevertController, VerifyController, AttendanceController,
 
     //water level
-    WaterLevelController, WaterPhLevelController, WaterTankHeightController
+    WaterLevelController,
 
 
 } from '../controllers/index.js';
@@ -315,8 +315,6 @@ router.put('/approve-leaves/:id', AttendanceController.approveLeaves);
 // router.post('/water-level', WaterLevelController.waterLevel);
 // router.get('/led-status', WaterLevelController.getLedStatus);
 // router.post('/led-status', WaterLevelController.updateLedStatus);
-// router.post('/water-ph-level', WaterPhLevelController.store)
-// router.post('/water-tank-height',WaterTankHeightController.store)
 
 
 //water level

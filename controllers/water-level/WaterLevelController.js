@@ -1,8 +1,8 @@
 import fs from 'fs';
 import { ObjectId } from 'mongodb';
-import { WaterLevel } from '../models/index.js';
-import CustomErrorHandler from '../services/CustomErrorHandler.js';
-import CustomSuccessHandler from '../services/CustomSuccessHandler.js';
+import { WaterLevel } from '../../models/index.js';
+import CustomErrorHandler from '../../services/CustomErrorHandler.js';
+import CustomSuccessHandler from '../../services/CustomSuccessHandler.js';
 
 const WaterLevelController = {
 
@@ -68,7 +68,7 @@ const WaterLevelController = {
     },
 
     async getWaterLevelImage(req, res, next){
-        const image_file_name = "Water_"+req.params.unique_id;
+        const image_file_name = "water_"+req.params.unique_id;
         const base64_string = fs.createReadStream('uploads/files/'+image_file_name+'.txt','utf-8');
         base64_string.pipe(res);
     },
@@ -78,7 +78,7 @@ const WaterLevelController = {
         try {
             const replace_2F = image.replace(/%2F/g, '/'); // %2F = /
             const final_image = replace_2F.replace(/%2B/g, '+'); // %2B = +
-            const image_file_name = "Water_"+req.params.unique_id;
+            const image_file_name = "water_"+req.params.unique_id;
 
             fs.writeFileSync('uploads/files/'+image_file_name+'.txt', JSON.stringify({image:'data:image/png;base64,'+final_image}));
             fs.writeFileSync("uploads/images/"+image_file_name+'.gif', final_image, {encoding: 'base64'}, function(err){
