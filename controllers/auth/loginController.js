@@ -4,6 +4,7 @@ import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import bcrypt from 'bcrypt';
 import JwtService from "../../services/JwtService.js";
 import { REFRESH_SECRET } from "../../config/index.js";
+import AttendanceController from "../user-profile/AttendanceController.js";
 
 const loginController = {
     async login(req, res, next){
@@ -95,6 +96,7 @@ const loginController = {
     async logout(req, res, next) {
         // validation
         const refreshSchema = Joi.object({
+            user_id: Joi.string(),
             refresh_token: Joi.string().required(),
         });
         const { error } = refreshSchema.validate(req.body);
@@ -103,12 +105,20 @@ const loginController = {
             return next(error);
         }
 
+        const {user_id, refresh_token} = req.body;
+        const bodyData = {
+            user_id: user_id,
+        }
+
         try {
-            await RefreshToken.deleteOne({ token: req.body.refresh_token });
+            const result = await AttendanceController.attendanceOutTime(bodyData);
+            if (result.status === 200) {
+                await RefreshToken.deleteOne({ token: refresh_token });
+            }
         } catch(err) {
             return next(new Error('Something went wrong in the database'));
         }
-        res.json({ status: 1 });
+        return res.send({ status: 200 });
     }
 
 };
