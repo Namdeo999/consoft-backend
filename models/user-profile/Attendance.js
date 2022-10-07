@@ -25,7 +25,7 @@ const attendanceSchema = mongoose.Schema({
 
     company_id:{ type: ObjectId, required:true },
     user_id:{ type: ObjectId, required:true },
-    year: { type:String},
+    year: { type:Number},
     month: { type: Number },
     month_name: { type: String },
     presentdates:[{

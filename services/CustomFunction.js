@@ -33,6 +33,25 @@ const CustomFunction  = {
         return month_name;
     },
 
+    currentYear(){
+        const now = new Date();
+        const year = now.getFullYear(); 
+        return year;
+    },
+
+    currentMonth(){
+
+        // const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+        // const d = new Date();
+        // let name = month[d.getMonth()];
+
+        const now = new Date();
+        const month = now.getMonth() + 1; 
+
+        return month;
+    },
+
     dateFormat(inputDate){
 
         let day, month, year;

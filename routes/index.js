@@ -71,7 +71,7 @@ router.get('/role-by-users/:company_id/:role_id', userController.roleByUsers);
 router.get('/privilege-by-users/:company_id/:privilege_id', userController.privilegeByUsers);
 
 router.post('/refresh', refreshController.refresh);
-router.post('/logout', auth, loginController.logout);
+router.post('/logout', loginController.logout);
 
 //payment
 router.get('/payment', PaymentController.index);
@@ -303,10 +303,10 @@ router.get('/verify-submit-work/:work_id', VerifyController.verifySubmitWork);
 
 //user profile
 
-router.get('/attendance/:company_id', AttendanceController.index);
+router.get('/attendance/:company_id/:year?/:month?/:user_id?', AttendanceController.index);
+// router.get('/attendance/:company_id/:user_id?', AttendanceController.index);
 
-
-// router.get('/attendance/:user_id', AttendanceController.index);
+router.get('/check-present/:company_id/:user_id', AttendanceController.checkPresent);
 
 router.post('/attendance', AttendanceController.attendance);
 
