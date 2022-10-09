@@ -97,7 +97,7 @@ const loginController = {
         // validation
         const refreshSchema = Joi.object({
             user_id: Joi.string(),
-            // refresh_token: Joi.string().required(),
+            refresh_token: Joi.string().required(),
         });
         const { error } = refreshSchema.validate(req.body);
 
@@ -112,9 +112,9 @@ const loginController = {
 
         try {
             const result = await AttendanceController.attendanceOutTime(bodyData);
-            // if (result.status === 200) {
-            //     await RefreshToken.deleteOne({ token: refresh_token });
-            // }
+            if (result.status === 200) {
+                await RefreshToken.deleteOne({ token: refresh_token });
+            }
         } catch(err) {
             return next(new Error('Something went wrong in the database'));
         }
