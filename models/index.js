@@ -65,3 +65,4 @@ export { default as Payment } from './payment/Payment.js';
 
 // water level
 export { default as WaterLevel } from './water-level/WaterLevel.js';
+export { default as WaterSetting } from './water-level/WaterSetting.js';
