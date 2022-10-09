@@ -73,4 +73,4 @@ export { default as PaymentController } from './payment/PaymentController.js';
 //water level
 
 export { default as WaterLevelController } from './water-level/WaterLevelController.js';
-
+export { default as WaterSettingController } from './water-level/WaterSettingController.js';

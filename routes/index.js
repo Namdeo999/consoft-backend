@@ -32,7 +32,7 @@ import {
     RevertController, VerifyController, AttendanceController,
 
     //water level
-    WaterLevelController,
+    WaterLevelController, WaterSettingController,
 
 
 } from '../controllers/index.js';
@@ -331,6 +331,9 @@ router.put('/water-level/:unique_id', WaterLevelController.updateWaterLevel);
 
 router.get('/water-level-image/:unique_id', WaterLevelController.getWaterLevelImage);
 router.post('/water-level-image/:unique_id', WaterLevelController.saveWaterLevelImage);
+
+router.get('/water-level-setting/:unique_id', WaterSettingController.getWaterSetting);
+router.put('/water-level-setting/:unique_id', WaterSettingController.setWaterSetting);
 
 
 export default router;
