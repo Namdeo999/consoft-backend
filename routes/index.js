@@ -58,6 +58,7 @@ router.post('/login', loginController.login);
 router.post('/company-login', CompanyController.companyLogin);
 router.get('/company', [auth, admin], CompanyController.index);
 router.post('/company', CompanyController.store);
+router.post('/company-logout', CompanyController.companyLogout);
 
 router.post('/verify-product-key', ProductKeyController.verifyProductKey);
 

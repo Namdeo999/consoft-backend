@@ -172,6 +172,26 @@ const CompanyController = {
         } catch (err) {
             return next(err);
         }
+    },
+
+    async companyLogout(req, res, next) {
+        // validation
+        const refreshSchema = Joi.object({
+            refresh_token: Joi.string().required(),
+        });
+        const { error } = refreshSchema.validate(req.body);
+
+        if (error) {
+            return next(error);
+        }
+
+        const {refresh_token} = req.body;
+        try {
+            await RefreshToken.deleteOne({ token: refresh_token });
+        } catch(err) {
+            return next(new Error('Something went wrong in the database'));
+        }
+        return res.send({ status: 200 });
     }
     
 }
