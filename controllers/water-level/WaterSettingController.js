@@ -21,7 +21,7 @@ const WaterSettingController = {
     async setWaterSetting(req, res, next){
         const water_level_id = await getWaterLevelId(req.params.unique_id);
 
-        const { start_level, stop_level } = req.body;
+        const { start_level, stop_level, pump_notification } = req.body;
         try {
             if (stop_level <= start_level ) {
                 return next(CustomErrorHandler.inValid('Maximum Level is not allow less than Minimum Level'));
@@ -43,6 +43,7 @@ const WaterSettingController = {
                 $set: {
                     ...(start_level && { start_level: start_level}),
                     ...(stop_level && { stop_level: stop_level }),
+                    // pump_notification:pump_notification,
                 }
             };
             const result = await WaterSetting.updateOne(filter, updateDoc, options);
@@ -51,6 +52,64 @@ const WaterSettingController = {
             return next(CustomErrorHandler.serverError());
         }
         return res.send(CustomSuccessHandler.success('Water level min and max percentage updated successfully'));
+    },
+
+    async setMotorNotificationSetting(req, res, next){
+        const water_level_id = await getWaterLevelId(req.params.unique_id);
+        const { motor_notification } = req.body;
+        try {
+            const filter = { water_level_id: water_level_id};
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    motor_notification
+                }
+            };
+            const result = await WaterSetting.updateOne(filter, updateDoc, options);
+        } catch (err) {
+            return next(err);
+        }
+        return res.send(CustomSuccessHandler.success('Motor notification updated successfully'));
+    },
+
+    async tankHeightSetting(req, res, next){
+        const water_level_id = await getWaterLevelId(req.params.unique_id);
+        const { tank_height_type, tank_height, tank_height_unit } = req.body;
+
+        try {
+            const filter = { water_level_id: water_level_id};
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    tank_height_type,
+                    tank_height,
+                    tank_height_unit,
+                }
+            };
+            const result = await WaterSetting.updateOne(filter, updateDoc, options);
+        } catch (err) {
+            return next(err);
+        }
+        return res.send(CustomSuccessHandler.success('Water tank height updated successfully'));
+    },
+
+    async waterSourceSetting(req, res, next){
+        const water_level_id = await getWaterLevelId(req.params.unique_id);
+        const { water_source_1, water_source_2 } = req.body;
+        try {
+            const filter = { water_level_id: water_level_id};
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    water_source_1,
+                    water_source_2,
+                }
+            };
+            const result = await WaterSetting.updateOne(filter, updateDoc, options);
+        } catch (err) {
+            return next(err);
+        }
+        return res.send(CustomSuccessHandler.success('Water source updated successfully'));
     }
 
 }
