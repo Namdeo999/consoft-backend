@@ -336,5 +336,11 @@ router.post('/water-level-image/:unique_id', WaterLevelController.saveWaterLevel
 router.get('/water-level-setting/:unique_id', WaterSettingController.getWaterSetting);
 router.put('/water-level-setting/:unique_id', WaterSettingController.setWaterSetting);
 
+// router.get('/pump-notification-setting/:unique_id', WaterSettingController.getWaterSetting);
+router.put('/motor-notification-setting/:unique_id', WaterSettingController.setMotorNotificationSetting);
+
+router.put('/tank-height-setting/:unique_id', WaterSettingController.tankHeightSetting);
+router.put('/water-source-setting/:unique_id', WaterSettingController.waterSourceSetting);
+
 
 export default router;

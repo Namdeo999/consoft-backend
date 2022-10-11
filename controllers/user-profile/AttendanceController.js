@@ -49,6 +49,7 @@ const AttendanceController = {
                         month:1,
                         user_name:"$userData.name",
                         "presentdates": {$ifNull: ["$presentdates", []]},
+                        leavedates:"$leavedates"
                     }
                 }
 

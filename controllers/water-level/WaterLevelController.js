@@ -2,6 +2,7 @@ import fs from 'fs';
 import { ObjectId } from 'mongodb';
 import { WaterLevel } from '../../models/index.js';
 import CustomErrorHandler from '../../services/CustomErrorHandler.js';
+import CustomFunction from '../../services/CustomFunction.js';
 import CustomSuccessHandler from '../../services/CustomSuccessHandler.js';
 
 const WaterLevelController = {
@@ -80,7 +81,10 @@ const WaterLevelController = {
             const final_image = replace_2F.replace(/%2B/g, '+'); // %2B = +
             const image_file_name = "water_"+req.params.unique_id;
 
-            fs.writeFileSync('uploads/files/'+image_file_name+'.txt', JSON.stringify({image:'data:image/png;base64,'+final_image}));
+            const date = CustomFunction.currentDate();
+            const time = new Date().toLocaleTimeString("en-US", {hour: '2-digit', minute: "2-digit", second:"2-digit", hour12: true, timeZone: "Asia/kolkata"});
+
+            fs.writeFileSync('uploads/files/'+image_file_name+'.txt', JSON.stringify({image:'data:image/png;base64,'+final_image, date:date, time:time}));
             fs.writeFileSync("uploads/images/"+image_file_name+'.gif', final_image, {encoding: 'base64'}, function(err){
                 console.log('File created');
             });
