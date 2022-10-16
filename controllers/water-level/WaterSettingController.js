@@ -43,7 +43,6 @@ const WaterSettingController = {
                 $set: {
                     ...(start_level && { start_level: start_level}),
                     ...(stop_level && { stop_level: stop_level }),
-                    // pump_notification:pump_notification,
                 }
             };
             const result = await WaterSetting.updateOne(filter, updateDoc, options);
@@ -111,7 +110,6 @@ const WaterSettingController = {
         }
         return res.send(CustomSuccessHandler.success('Water source updated successfully'));
     }
-
 }
 
 async function getWaterLevelId(unique_id){

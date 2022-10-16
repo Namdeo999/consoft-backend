@@ -322,10 +322,10 @@ router.put('/approve-leaves/:id', AttendanceController.approveLeaves);
 // router.get('/led-status', WaterLevelController.getLedStatus);
 // router.post('/led-status', WaterLevelController.updateLedStatus);
 
-
 //water level
 router.get('/led-status/:unique_id', WaterLevelController.getLedStatus);
 router.put('/led-status/:unique_id', WaterLevelController.updateLedStatus);
+router.put('/sump-status/:unique_id', WaterLevelController.updateSumpStatus);
 
 router.get('/water-level/:unique_id', WaterLevelController.getWaterLevel);
 router.put('/water-level/:unique_id', WaterLevelController.updateWaterLevel);
