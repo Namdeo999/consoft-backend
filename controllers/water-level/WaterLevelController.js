@@ -10,7 +10,7 @@ const WaterLevelController = {
     async getLedStatus(req, res, next){
         let documents;
         try {
-            documents = await WaterLevel.findOne({unique_id:req.params.unique_id}).select('led_status -_id');
+            documents = await WaterLevel.findOne({unique_id:req.params.unique_id}).select('led_status sump_status -_id');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
@@ -36,6 +36,27 @@ const WaterLevelController = {
             return next(CustomErrorHandler.serverError());
         }
         return res.send(CustomSuccessHandler.success('Led status updated successfully'));
+    },
+
+    async updateSumpStatus(req, res, next){
+
+        const water_level_id = await getWaterLevelId(req.params.unique_id);
+
+        const {sump_status} = req.body;
+        try {
+            const filter = { _id: water_level_id};
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    sump_status: sump_status
+                }
+            };
+            const result = await WaterLevel.updateOne(filter, updateDoc, options);
+            
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+        return res.send(CustomSuccessHandler.success('Sump status updated successfully'));
     },
 
     async getWaterLevel(req, res, next){
