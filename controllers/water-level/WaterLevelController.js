@@ -10,7 +10,17 @@ const WaterLevelController = {
     async getLedStatus(req, res, next){
         let documents;
         try {
-            documents = await WaterLevel.findOne({unique_id:req.params.unique_id}).select('led_status sump_status -_id');
+            documents = await WaterLevel.findOne({unique_id:req.params.unique_id}).select('led_status -_id');
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+        return res.json({status:200, data:documents});
+    },
+
+    async getSumpStatus(req, res, next){
+        let documents;
+        try {
+            documents = await WaterLevel.findOne({unique_id:req.params.unique_id}).select('sump_status -_id');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
