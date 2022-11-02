@@ -393,8 +393,17 @@ const AttendanceController = {
     // },
 
     async approveLeaves(req, res, next){
+        const {leavedates}  = req.body;
+
         try {
-            const {leavedates}  = req.body;
+            if (leavedates.length === 0) {
+                return res.send({status:400, message: "Please select leave dates for approve"});
+            }
+        } catch (err) {
+            return next(err);
+        }
+
+        try {
             leavedates.forEach( async (list, key) => {
                 await Attendance.findOneAndUpdate(
                     {
@@ -408,14 +417,13 @@ const AttendanceController = {
                     },
                 );
             })
-            res.send(CustomSuccessHandler.success("Leave Approved successfully!"))
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
+        return res.send(CustomSuccessHandler.success("Leave Approved successfully!"))
     }
 
 }
-
 
 export default AttendanceController;
 
