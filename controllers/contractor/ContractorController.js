@@ -8,7 +8,7 @@ const ContractorController = {
     async index(req, res, next) {
         let documents;
         try {
-            documents = await Contractor.find().select('-createdAt -updatedAt -__v');
+            documents = await Contractor.find({company_id:req.params.company_id}).select('-createdAt -updatedAt -__v');
         } catch (error) {
             return next(CustomErrorHandler.serverError())
         }

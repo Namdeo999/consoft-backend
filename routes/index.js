@@ -211,7 +211,7 @@ router.get('/user-completed-works/:user_id', UserAssignWorkController.userComple
 router.put('/user-work-comment/:work_id', UserAssignWorkController.userWorkComment)
 
 //Tools And Machinery
-router.get('/tools-machinery', ToolsMachineryController.index);
+router.get('/tools-machinery/:company_id', ToolsMachineryController.index);
 router.get('/tools-machinery-report/:project_id/:user_id/:date', ToolsMachineryController.getTAndPReport);
 router.get('/edit-tools-machinery-report/:id', ToolsMachineryController.tAndPEditReport);
 router.get('/tools-machinery/:id', ToolsMachineryController.edit);
@@ -221,7 +221,7 @@ router.put('/tools-machinery/:id', ToolsMachineryController.update);
 router.delete('/tools-machinery/:id', ToolsMachineryController.destroy);
 
 //contractors
-router.get('/contractor', ContractorController.index);
+router.get('/contractor/:company_id', ContractorController.index);
 router.get('/project-by-contractor/:project_id', ContractorController.projectByContractor);
 router.post('/contractor', ContractorController.store);
 router.put('/contractor/:id', ContractorController.update);

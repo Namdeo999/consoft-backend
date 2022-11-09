@@ -11,7 +11,7 @@ const ToolsMachineryController = {
     async index(req, res, next) { 
         let Tools;
         try {
-            Tools = await ToolsMachinery.find().select('-createdAt -updatedAt -__v');
+            Tools = await ToolsMachinery.find({ company_id:req.params.company_id }).select('-createdAt -updatedAt -__v');
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
