@@ -6,6 +6,8 @@ const manageBoqSchema = Joi.object({
     item_id: Joi.string().required(),
     unit_name: Joi.string().required(),
     qty: Joi.number().required(),
+    rate:Joi.number().required(),
+    amount:Joi.number()
 });
 
 export default manageBoqSchema;
