@@ -184,6 +184,7 @@ const ManageBoqController = {
             item_name: "$quantityReportItemData.item_name",
             unit_name: 1,
             qty: 1,
+            rate:1,
             completed_qty: 1,
           },
         },
@@ -300,7 +301,7 @@ const ManageBoqController = {
     if (error) {
       return next(error);
     }
-    const { company_id, project_id, item_id, unit_name, qty } = req.body;
+    const { company_id, project_id, item_id, unit_name, qty,rate } = req.body;
     try {
       // const exist = await ManageBoq.exists({ company_id: ObjectId(company_id), project_id: ObjectId(project_id), item_id: ObjectId(item_id) });
       // if (exist) {
@@ -314,6 +315,7 @@ const ManageBoqController = {
           item_id,
           unit_name,
           qty,
+          rate
         },
         { upsert: true }
       );
