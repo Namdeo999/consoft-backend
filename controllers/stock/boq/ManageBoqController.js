@@ -185,6 +185,7 @@ const ManageBoqController = {
             unit_name: 1,
             qty: 1,
             rate:1,
+            amount:1,
             completed_qty: 1,
           },
         },
