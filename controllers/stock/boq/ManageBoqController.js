@@ -183,9 +183,9 @@ const ManageBoqController = {
             item_id: 1,
             item_name: "$quantityReportItemData.item_name",
             unit_name: 1,
-            qty: 1,            
-            rate:1,
-            amount:1,
+            qty: 1,
+            rate: 1,
+            amount: 1,
             completed_qty: 1,
           },
         },
@@ -263,7 +263,8 @@ const ManageBoqController = {
         qty,
         rate,
         amount: qty * rate,
-      });     
+        // consumed_amount:completed_qty*rate
+      });
       const result = await createBoq.save();
       res.send(CustomSuccessHandler.success("Boq created successfull"));
     } catch (err) {
@@ -271,20 +272,45 @@ const ManageBoqController = {
     }
   },
   async boqPercentCalc(req, res, next) {
-    let total = 0;
-    let perc=0;
+    let totalAmount = 0;
+    let totalConsumedAmount = 0;
+    let pojectCost = 0;
+    let consumedProjectCost = 0;
+    let overAllPercent=0;
     try {
-      total = await ManageBoq.aggregate([
+      totalAmount = await ManageBoq.aggregate([
         { $group: { _id: null, sum_val: { $sum: "$amount" } } },
       ]);
-      let [positionOne] = total;
-      perc = (positionOne.sum_val*100);
 
+      totalConsumedAmount = await ManageBoq.aggregate([
+        {
+          $group: {
+            _id: null,
+            sum_val: {
+              $sum: {
+                $multiply: ["$completed_qty", "$rate"],
+              },
+            },
+          },
+        },
+      ]);
+
+      let [positionOne] = totalAmount;
+      pojectCost = positionOne.sum_val;
+   
+
+      let [positionTwo] = totalConsumedAmount;
+      consumedProjectCost = positionTwo.sum_val;
+ 
+
+       overAllPercent =
+       ((pojectCost - consumedProjectCost) / pojectCost) * 100;
+       console.log("🚀 ~ file: ManageBoqController.js ~ line 307 ~ boqPercentCalc ~ overAllPercent", overAllPercent)
+    
     } catch (error) {
       return next(CustomErrorHandler.serverError());
-    } 
-    console.log('perc--',perc)
-    return res.json({ status: Constants.RES_SUCCESS, data: perc });
+    }
+    return res.json({ status: Constants.RES_SUCCESS, data: overAllPercent });
   },
 
   async edit(req, res, next) {
@@ -302,7 +328,7 @@ const ManageBoqController = {
     if (error) {
       return next(error);
     }
-    const { company_id, project_id, item_id, unit_name, qty,rate } = req.body;
+    const { company_id, project_id, item_id, unit_name, qty, rate } = req.body;
     try {
       // const exist = await ManageBoq.exists({ company_id: ObjectId(company_id), project_id: ObjectId(project_id), item_id: ObjectId(item_id) });
       // if (exist) {
@@ -316,7 +342,7 @@ const ManageBoqController = {
           item_id,
           unit_name,
           qty,
-          rate
+          rate,
         },
         { upsert: true }
       );
