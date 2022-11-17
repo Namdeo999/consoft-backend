@@ -13,9 +13,7 @@ const QuantityReportItemController = {
             documents =  await QuantityReportItem.aggregate([
                 {
                     $match: { 
-                        // $and:[
-                            "company_id": ObjectId(req.params.company_id)
-                        // ]
+                        "company_id": ObjectId(req.params.company_id)
                     }
                 },
                 {

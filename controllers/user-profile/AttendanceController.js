@@ -10,6 +10,9 @@ const AttendanceController = {
     async index(req, res, next){
         let documents; 
         let condition;
+        const year = CustomFunction.currentYearMonthDay('YYYY');
+        const month = CustomFunction.currentYearMonthDay('MM')
+        
         try {
             
             if (req.params.user_id) {
@@ -24,8 +27,11 @@ const AttendanceController = {
                     $match:{
                         $and:[
                             condition,
-                            {"year": parseInt(req.params.year)}, 
-                            {"month": parseInt(req.params.month)},
+                            // {"year": parseInt(req.params.year)}, 
+                            // {"month": parseInt(req.params.month)},
+
+                            {"year": req.params.year ? parseInt(req.params.year) : year}, 
+                            {"month": req.params.month ?  parseInt(req.params.month) : month},
                         ]
                     }
                 },
