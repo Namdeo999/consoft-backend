@@ -1,5 +1,9 @@
 import Joi from "joi";
-import { ManageBoq, QuantityWorkItemReport } from "../../../models/index.js";
+import {
+  ManageBoq,
+  QuantityWorkItemReport,
+  Project,
+} from "../../../models/index.js";
 import { manageBoqSchema } from "../../../validators/index.js";
 import CustomErrorHandler from "../../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../../services/CustomSuccessHandler.js";
@@ -272,45 +276,71 @@ const ManageBoqController = {
     }
   },
   async boqPercentCalc(req, res, next) {
-    let totalAmount = 0;
-    let totalConsumedAmount = 0;
-    let pojectCost = 0;
-    let consumedProjectCost = 0;
-    let overAllPercent=0;
-    try {
-      totalAmount = await ManageBoq.aggregate([
-        { $group: { _id: null, sum_val: { $sum: "$amount" } } },
-      ]);
-
-      totalConsumedAmount = await ManageBoq.aggregate([
-        {
-          $group: {
-            _id: null,
-            sum_val: {
-              $sum: {
-                $multiply: ["$completed_qty", "$rate"],
-              },
+    let document;
+    document = await Project.aggregate([
+      {
+        $match: {
+          company_id: ObjectId(req.params.company_id),
+        },
+      },
+      {
+        $lookup: {
+          from: "manageBoq",
+          localField: "_id",
+          foreignField: "project_id",
+          as: "projectList",
+        },
+      },
+      {
+        $unwind: "$projectList",
+      },
+      {
+        $group: {
+          _id: "$projectList.project_id",
+          company_id: { $first: "$projectList.company_id" },
+          project_id: { $first: "$projectList.project_id" },
+          project_name: { $first: "$project_name" },
+          project_cost: { $sum: "$projectList.amount" },
+          consumed_project_cost: {
+            $sum: {
+              $multiply: ["$projectList.completed_qty", "$projectList.rate"],
             },
           },
         },
-      ]);
-
-      let [positionOne] = totalAmount;
-      pojectCost = positionOne.sum_val;
-   
-
-      let [positionTwo] = totalConsumedAmount;
-      consumedProjectCost = positionTwo.sum_val;
- 
-
-       overAllPercent =
-       ((pojectCost - consumedProjectCost) / pojectCost) * 100;
-       console.log("🚀 ~ file: ManageBoqController.js ~ line 307 ~ boqPercentCalc ~ overAllPercent", overAllPercent)
-    
-    } catch (error) {
-      return next(CustomErrorHandler.serverError());
-    }
-    return res.json({ status: Constants.RES_SUCCESS, data: overAllPercent });
+      },
+      {
+        $project: {
+          _id: 1,
+          company_id: 1,
+          project_id: 1,
+          project_name: 1,
+          project_cost: "$project_cost",
+          consumed_project_cost: 1,
+          consumed_cost_InPercent: {
+            $subtract: [
+              100,
+              {
+                $multiply: [
+                  {
+                    $divide: [
+                      {
+                        $subtract: ["$project_cost", "$consumed_project_cost"],
+                      },
+                      "$project_cost",
+                    ],
+                  },
+                  100,
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ]);
+    return res.json({
+      status: Constants.RES_SUCCESS,
+      data: document,
+    });
   },
 
   async edit(req, res, next) {
