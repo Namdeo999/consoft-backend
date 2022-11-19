@@ -159,7 +159,7 @@ router.get('/manage-boq/:company_id/:project_id', ManageBoqController.index);
 router.post('/manage-boq', ManageBoqController.store);
 router.get('/edit-manage-boq/:id', ManageBoqController.edit);//pending
 router.put('/update-manage-boq/:id', ManageBoqController.update);
-router.get('/get-boq-percent',ManageBoqController.boqPercentCalc);
+router.get('/get-boq-percent/:company_id',ManageBoqController.boqPercentCalc);
 
 router.get('/boq-cal', ManageBoqController.boqcal);
 
