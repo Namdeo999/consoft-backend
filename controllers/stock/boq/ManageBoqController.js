@@ -276,7 +276,9 @@ const ManageBoqController = {
     let totalConsumedAmount = 0;
     let pojectCost = 0;
     let consumedProjectCost = 0;
-    let overAllPercent=0;
+    let overAllPercent = 0;
+    let overAllConsumedPercent = 0;
+
     try {
       totalAmount = await ManageBoq.aggregate([
         { $group: { _id: null, sum_val: { $sum: "$amount" } } },
@@ -297,20 +299,24 @@ const ManageBoqController = {
 
       let [positionOne] = totalAmount;
       pojectCost = positionOne.sum_val;
-   
 
       let [positionTwo] = totalConsumedAmount;
       consumedProjectCost = positionTwo.sum_val;
- 
 
-       overAllPercent =
-       ((pojectCost - consumedProjectCost) / pojectCost) * 100;
-       console.log("🚀 ~ file: ManageBoqController.js ~ line 307 ~ boqPercentCalc ~ overAllPercent", overAllPercent)
-    
+      overAllPercent = ((pojectCost - consumedProjectCost) / pojectCost) * 100;
+      overAllConsumedPercent = 100 - overAllPercent;  
     } catch (error) {
       return next(CustomErrorHandler.serverError());
     }
-    return res.json({ status: Constants.RES_SUCCESS, data: overAllPercent });
+    return res.json({
+      status: Constants.RES_SUCCESS,
+      data: {
+        "pojectCost":pojectCost,
+        "overAllPercent": overAllPercent,
+        "consumedProjectCost":consumedProjectCost,
+        "overAllConsumedPercent": overAllConsumedPercent,
+      }
+    });
   },
 
   async edit(req, res, next) {
