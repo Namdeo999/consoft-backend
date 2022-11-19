@@ -280,7 +280,7 @@ const ManageBoqController = {
     document = await Project.aggregate([
       {
         $match: {
-          company_id: ObjectId(req.params.company_id),
+          company_id: ObjectId("6361283bc1ea4a3ea136a0bb"),
         },
       },
       {
@@ -314,24 +314,32 @@ const ManageBoqController = {
           company_id: 1,
           project_id: 1,
           project_name: 1,
-          project_cost: "$project_cost",
+          project_cost: { $round: ["$project_cost", 2] },
           consumed_project_cost: 1,
           consumed_cost_InPercent: {
-            $subtract: [
-              100,
+            $round: [
               {
-                $multiply: [
+                $subtract: [
+                  100,
                   {
-                    $divide: [
+                    $multiply: [
                       {
-                        $subtract: ["$project_cost", "$consumed_project_cost"],
+                        $divide: [
+                          {
+                            $subtract: [
+                              "$project_cost",
+                              "$consumed_project_cost",
+                            ],
+                          },
+                          "$project_cost",
+                        ],
                       },
-                      "$project_cost",
+                      100,
                     ],
                   },
-                  100,
                 ],
               },
+              2,
             ],
           },
         },
