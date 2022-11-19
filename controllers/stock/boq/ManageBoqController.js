@@ -280,7 +280,7 @@ const ManageBoqController = {
     document = await Project.aggregate([
       {
         $match: {
-          company_id: ObjectId("6361283bc1ea4a3ea136a0bb"),
+          company_id: ObjectId(req.params.company_id),
         },
       },
       {
