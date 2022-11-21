@@ -32,7 +32,7 @@ import {
     RevertController, VerifyController, AttendanceController,
 
     //water level
-    WaterLevelController, WaterSettingController,
+    WaterLevelController, WaterSettingController, VoucherController,
 
 
 } from '../controllers/index.js';
@@ -134,6 +134,11 @@ router.get('/project-report-path/:company_id/:project_id', ProjectReportPathCont
 router.post('/project-report-path', ProjectReportPathController.store);
 router.put('/project-report-path/:id', ProjectReportPathController.update);
 router.delete('/project-report-path/:id', ProjectReportPathController.destroy);
+
+
+//voucher
+router.post('/voucher',VoucherController.store);
+
 
 //stock
 router.get('/unit', UnitController.index);
