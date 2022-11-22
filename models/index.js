@@ -31,6 +31,10 @@ export { default as ManageStock } from './stock/ManageStock.js';
 export { default as StockEntry } from './stock/StockEntry.js';
 export { default as ManageBoq } from './stock/ManageBoq.js';
 
+//voucher
+export {default as voucher} from './voucher/Voucher.js';
+export {default as voucherDetails} from './voucher/VoucherDetails.js';
+
 //tools machinery
 
 export { default as ToolsMachinery } from './tools-machinery/ToolsMachinery.js';

@@ -55,6 +55,9 @@ export { default as QuantityReportItemController } from './report/quantity-repor
 export { default as QualityTypeController } from './report/quality-type/QualityTypeController.js';
 export { default as ManpowerReportController } from './report/ManpowerReportController.js';
 
+//voucher
+export {default as VoucherController } from './voucher/VoucherController.js';
+
 //supplier
 export { default as SupplierController } from './supplier/SupplierController.js';
 
