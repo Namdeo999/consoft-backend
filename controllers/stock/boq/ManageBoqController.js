@@ -381,6 +381,7 @@ const ManageBoqController = {
           unit_name,
           qty,
           rate,
+          amount: qty * rate,
         },
         { upsert: true }
       );
