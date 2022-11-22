@@ -4,6 +4,7 @@ import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import CustomFunction from "../../services/CustomFunction.js";
 import { ObjectId } from "mongodb";
+import helpers from "../../helpers/index.js";
 const VoucherController = {
   async index(req, res, next) {
     let documents;
@@ -53,7 +54,7 @@ const VoucherController = {
             _id: "$_id",
             company_id: { $first: "$company_id" },
             project_id: { $first: "$project_id" },
-            project_name:{$first:"$projectData.project_name"},
+            project_name: { $first: "$projectData.project_name" },
             voucher_type: { $first: "$voucher_type" },
             verify_status: { $first: "$verify_status" },
             voucherData: {
@@ -76,7 +77,7 @@ const VoucherController = {
             verify_status: "$verify_status",
             company_id: "$company_id",
             // project_id: "$project_id",
-            project_name:"$project_name",
+            project_name: "$project_name",
             voucher_type: "$voucher_type",
             voucherData: "$voucherData",
           },
@@ -156,9 +157,15 @@ const VoucherController = {
           verify_status: true,
         },
         {
-          new: true,
+          new: true
         }
-      );
+      );  
+      if (documents.verify_status==true) {
+        const temp = await helpers.availableStock(
+          documents.voucher_type,
+          documents._id
+        );
+      }
       res.json({ status: 200, data: documents });
     } catch (error) {
       return next(error);
