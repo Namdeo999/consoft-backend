@@ -113,7 +113,7 @@ const ItemController = {
         if (!document) {
             return next(new Error('Nothing to delete'));
         }
-        return res.json(document);
+        return res.json({ status:200, message:"Deleted successfully" });
     },
 
 }

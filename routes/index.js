@@ -51,6 +51,7 @@ import user_auth from '../middlewares/user_auth.js';
 router.get('/companies', AdminDashboardController.index);
 router.get('/pending-verify-payment', AdminDashboardController.pendingVerifyPayment);
 router.put('/payment-verify', AdminDashboardController.paymentVerify);
+router.get('/verified-company', AdminDashboardController.verifiedCompany);
 
 // router.get('/me', userController.me);
 router.post('/login', loginController.login);
