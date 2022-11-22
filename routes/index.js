@@ -139,6 +139,7 @@ router.delete('/project-report-path/:id', ProjectReportPathController.destroy);
 //voucher
 router.get('/voucher/:company_id/:date',VoucherController.index);
 router.post('/voucher',VoucherController.store);
+router.put('/verify-voucher/:voucher_id',VoucherController.verifyVoucher);
 
 
 //stock
