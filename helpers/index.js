@@ -203,7 +203,7 @@ export default {
       if (voucher_type == constants.RECEIVED_RETURN_VOUCHER) {
         const vouchDetails = await voucherDetails
           .findOne({
-            voucher_id: ObjectId(id),
+            _id: ObjectId(id),
           })
           .select();
 
