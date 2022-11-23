@@ -4,6 +4,7 @@ import CustomErrorHandler from "../../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import CustomFunction from "../../services/CustomFunction.js";
 import { ObjectId } from "mongodb";
+import helpers from "../../helpers/index.js";
 const VoucherController = {
   async index(req, res, next) {
     let documents;
@@ -12,7 +13,6 @@ const VoucherController = {
         {
           $match: {
             company_id: ObjectId(req.params.company_id),
-            // project_id: req.params.project_id,
             voucher_date: req.params.date,
           },
         },
@@ -39,17 +39,30 @@ const VoucherController = {
           $unwind: "$itemData",
         },
         {
+          $lookup: {
+            from: "projects",
+            localField: "project_id",
+            foreignField: "_id",
+            as: "projectData",
+          },
+        },
+        {
+          $unwind: "$projectData",
+        },
+        {
           $group: {
             _id: "$_id",
             company_id: { $first: "$company_id" },
             project_id: { $first: "$project_id" },
+            project_name: { $first: "$projectData.project_name" },
             voucher_type: { $first: "$voucher_type" },
+            verify_status: { $first: "$verify_status" },
             voucherData: {
               $push: {
                 _id: "$voucherData._id",
                 voucher_id: "$voucherData.voucher_id",
                 item_id: "$voucherData.item_id",
-                item_name:"$itemData.item_name",
+                item_name: "$itemData.item_name",
                 qty: "$voucherData.qty",
                 vehicle_no: "$voucherData.vehicle_no",
                 location: "$voucherData.location",
@@ -61,8 +74,10 @@ const VoucherController = {
         {
           $project: {
             _id: "$_id",
-            company_id: "$company_id",            
-            project_id: "$project_id",
+            verify_status: "$verify_status",
+            company_id: "$company_id",
+            // project_id: "$project_id",
+            project_name: "$project_name",
             voucher_type: "$voucher_type",
             voucherData: "$voucherData",
           },
@@ -92,6 +107,7 @@ const VoucherController = {
       voucher_type,
       voucher_date: current_date,
       voucher_time: current_time,
+      verify_status: false,
     });
     const exist = await voucher.exists({
       company_id: company_id,
@@ -128,6 +144,31 @@ const VoucherController = {
       res.send(CustomSuccessHandler.success("voucher created successfully"));
     } catch (err) {
       return next(err);
+    }
+  },
+  async verifyVoucher(req, res, next) {
+    let documents;
+    try {
+      documents = await voucher.findByIdAndUpdate(
+        {
+          _id: req.params.voucher_id,
+        },
+        {
+          verify_status: true,
+        },
+        {
+          new: true
+        }
+      );  
+      if (documents.verify_status==true) {
+        const temp = await helpers.availableStock(
+          documents.voucher_type,
+          documents._id
+        );
+      }
+      res.json({ status: 200, data: documents });
+    } catch (error) {
+      return next(error);
     }
   },
 };
