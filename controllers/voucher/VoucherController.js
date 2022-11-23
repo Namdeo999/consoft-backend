@@ -21,15 +21,20 @@ const VoucherController = {
           $lookup: {
             from: "voucherDetails",
             localField: "_id",
-            let: { id: "_id", voucher_type: constants.PURCHASED_VOUCHER,verify_status:false,revert_status:false },
+            let: {
+              id: "_id",
+              voucher_type: constants.PURCHASED_VOUCHER,
+              verify_status: false,
+              revert_status: false,
+            },
             pipeline: [
               {
                 $match: {
                   $expr: {
                     $and: [
                       { $eq: ["$voucher_type", "$$voucher_type"] },
-                      { $eq: [ "$verify_status", "$$verify_status" ] },
-                      { $eq: [ "$revert_status", "$$revert_status" ] }
+                      { $eq: ["$verify_status", "$$verify_status"] },
+                      { $eq: ["$revert_status", "$$revert_status"] },
                     ],
                   },
                 },
@@ -202,104 +207,104 @@ const VoucherController = {
       return next(error);
     }
   },
-async revertedVoucher(req, res, next){
-  let documents;
-  try {
-    documents = await voucher.aggregate([
-      {
-        $match: {
-          company_id: ObjectId(req.params.company_id),
-          voucher_date: req.params.date,
+  async revertedVoucher(req, res, next) {
+    let documents;
+    try {
+      documents = await voucher.aggregate([
+        {
+          $match: {
+            company_id: ObjectId(req.params.company_id),
+            voucher_date: req.params.date,
+          },
         },
-      },
-      {
-        $lookup: {
-          from: "voucherDetails",
-          localField: "_id",
-          let: { id: "_id", revert_status: true },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$revert_status", "$$revert_status"] },
-                    // { $eq: [ "$voucher_id", "$$id" ] }
-                  ],
+        {
+          $lookup: {
+            from: "voucherDetails",
+            localField: "_id",
+            let: { id: "_id", revert_status: true },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ["$revert_status", "$$revert_status"] },
+                      // { $eq: [ "$voucher_id", "$$id" ] }
+                    ],
+                  },
                 },
               },
-            },
-          ],
-          foreignField: "voucher_id",
-          as: "voucherData",
+            ],
+            foreignField: "voucher_id",
+            as: "voucherData",
+          },
         },
-      },
-      {
-        $unwind: "$voucherData",
-      },
-      {
-        $lookup: {
-          from: "items",
-          localField: "voucherData.item_id",
-          foreignField: "_id",
-          as: "itemData",
+        {
+          $unwind: "$voucherData",
         },
-      },
-      {
-        $unwind: "$itemData",
-      },
-      {
-        $lookup: {
-          from: "projects",
-          localField: "project_id",
-          foreignField: "_id",
-          as: "projectData",
+        {
+          $lookup: {
+            from: "items",
+            localField: "voucherData.item_id",
+            foreignField: "_id",
+            as: "itemData",
+          },
         },
-      },
-      {
-        $unwind: "$projectData",
-      },
-      {
-        $group: {
-          _id: "$project_id",
-          company_id: { $first: "$company_id" },
-          project_id: { $first: "$project_id" },
-          project_name: { $first: "$projectData.project_name" },
-          voucherData: {
-            $push: {
-              _id: "$voucherData._id",
-              voucher_id: "$voucherData.voucher_id",
-              voucher_type: "$voucherData.voucher_type",
-              verify_status: "$voucherData.verify_status",
-              revert_status: "$voucherData.revert_status",
-              item_id: "$voucherData.item_id",
-              voucher_date: "$voucher_date",
-              item_name: "$itemData.item_name",
-              qty: "$voucherData.qty",
-              vehicle_no: "$voucherData.vehicle_no",
-              location: "$voucherData.location",
-              remark: "$voucherData.remark",
+        {
+          $unwind: "$itemData",
+        },
+        {
+          $lookup: {
+            from: "projects",
+            localField: "project_id",
+            foreignField: "_id",
+            as: "projectData",
+          },
+        },
+        {
+          $unwind: "$projectData",
+        },
+        {
+          $group: {
+            _id: "$project_id",
+            company_id: { $first: "$company_id" },
+            project_id: { $first: "$project_id" },
+            project_name: { $first: "$projectData.project_name" },
+            voucherData: {
+              $push: {
+                _id: "$voucherData._id",
+                voucher_id: "$voucherData.voucher_id",
+                voucher_type: "$voucherData.voucher_type",
+                verify_status: "$voucherData.verify_status",
+                revert_status: "$voucherData.revert_status",
+                item_id: "$voucherData.item_id",
+                voucher_date: "$voucher_date",
+                item_name: "$itemData.item_name",
+                qty: "$voucherData.qty",
+                vehicle_no: "$voucherData.vehicle_no",
+                location: "$voucherData.location",
+                remark: "$voucherData.remark",
+              },
             },
           },
         },
-      },
-      {
-        $project: {
-          _id: "$_id",
-          // verify_status: "$verify_status",
-          // revert_status:"$revert_status",
-          company_id: "$company_id",
-          // project_id: "$project_id",
-          project_name: "$project_name",
-          voucherData: "$voucherData",
+        {
+          $project: {
+            _id: "$_id",
+            // verify_status: "$verify_status",
+            // revert_status:"$revert_status",
+            company_id: "$company_id",
+            // project_id: "$project_id",
+            project_name: "$project_name",
+            voucherData: "$voucherData",
+          },
         },
-      },
-    ]);
-    return res.json({ status: 200, data: documents });
-  } catch (error) {
-    return next(error);
-  }
-},
-  
+      ]);
+      return res.json({ status: 200, data: documents });
+    } catch (error) {
+      return next(error);
+    }
+  },
+
   async store(req, res, next) {
     const {
       voucher_type,
@@ -342,6 +347,16 @@ async revertedVoucher(req, res, next){
         remark: remark,
       });
       const temp = await voucherDetail.save();
+      if (
+        constants.RECEIVED_VOUCHER == temp.voucher_type ||
+        constants.RECEIVED_RETURN_VOUCHER == temp.voucher_type
+      ) {
+        const avail = await helpers.availableStock(
+          temp.voucher_type,
+          temp._id
+        );
+      }
+   
     } else {
       const result = await voucherData.save();
       const voucherId = result._id;
@@ -360,6 +375,15 @@ async revertedVoucher(req, res, next){
         remark: remark,
       });
       const temp = await voucherDetail.save();
+      if (
+        constants.RECEIVED_VOUCHER == temp.voucher_type ||
+        constants.RECEIVED_RETURN_VOUCHER == temp.voucher_type
+      ) {
+        const avail = await helpers.availableStock(
+          temp.voucher_type,
+          temp._id
+        );
+      }
     }
 
     try {
@@ -384,12 +408,12 @@ async revertedVoucher(req, res, next){
         }
       );
       // console.log("🚀 ~ file: VoucherController.js ~ line 284 ~ verifyVoucher ~ documents", documents)
-      if (documents.verify_status == true) {
-        const temp = await helpers.availableStock(
-          documents.voucher_type,
-          documents._id
-        );
-      }
+      // if (documents.verify_status == true) {
+      // const temp = await helpers.availableStock(
+      //   documents.voucher_type,
+      //   documents._id
+      // );
+      // }
       res.json({ status: 200, data: documents });
     } catch (error) {
       return next(error);
@@ -403,7 +427,7 @@ async revertedVoucher(req, res, next){
           _id: req.params.id,
         },
         {
-          revert_status: true
+          revert_status: true,
         },
         {
           new: true,
