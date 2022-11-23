@@ -141,7 +141,8 @@ router.delete('/project-report-path/:id', ProjectReportPathController.destroy);
 router.get('/voucher/:company_id/:date',VoucherController.index);
 router.get('/verified-voucher/:company_id/:date',VoucherController.verifiedVoucher);
 router.post('/voucher',VoucherController.store);
-router.put('/verify-voucher/:voucher_id',VoucherController.verifyVoucher);
+router.put('/verify-voucher/:id',VoucherController.verifyVoucher);
+router.put('/revert-voucher/:id',VoucherController.revertVoucher);
 
 
 //stock

@@ -8,6 +8,7 @@ const voucherDetailsSchema = mongoose.Schema({
     qty:{type:Number,required:true},
     voucher_type: { type: String, required: true },
     verify_status:{type:Boolean,default:true},
+    revert_status:{type:Boolean,default:false},
     vehicle_no:{type:String},
     location:{type:String},
     remark:{type:String}    

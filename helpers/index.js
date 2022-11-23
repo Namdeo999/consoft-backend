@@ -168,14 +168,14 @@ export default {
       return { status: 200 };
     }
   },
-  async availableStock(voucher_type, voucher_id) {
+  async availableStock(voucher_type, id) {
     let recvdQty;
     let itemId;
 
     if (voucher_type == constants.RECEIVED_VOUCHER) {
       const vouchDetails = await voucherDetails
         .findOne({
-          voucher_id: ObjectId(voucher_id),
+          _id: ObjectId(id),
         })
         .select();
 
@@ -200,28 +200,26 @@ export default {
         );
       }
     } else {
-      const vouchDetails = await voucherDetails
-        .findOne({
-          voucher_id: ObjectId(voucher_id),
-        })
-        .select();
-        console.log("🚀 ~ file: index.js ~ line 208 ~ availableStock ~ vouchDetails", vouchDetails)
-        
-      const stockData = await StockEntry.findOne({
-        item_id: vouchDetails.item_id
-      }).select();
+      if (voucher_type == constants.RECEIVED_RETURN_VOUCHER) {
+        const vouchDetails = await voucherDetails
+          .findOne({
+            voucher_id: ObjectId(id),
+          })
+          .select();
 
-      console.log("🚀 ~ file: index.js ~ line 213 ~ availableStock ~ stockData", stockData)
+        const stockData = await StockEntry.findOne({
+          item_id: vouchDetails.item_id,
+        }).select();
 
-      if (stockData != null) {
-        const temp = await StockEntry.findByIdAndUpdate(
-          { _id: stockData._id },
-          {
-            qty: stockData.qty - vouchDetails.qty,
-          },
-          { new: true }
-        );
-        console.log("🚀 ~ file: index.js ~ line 223 ~ availableStock ~ temp", temp)
+        if (stockData != null) {
+          const temp = await StockEntry.findByIdAndUpdate(
+            { _id: stockData._id },
+            {
+              qty: stockData.qty - vouchDetails.qty,
+            },
+            { new: true }
+          );
+        }
       }
     }
     return { status: 200 };
