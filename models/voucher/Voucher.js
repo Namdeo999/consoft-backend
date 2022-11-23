@@ -8,8 +8,7 @@ const time = CustomFunction.currentTime();
 const VoucherSchema = mongoose.Schema({
   company_id: { type: ObjectId, required: true },
   project_id: { type: ObjectId, required: true },
-  voucher_type: { type: String, required: true },
-  verify_status:{type:Boolean},
+  // verify_status:{type:Boolean,default:true},
   voucher_date: { type: String, default: date },
   voucher_time: { type: String, default: time },
 });

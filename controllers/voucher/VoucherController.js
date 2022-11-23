@@ -5,6 +5,7 @@ import CustomSuccessHandler from "../../services/CustomSuccessHandler.js";
 import CustomFunction from "../../services/CustomFunction.js";
 import { ObjectId } from "mongodb";
 import helpers from "../../helpers/index.js";
+import constants from "../../constants/index.js";
 const VoucherController = {
   async index(req, res, next) {
     let documents;
@@ -51,16 +52,18 @@ const VoucherController = {
         },
         {
           $group: {
-            _id: "$_id",
+            _id: "$project_id",
             company_id: { $first: "$company_id" },
             project_id: { $first: "$project_id" },
             project_name: { $first: "$projectData.project_name" },
-            voucher_type: { $first: "$voucher_type" },
-            verify_status: { $first: "$verify_status" },
+            // voucher_type: { $first: "$voucher_type" },
+            // verify_status: { $first: "$verify_status" },
             voucherData: {
               $push: {
                 _id: "$voucherData._id",
                 voucher_id: "$voucherData.voucher_id",
+                voucher_type:  "$voucherData.voucher_type" ,
+                verify_status: "$voucherData.verify_status",
                 item_id: "$voucherData.item_id",
                 item_name: "$itemData.item_name",
                 qty: "$voucherData.qty",
@@ -99,28 +102,32 @@ const VoucherController = {
       company_id,
       project_id,
     } = req.body;
+    console.log("-body", req.body);
     let current_date = CustomFunction.currentDate();
     let current_time = CustomFunction.currentTime();
     const voucherData = new voucher({
       company_id,
       project_id,
-      voucher_type,
       voucher_date: current_date,
       voucher_time: current_time,
-      verify_status: false,
     });
     const exist = await voucher.exists({
       company_id: company_id,
       project_id: project_id,
-      voucher_type: voucher_type,
+      // voucher_type: voucher_type,
       voucher_date: current_date,
-      // voucher_time: current_time,
     });
     if (exist) {
       const voucherDetail = voucherDetails({
         voucher_id: exist._id,
         item_id: item_id,
         location: location,
+        voucher_type: voucher_type,
+        verify_status:
+        voucher_type == constants.PURCHASED_VOUCHER ||
+        voucher_type == constants.RECEIVED_VOUCHER
+          ? false
+          : true,
         vehicle_no: vehicle_no,
         qty: qty,
         remark: remark,
@@ -133,6 +140,12 @@ const VoucherController = {
         voucher_id: voucherId,
         item_id: item_id,
         location: location,
+        voucher_type: voucher_type,
+        verify_status:
+          voucher_type == constants.PURCHASED_VOUCHER ||
+          voucher_type == constants.RECEIVED_VOUCHER
+            ? false
+            : true,
         vehicle_no: vehicle_no,
         qty: qty,
         remark: remark,
@@ -157,10 +170,10 @@ const VoucherController = {
           verify_status: true,
         },
         {
-          new: true
+          new: true,
         }
-      );  
-      if (documents.verify_status==true) {
+      );
+      if (documents.verify_status == true) {
         const temp = await helpers.availableStock(
           documents.voucher_type,
           documents._id
