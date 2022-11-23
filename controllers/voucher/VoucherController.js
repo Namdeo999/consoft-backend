@@ -209,7 +209,7 @@ const VoucherController = {
       company_id,
       project_id,
     } = req.body;
-    console.log("-body", req.body);
+    // console.log("-body", req.body);
     let current_date = CustomFunction.currentDate();
     let current_time = CustomFunction.currentTime();
     const voucherData = new voucher({
@@ -269,9 +269,10 @@ const VoucherController = {
   async verifyVoucher(req, res, next) {
     let documents;
     try {
-      documents = await voucher.findByIdAndUpdate(
+   
+      documents = await voucherDetails.findByIdAndUpdate(
         {
-          _id: req.params.voucher_id,
+         _id: ObjectId(req.params.id),
         },
         {
           verify_status: true,
@@ -280,6 +281,7 @@ const VoucherController = {
           new: true,
         }
       );
+      // console.log("🚀 ~ file: VoucherController.js ~ line 284 ~ verifyVoucher ~ documents", documents)
       if (documents.verify_status == true) {
         const temp = await helpers.availableStock(
           documents.voucher_type,
@@ -291,5 +293,30 @@ const VoucherController = {
       return next(error);
     }
   },
+  // async verifyVoucher(req, res, next) {
+  //   let documents;
+  //   try {
+  //     documents = await voucher.findByIdAndUpdate(
+  //       {
+  //         _id: req.params.voucher_id,
+  //       },
+  //       {
+  //         verify_status: true,
+  //       },
+  //       {
+  //         new: true,
+  //       }
+  //     );
+  //     if (documents.verify_status == true) {
+  //       const temp = await helpers.availableStock(
+  //         documents.voucher_type,
+  //         documents._id
+  //       );
+  //     }
+  //     res.json({ status: 200, data: documents });
+  //   } catch (error) {
+  //     return next(error);
+  //   }
+  // },
 };
 export default VoucherController;
