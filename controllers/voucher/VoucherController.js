@@ -114,7 +114,7 @@ const VoucherController = {
       project_id: project_id,
       voucher_type: voucher_type,
       voucher_date: current_date,
-      voucher_time: current_time,
+      // voucher_time: current_time,
     });
     if (exist) {
       const voucherDetail = voucherDetails({
