@@ -21,14 +21,15 @@ const VoucherController = {
           $lookup: {
             from: "voucherDetails",
             localField: "_id",
-            let: { id: "_id", voucher_type: constants.PURCHASED_VOUCHER,verify_status:false },
+            let: { id: "_id", voucher_type: constants.PURCHASED_VOUCHER,verify_status:false,revert_status:false },
             pipeline: [
               {
                 $match: {
                   $expr: {
                     $and: [
                       { $eq: ["$voucher_type", "$$voucher_type"] },
-                      { $eq: [ "$verify_status", "$$verify_status" ] }
+                      { $eq: [ "$verify_status", "$$verify_status" ] },
+                      { $eq: [ "$revert_status", "$$revert_status" ] }
                     ],
                   },
                 },
