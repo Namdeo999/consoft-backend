@@ -14,4 +14,8 @@ export default{
     REVERT:true,
     QUANTITY_ITEM_STEEL:'steel',
     PRIVILEGE_OTHER_TEAM:'other team',
+    PURCHASED_VOUCHER: 'Purchase Request',
+    RECEIVED_VOUCHER: 'Received',
+    PURCHASED_RETURN_VOUCHER: 'Purchased Return',
+    RECEIVED_RETURN_VOUCHER: 'Received Return'
 }

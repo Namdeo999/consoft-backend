@@ -4,10 +4,13 @@ import {
   QuantityReport,
   ManageBoq,
   QuantityWorkItemReport,
+  StockEntry,
+  voucherDetails,
 } from "../models/index.js";
 import { manageBoqSchema } from "../validators/index.js";
 import CustomErrorHandler from "../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../services/CustomSuccessHandler.js";
+import constants from "../constants/index.js";
 
 export default {
   async totalQuantityItemWotk(quantity_work_item_report_id) {
@@ -110,13 +113,12 @@ export default {
           project_id: ObjectId(report.project_id),
           item_id: ObjectId(item_id),
         }).select("_id completed_qty");
-        console.log("completed_qty--", completed_qty);
+        // console.log("completed_qty--", completed_qty);
 
         if (exist) {
           total_qty =
             parseFloat(exist.completed_qty) - parseFloat(pre_total_qty);
           total_qty = parseFloat(total_qty) + parseFloat(completed_qty);
-
 
           const updateBoq = await ManageBoq.findByIdAndUpdate(
             { _id: exist._id },
@@ -165,6 +167,64 @@ export default {
       }
       return { status: 200 };
     }
+  },
+  async availableStock(voucher_type, voucher_id) {
+    let recvdQty;
+    let itemId;
+
+    if (voucher_type == constants.RECEIVED_VOUCHER) {
+      const vouchDetails = await voucherDetails
+        .findOne({
+          voucher_id: ObjectId(voucher_id),
+        })
+        .select();
+
+      const StockEntryData = new StockEntry({
+        qty: vouchDetails.qty,
+        item_id: vouchDetails.item_id,
+      });
+
+      const stockData = await StockEntry.findOne({
+        item_id: vouchDetails.item_id,
+      }).select();
+
+      if (stockData == null) {
+        const result = await StockEntryData.save();
+      } else {
+        const temp = await StockEntry.findByIdAndUpdate(
+          { _id: stockData._id },
+          {
+            qty: vouchDetails.qty + stockData.qty,
+          },
+          { new: true }
+        );
+      }
+    } else {
+      const vouchDetails = await voucherDetails
+        .findOne({
+          voucher_id: ObjectId(voucher_id),
+        })
+        .select();
+        console.log("🚀 ~ file: index.js ~ line 208 ~ availableStock ~ vouchDetails", vouchDetails)
+        
+      const stockData = await StockEntry.findOne({
+        item_id: vouchDetails.item_id
+      }).select();
+
+      console.log("🚀 ~ file: index.js ~ line 213 ~ availableStock ~ stockData", stockData)
+
+      if (stockData != null) {
+        const temp = await StockEntry.findByIdAndUpdate(
+          { _id: stockData._id },
+          {
+            qty: stockData.qty - vouchDetails.qty,
+          },
+          { new: true }
+        );
+        console.log("🚀 ~ file: index.js ~ line 223 ~ availableStock ~ temp", temp)
+      }
+    }
+    return { status: 200 };
   },
 };
 
