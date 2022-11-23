@@ -179,7 +179,6 @@ export default {
         })
         .select();
 
-
       const StockEntryData = new StockEntry({
         qty: vouchDetails.qty,
         item_id: vouchDetails.item_id,
@@ -201,24 +200,26 @@ export default {
         );
       }
     } else {
-      const vouchDetails = await voucherDetails
-        .findOne({
-          voucher_id: ObjectId(id),
-        })
-        .select();
+      if (voucher_type == constants.RECEIVED_RETURN_VOUCHER) {
+        const vouchDetails = await voucherDetails
+          .findOne({
+            voucher_id: ObjectId(id),
+          })
+          .select();
 
-      const stockData = await StockEntry.findOne({
-        item_id: vouchDetails.item_id,
-      }).select();
+        const stockData = await StockEntry.findOne({
+          item_id: vouchDetails.item_id,
+        }).select();
 
-      if (stockData != null) {
-        const temp = await StockEntry.findByIdAndUpdate(
-          { _id: stockData._id },
-          {
-            qty: stockData.qty - vouchDetails.qty,
-          },
-          { new: true }
-        );
+        if (stockData != null) {
+          const temp = await StockEntry.findByIdAndUpdate(
+            { _id: stockData._id },
+            {
+              qty: stockData.qty - vouchDetails.qty,
+            },
+            { new: true }
+          );
+        }
       }
     }
     return { status: 200 };
