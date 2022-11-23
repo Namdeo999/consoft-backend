@@ -75,6 +75,7 @@ const VoucherController = {
                 voucher_id: "$voucherData.voucher_id",
                 voucher_type: "$voucherData.voucher_type",
                 verify_status: "$voucherData.verify_status",
+                revert_status: "$voucherData.revert_status",
                 item_id: "$voucherData.item_id",
                 voucher_date: "$voucher_date",
                 item_name: "$itemData.item_name",
@@ -123,7 +124,7 @@ const VoucherController = {
                 $match: {
                   $expr: {
                     $and: [
-                      { $eq: [ "$verify_status",  "$$verify_status" ] },
+                      { $eq: ["$verify_status", "$$verify_status"] },
                       // { $eq: [ "$voucher_id", "$$id" ] }
                     ],
                   },
@@ -171,6 +172,7 @@ const VoucherController = {
                 voucher_id: "$voucherData.voucher_id",
                 voucher_type: "$voucherData.voucher_type",
                 verify_status: "$voucherData.verify_status",
+                revert_status: "$voucherData.revert_status",
                 item_id: "$voucherData.item_id",
                 voucher_date: "$voucher_date",
                 item_name: "$itemData.item_name",
@@ -186,6 +188,7 @@ const VoucherController = {
           $project: {
             _id: "$_id",
             verify_status: "$verify_status",
+            revert_status:"$revert_status",
             company_id: "$company_id",
             // project_id: "$project_id",
             project_name: "$project_name",
@@ -269,13 +272,13 @@ const VoucherController = {
   async verifyVoucher(req, res, next) {
     let documents;
     try {
-   
       documents = await voucherDetails.findByIdAndUpdate(
         {
-         _id: ObjectId(req.params.id),
+          _id: ObjectId(req.params.id),
         },
         {
           verify_status: true,
+          revert_status: false,
         },
         {
           new: true,
@@ -293,30 +296,24 @@ const VoucherController = {
       return next(error);
     }
   },
-  // async verifyVoucher(req, res, next) {
-  //   let documents;
-  //   try {
-  //     documents = await voucher.findByIdAndUpdate(
-  //       {
-  //         _id: req.params.voucher_id,
-  //       },
-  //       {
-  //         verify_status: true,
-  //       },
-  //       {
-  //         new: true,
-  //       }
-  //     );
-  //     if (documents.verify_status == true) {
-  //       const temp = await helpers.availableStock(
-  //         documents.voucher_type,
-  //         documents._id
-  //       );
-  //     }
-  //     res.json({ status: 200, data: documents });
-  //   } catch (error) {
-  //     return next(error);
-  //   }
-  // },
+  async revertVoucher(req, res, next) {
+    let documents;
+    try {
+      documents = await voucherDetails.findByIdAndUpdate(
+        {
+          _id: req.params.id,
+        },
+        {
+          revert_status: true
+        },
+        {
+          new: true,
+        }
+      );
+      res.json({ status: 200, data: documents });
+    } catch (error) {
+      return next(error);
+    }
+  },
 };
 export default VoucherController;
