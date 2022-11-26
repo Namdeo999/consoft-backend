@@ -160,7 +160,7 @@ router.get('/item/:id', ItemController.edit);
 router.put('/item/:id', ItemController.update);
 router.delete('/item/:id', ItemController.destroy);
 
-router.get('/stock-entry', ManageStockController.index);
+router.get('/stock-entry/:company_id', ManageStockController.index);
 router.post('/stock-entry', ManageStockController.store);
 router.get('/stock-entry/:id', ManageStockController.edit);
 router.put('/stock-entry/:id', ManageStockController.update);
