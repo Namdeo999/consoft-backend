@@ -79,6 +79,7 @@ const VoucherController = {
               $push: {
                 _id: "$voucherData._id",
                 voucher_id: "$voucherData.voucher_id",
+                project_id:"$project_id",
                 voucher_type: "$voucherData.voucher_type",
                 verify_status: "$voucherData.verify_status",
                 revert_status: "$voucherData.revert_status",
@@ -182,12 +183,13 @@ const VoucherController = {
           $group: {
             _id: "$project_id",
             company_id: { $first: "$company_id" },
-            project_id: { $first: "$project_id" },
+            // project_id: { $first: "$project_id" },
             project_name: { $first: "$projectData.project_name" },
             voucherData: {
               $push: {
                 _id: "$voucherData._id",
                 voucher_id: "$voucherData.voucher_id",
+                project_id:"$project_id",
                 voucher_type: "$voucherData.voucher_type",
                 verify_status: "$voucherData.verify_status",
                 revert_status: "$voucherData.revert_status",
@@ -279,12 +281,13 @@ const VoucherController = {
           $group: {
             _id: "$project_id",
             company_id: { $first: "$company_id" },
-            project_id: { $first: "$project_id" },
+            // project_id: { $first: "$project_id" },
             project_name: { $first: "$projectData.project_name" },
             voucherData: {
               $push: {
                 _id: "$voucherData._id",
                 voucher_id: "$voucherData.voucher_id",
+                project_id:"$project_id",
                 voucher_type: "$voucherData.voucher_type",
                 verify_status: "$voucherData.verify_status",
                 revert_status: "$voucherData.revert_status",

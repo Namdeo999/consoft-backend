@@ -60,6 +60,7 @@ const ManageStockController = {
               $push: {
                 _id: "$stockData._id",
                 stock_id: "$stockData.voucher_id",
+                project_name:"$projectData.project_name",
                 item_id: "$stockData.item_id",
                 stock_date: "$stock_date",
                 project_name: "$projectData.project_name",
@@ -73,7 +74,7 @@ const ManageStockController = {
           $project: {
             _id: "$_id",
             company_id: "$company_id",
-            project_name: "$project_name",
+            // project_name: "$project_name",
             stockData: "$stockData",
           },
         },
