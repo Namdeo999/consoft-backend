@@ -10,7 +10,7 @@ const ManageStockController = {
   async index(req, res, next) {
     let documents;
     try {
-      documents = await db.manageStock.aggregate([
+      documents = await ManageStock.aggregate([
         {
           $match: {
             company_id: ObjectId(req.params.company_id),
@@ -55,13 +55,14 @@ const ManageStockController = {
             _id: "$project_id",
             company_id: { $first: "$company_id" },
             project_id: { $first: "$project_id" },
-            project_name: { $first: "$projectData.project_name" },
+            // project_name: { $first: "$projectData.project_name" },
             stockData: {
               $push: {
                 _id: "$stockData._id",
                 stock_id: "$stockData.voucher_id",
                 item_id: "$stockData.item_id",
                 stock_date: "$stock_date",
+                project_name: "$projectData.project_name",
                 item_name: "$itemData.item_name",
                 qty: "$stockData.qty",
               },
