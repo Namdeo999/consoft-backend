@@ -6,11 +6,13 @@ import {
   QuantityWorkItemReport,
   StockEntry,
   voucherDetails,
+  ManageStock
 } from "../models/index.js";
 import { manageBoqSchema } from "../validators/index.js";
 import CustomErrorHandler from "../services/CustomErrorHandler.js";
 import CustomSuccessHandler from "../services/CustomSuccessHandler.js";
 import constants from "../constants/index.js";
+import CustomFunction from "../services/CustomFunction.js";
 
 export default {
   async totalQuantityItemWotk(quantity_work_item_report_id) {
@@ -168,9 +170,8 @@ export default {
       return { status: 200 };
     }
   },
-  async availableStock(voucher_type, id) {
-    let recvdQty;
-    let itemId;
+  async availableStock(voucher_type, id,company_id,project_id) {
+
 
     if (voucher_type == constants.RECEIVED_VOUCHER) {
       const vouchDetails = await voucherDetails
@@ -178,13 +179,37 @@ export default {
           _id: ObjectId(id),
         })
         .select();
+        const stock_exist = await ManageStock.exists({company_id: ObjectId(company_id), project_id: ObjectId(project_id)});
+        let stock_id
+        let current_date = CustomFunction.currentDate();
+        let current_time = CustomFunction.currentTime();
+        try {
+            if (!stock_exist) {
+                const manage_stock = new ManageStock({
+                    company_id,
+                    project_id,
+                    stock_date:current_date,
+                    stock_time:current_time
+                    // user_id 
+                });
+                const result = await manage_stock.save();
+                stock_id = result._id;
+            }else{
+                stock_id = stock_exist._id;
+            }
+        } catch (err) {
+            return err;
+        }
 
+    
       const StockEntryData = new StockEntry({
+        stock_id:stock_id,
         qty: vouchDetails.qty,
         item_id: vouchDetails.item_id,
       });
 
       const stockData = await StockEntry.findOne({
+        stock_id:stock_id,
         item_id: vouchDetails.item_id,
       }).select();
 
@@ -206,8 +231,30 @@ export default {
             _id: ObjectId(id),
           })
           .select();
-
+          const stock_exist = await ManageStock.exists({company_id: ObjectId(company_id), project_id: ObjectId(project_id)});
+          let stock_id
+          let current_date = CustomFunction.currentDate();
+          let current_time = CustomFunction.currentTime();
+          try {
+              if (!stock_exist) {
+                  const manage_stock = new ManageStock({
+                      company_id,
+                      project_id,
+                      stock_date:current_date,
+                      stock_time:current_time
+                      // user_id 
+                  });
+                  const result = await manage_stock.save();
+                  stock_id = result._id;
+              }else{
+                  stock_id = stock_exist._id;
+              }
+          } catch (err) {
+              return err;
+          }
+  
         const stockData = await StockEntry.findOne({
+          stock_id:stock_id,
           item_id: vouchDetails.item_id,
         }).select();
 

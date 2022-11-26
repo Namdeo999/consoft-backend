@@ -110,6 +110,18 @@ const VoucherController = {
     }
   },
 
+  async edit(req, res, next) {
+    let document;
+    try {
+      document = await voucherDetails.findOne({
+        _id: req.params.id,
+      }).select("-__v");
+    } catch (err) {
+      return next(CustomErrorHandler.serverError());
+    }
+
+    return res.json({ status: 200, data: document });
+  },
   async verifiedVoucher(req, res, next) {
     let documents;
     try {
@@ -338,8 +350,8 @@ const VoucherController = {
         location: location,
         voucher_type: voucher_type,
         verify_status:
-          voucher_type == constants.PURCHASED_VOUCHER ||
-          voucher_type == constants.RECEIVED_VOUCHER
+          voucher_type == constants.PURCHASED_VOUCHER 
+          // voucher_type == constants.RECEIVED_VOUCHER
             ? false
             : true,
         vehicle_no: vehicle_no,
@@ -351,12 +363,8 @@ const VoucherController = {
         constants.RECEIVED_VOUCHER == temp.voucher_type ||
         constants.RECEIVED_RETURN_VOUCHER == temp.voucher_type
       ) {
-        const avail = await helpers.availableStock(
-          temp.voucher_type,
-          temp._id
-        );
+        const avail = await helpers.availableStock(temp.voucher_type, temp._id,company_id,project_id);
       }
-   
     } else {
       const result = await voucherData.save();
       const voucherId = result._id;
@@ -366,8 +374,8 @@ const VoucherController = {
         location: location,
         voucher_type: voucher_type,
         verify_status:
-          voucher_type == constants.PURCHASED_VOUCHER ||
-          voucher_type == constants.RECEIVED_VOUCHER
+          voucher_type == constants.PURCHASED_VOUCHER 
+          // voucher_type == constants.RECEIVED_VOUCHER
             ? false
             : true,
         vehicle_no: vehicle_no,
@@ -379,10 +387,7 @@ const VoucherController = {
         constants.RECEIVED_VOUCHER == temp.voucher_type ||
         constants.RECEIVED_RETURN_VOUCHER == temp.voucher_type
       ) {
-        const avail = await helpers.availableStock(
-          temp.voucher_type,
-          temp._id
-        );
+        const avail = await helpers.availableStock(temp.voucher_type, temp._id, company_id,project_id);
       }
     }
 
