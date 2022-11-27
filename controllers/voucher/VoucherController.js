@@ -23,7 +23,8 @@ const VoucherController = {
             localField: "_id",
             let: {
               id: "_id",
-              voucher_type: constants.PURCHASED_VOUCHER,
+              voucher_type: req.params.voucher_type,
+              // voucher_type: constants.PURCHASED_VOUCHER,
               verify_status: false,
               revert_status: false,
             },
@@ -79,7 +80,7 @@ const VoucherController = {
               $push: {
                 _id: "$voucherData._id",
                 voucher_id: "$voucherData.voucher_id",
-                project_id:"$project_id",
+                project_id: "$project_id",
                 voucher_type: "$voucherData.voucher_type",
                 verify_status: "$voucherData.verify_status",
                 revert_status: "$voucherData.revert_status",
@@ -111,18 +112,67 @@ const VoucherController = {
     }
   },
 
-  async edit(req, res, next) {
-    let document;
-    try {
-      document = await voucherDetails.findOne({
-        _id: req.params.id,
-      }).select("-__v");
-    } catch (err) {
-      return next(CustomErrorHandler.serverError());
-    }
+  // async edit(req, res, next) {
+  //   let document;
+  //   try {
+  //     document = await voucherDetails
+  //       .findOne({
+  //         _id: req.params.id,
+  //       })
+  //       .select("-__v");
+  //   } catch (err) {
+  //     return next(CustomErrorHandler.serverError());
+  //   }
 
-    return res.json({ status: 200, data: document });
+  //   return res.json({ status: 200, data: document });
+  // },
+
+  async update(req, res, next) {
+    let document;
+    const { item_id, qty, voucher_type, vehicle_no, location, remark ,project_id,company_id} =
+      req.body;
+    try {
+       document = await voucherDetails
+        .findByIdAndUpdate(
+          {
+            _id: ObjectId(req.params.id),
+          },
+          {
+            item_id,
+            qty,
+            voucher_type,
+            verify_status:
+            voucher_type == constants.PURCHASED_VOUCHER
+              ?
+                false 
+              : true, 
+            vehicle_no,
+            location,
+            remark
+          },
+          {
+            new: true,
+          }
+        )
+        .select("-createdAt -updatedAt -__v");
+       if (
+        constants.RECEIVED_VOUCHER == document.voucher_type ||
+        constants.RECEIVED_RETURN_VOUCHER == document.voucher_type
+      ) {
+        const avail = await helpers.availableStock(
+          document.voucher_type,
+          document._id,
+          company_id,
+          project_id
+        );
+      }
+    } catch (error) {
+      return next(error);
+    }
+    // res.status(200).json(document);
+    res.send({ status: 200, data: document });
   },
+
   async verifiedVoucher(req, res, next) {
     let documents;
     try {
@@ -189,7 +239,7 @@ const VoucherController = {
               $push: {
                 _id: "$voucherData._id",
                 voucher_id: "$voucherData.voucher_id",
-                project_id:"$project_id",
+                project_id: "$project_id",
                 voucher_type: "$voucherData.voucher_type",
                 verify_status: "$voucherData.verify_status",
                 revert_status: "$voucherData.revert_status",
@@ -287,7 +337,7 @@ const VoucherController = {
               $push: {
                 _id: "$voucherData._id",
                 voucher_id: "$voucherData.voucher_id",
-                project_id:"$project_id",
+                project_id: "$project_id",
                 voucher_type: "$voucherData.voucher_type",
                 verify_status: "$voucherData.verify_status",
                 revert_status: "$voucherData.revert_status",
@@ -353,9 +403,9 @@ const VoucherController = {
         location: location,
         voucher_type: voucher_type,
         verify_status:
-          voucher_type == constants.PURCHASED_VOUCHER 
-          // voucher_type == constants.RECEIVED_VOUCHER
-            ? false
+          voucher_type == constants.PURCHASED_VOUCHER
+            ? // voucher_type == constants.RECEIVED_VOUCHER
+              false
             : true,
         vehicle_no: vehicle_no,
         qty: qty,
@@ -366,7 +416,12 @@ const VoucherController = {
         constants.RECEIVED_VOUCHER == temp.voucher_type ||
         constants.RECEIVED_RETURN_VOUCHER == temp.voucher_type
       ) {
-        const avail = await helpers.availableStock(temp.voucher_type, temp._id,company_id,project_id);
+        const avail = await helpers.availableStock(
+          temp.voucher_type,
+          temp._id,
+          company_id,
+          project_id
+        );
       }
     } else {
       const result = await voucherData.save();
@@ -377,9 +432,9 @@ const VoucherController = {
         location: location,
         voucher_type: voucher_type,
         verify_status:
-          voucher_type == constants.PURCHASED_VOUCHER 
-          // voucher_type == constants.RECEIVED_VOUCHER
-            ? false
+          voucher_type == constants.PURCHASED_VOUCHER
+            ? // voucher_type == constants.RECEIVED_VOUCHER
+              false
             : true,
         vehicle_no: vehicle_no,
         qty: qty,
@@ -390,7 +445,12 @@ const VoucherController = {
         constants.RECEIVED_VOUCHER == temp.voucher_type ||
         constants.RECEIVED_RETURN_VOUCHER == temp.voucher_type
       ) {
-        const avail = await helpers.availableStock(temp.voucher_type, temp._id, company_id,project_id);
+        const avail = await helpers.availableStock(
+          temp.voucher_type,
+          temp._id,
+          company_id,
+          project_id
+        );
       }
     }
 

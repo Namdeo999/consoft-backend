@@ -137,11 +137,12 @@ router.delete('/project-report-path/:id', ProjectReportPathController.destroy);
 
 
 //voucher
-router.get('/voucher/:company_id/:date',VoucherController.index);
+router.get('/voucher/:company_id/:date/:voucher_type',VoucherController.index);
 router.get('/verified-voucher/:company_id/:date',VoucherController.verifiedVoucher);
 router.get('/reverted-voucher/:company_id/:date',VoucherController.revertedVoucher);
-router.get('/edit-voucher/:id',VoucherController.edit);
+// router.get('/edit-voucher/:id',VoucherController.edit);
 router.post('/voucher',VoucherController.store);
+router.put('/voucher/:id',VoucherController.update);
 router.put('/verify-voucher/:id',VoucherController.verifyVoucher);
 router.put('/revert-voucher/:id',VoucherController.revertVoucher);
 
