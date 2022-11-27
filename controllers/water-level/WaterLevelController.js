@@ -107,6 +107,7 @@ const WaterLevelController = {
 
     async saveWaterLevelImage(req, res, next){
         const {image} = req.body;
+        console.log(image)
         try {
             const replace_2F = image.replace(/%2F/g, '/'); // %2F = /
             const final_image = replace_2F.replace(/%2B/g, '+'); // %2B = +

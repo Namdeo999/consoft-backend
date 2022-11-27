@@ -174,6 +174,28 @@ const CompanyController = {
         }
     },
 
+    async update(req, res, next){
+        try {
+            const exist = await Company.exists({_id:req.params.id});
+            if(!exist){
+                return next(CustomErrorHandler.alreadyExist('Company not exist'));                
+            }
+        } catch (err) {
+            return next(err);
+        }
+
+        const {company_address} = req.body;
+        try {
+            await Company.findOneAndUpdate(
+                {_id : req.params.id},
+                {company_address}
+            )
+        } catch (err) {
+            return next(err)
+        }
+        return res.send(CustomSuccessHandler.success("Company updated successfully"))
+    },
+
     async companyLogout(req, res, next) {
         // validation
         const refreshSchema = Joi.object({

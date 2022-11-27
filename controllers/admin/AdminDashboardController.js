@@ -29,6 +29,9 @@ const AdminDashboardController = {
                             {"payment_status":true},
                             {"payment_verify":false}
                         ]
+                        
+                            // "payment_status":true,
+                            // "payment_verify":false
                     }
                 },
                 {
@@ -100,6 +103,48 @@ const AdminDashboardController = {
             return next(err);
         }
         res.send(CustomSuccessHandler.success('Payment verified successfully'));
+    },
+
+    async verifiedCompany(req, res, next){
+        let documents;
+        try {
+            documents = await Payment.aggregate([
+                {
+                    $match:{
+                        // "payment_status":true,
+                        "payment_verify":true
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'companies',
+                        localField: 'company_id',
+                        foreignField: '_id',
+                        as: 'companyData'
+                    }
+                },
+                { $unwind: "$companyData" },
+                {
+                    $project:{
+                        id:1,
+                        transaction_id:1,
+                        payment:1,
+                        payment_date:1,
+                        payment_time:1,
+                        company_id:1,
+                        company_name:"$companyData.company_name",
+                        company_owner_name:"$companyData.name",
+                        mobile:"$companyData.mobile",
+                        email:"$companyData.email",
+                    }
+                }
+                
+            ]);
+
+        } catch (err) {
+            return next(CustomErrorHandler.serverError());
+        }
+        return res.json({status:200, data:documents});
     }
 
 }

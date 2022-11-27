@@ -9,12 +9,13 @@ import ManpowerReportController from "./ManpowerReportController.js";
 import { ObjectId } from "mongodb";
 import ToolsMachineryController from "../tools-machinery/ToolsMachineryController.js";
 
-const current_date = CustomFunction.currentDate();
-const current_time = CustomFunction.currentTime();
+
 
 const ReportController = {
 
     async saveReport(req, res, next) {
+        let current_date = CustomFunction.currentDate();
+        let current_time = CustomFunction.currentTime();
         try {
             const { company_id, project_id, user_id } = req.body;
             const exist = await Report.exists({ company_id: company_id, project_id: project_id, user_id: user_id, report_date: current_date });
@@ -374,6 +375,8 @@ const ReportController = {
     // },
 
     async index(req, res, next) {
+        let current_date = CustomFunction.currentDate();
+        let current_time = CustomFunction.currentTime();
         let documents;
         let condition;
         try {
