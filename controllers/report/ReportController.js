@@ -413,9 +413,24 @@ const ReportController = {
                 },
                 { $unwind: "$projectData" },
                 {
+                    $lookup:{
+                      from:'companies',
+                      localField:'company_id',
+                      foreignField:'_id',
+                      as:'companyData'
+                    }
+                  },
+                  {
+                    $unwind:"$companyData"
+                  },
+                {
                     $project: {
                         _id: 1,
                         company_id: 1,
+                        company_name:"$companyData.company_name",
+                        company_email:"$companyData.email",
+                        company_mobile:"$companyData.mobile",
+                        company_address:"$companyData.address",
                         project_id: 1,
                         project_name: "$projectData.project_name",
                         user_id: "$user_id",
