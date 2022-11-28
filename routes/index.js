@@ -140,6 +140,7 @@ router.delete('/project-report-path/:id', ProjectReportPathController.destroy);
 router.get('/voucher/:company_id/:date/:voucher_type',VoucherController.index);
 router.get('/verified-voucher/:company_id/:date',VoucherController.verifiedVoucher);
 router.get('/reverted-voucher/:company_id/:date',VoucherController.revertedVoucher);
+router.get('/filter-voucher/:company_id/:date/:voucher_type',VoucherController.filterVoucher);
 // router.get('/edit-voucher/:id',VoucherController.edit);
 router.post('/voucher',VoucherController.store);
 router.put('/voucher/:id',VoucherController.update);
