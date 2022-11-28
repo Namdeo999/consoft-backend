@@ -430,7 +430,7 @@ const ReportController = {
                         company_name:"$companyData.company_name",
                         company_email:"$companyData.email",
                         company_mobile:"$companyData.mobile",
-                        company_address:"$companyData.address",
+                        company_address:"$companyData.company_address",
                         project_id: 1,
                         project_name: "$projectData.project_name",
                         user_id: "$user_id",
