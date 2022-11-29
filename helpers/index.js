@@ -206,11 +206,12 @@ export default {
         stock_id:stock_id,
         qty: vouchDetails.qty,
         item_id: vouchDetails.item_id,
+        unit_id: vouchDetails.unit_id      
       });
 
       const stockData = await StockEntry.findOne({
         stock_id:stock_id,
-        item_id: vouchDetails.item_id,
+        item_id: vouchDetails.item_id
       }).select();
 
       if (stockData == null) {
@@ -219,7 +220,7 @@ export default {
         const temp = await StockEntry.findByIdAndUpdate(
           { _id: stockData._id },
           {
-            qty: vouchDetails.qty + stockData.qty,
+            qty: vouchDetails.qty + stockData.qty
           },
           { new: true }
         );
@@ -256,6 +257,7 @@ export default {
         const stockData = await StockEntry.findOne({
           stock_id:stock_id,
           item_id: vouchDetails.item_id,
+          unit_id: vouchDetails.unit_id,
         }).select();
 
         if (stockData != null) {

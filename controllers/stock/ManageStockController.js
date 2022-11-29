@@ -41,6 +41,17 @@ const ManageStockController = {
         },
         {
           $lookup: {
+            from: "units",
+            localField: "stockData.unit_id",
+            foreignField: "_id",
+            as: "unitData",
+          },
+        },
+        {
+          $unwind: "$unitData",
+        },
+        {
+          $lookup: {
             from: "projects",
             localField: "project_id",
             foreignField: "_id",
@@ -62,6 +73,7 @@ const ManageStockController = {
                 stock_id: "$stockData.voucher_id",
                 project_name:"$projectData.project_name",
                 item_id: "$stockData.item_id",
+                unit_name: "$unitData.unit_name",
                 stock_date: "$stock_date",
                 project_name: "$projectData.project_name",
                 item_name: "$itemData.item_name",
