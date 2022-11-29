@@ -238,6 +238,7 @@ const VoucherController = {
       qty,
       voucher_type,
       vehicle_no,
+      unit_id,
       location,
       remark,
       project_id,
@@ -251,6 +252,7 @@ const VoucherController = {
           },
           {
             item_id,
+            unit_id,
             qty,
             voucher_type,
             verify_status:
@@ -483,6 +485,7 @@ const VoucherController = {
     const {
       voucher_type,
       item_id,
+      unit_id,
       location,
       vehicle_no,
       qty,
@@ -509,6 +512,7 @@ const VoucherController = {
       const voucherDetail = voucherDetails({
         voucher_id: exist._id,
         item_id: item_id,
+        unit_id:unit_id,
         location: location,
         voucher_type: voucher_type,
         verify_status:
@@ -538,6 +542,7 @@ const VoucherController = {
       const voucherDetail = voucherDetails({
         voucher_id: voucherId,
         item_id: item_id,
+        unit_id:unit_id,
         location: location,
         voucher_type: voucher_type,
         verify_status:

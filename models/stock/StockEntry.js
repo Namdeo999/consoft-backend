@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 const stockEntrySchema = mongoose.Schema({
     stock_id: { type: ObjectId},
     item_id: {type: ObjectId},
+    unit_id: {type: ObjectId},
     // unit_name: { type: String},
     qty: {type:Number, required:true},
     // location: { type: String},
