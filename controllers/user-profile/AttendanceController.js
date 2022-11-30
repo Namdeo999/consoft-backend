@@ -10,6 +10,9 @@ const AttendanceController = {
     async index(req, res, next){
         let documents; 
         let condition;
+        const year = CustomFunction.currentYearMonthDay('YYYY');
+        const month = CustomFunction.currentYearMonthDay('MM')
+        
         try {
             
             if (req.params.user_id) {
@@ -24,8 +27,11 @@ const AttendanceController = {
                     $match:{
                         $and:[
                             condition,
-                            {"year": parseInt(req.params.year)}, 
-                            {"month": parseInt(req.params.month)},
+                            // {"year": parseInt(req.params.year)}, 
+                            // {"month": parseInt(req.params.month)},
+
+                            {"year": req.params.year ? parseInt(req.params.year) : year}, 
+                            {"month": req.params.month ?  parseInt(req.params.month) : month},
                         ]
                     }
                 },
@@ -393,8 +399,17 @@ const AttendanceController = {
     // },
 
     async approveLeaves(req, res, next){
+        const {leavedates}  = req.body;
+
         try {
-            const {leavedates}  = req.body;
+            if (leavedates.length === 0) {
+                return res.send({status:400, message: "Please select leave dates for approve"});
+            }
+        } catch (err) {
+            return next(err);
+        }
+
+        try {
             leavedates.forEach( async (list, key) => {
                 await Attendance.findOneAndUpdate(
                     {
@@ -408,14 +423,13 @@ const AttendanceController = {
                     },
                 );
             })
-            res.send(CustomSuccessHandler.success("Leave Approved successfully!"))
         } catch (err) {
             return next(CustomErrorHandler.serverError());
         }
+        return res.send(CustomSuccessHandler.success("Leave Approved successfully!"))
     }
 
 }
-
 
 export default AttendanceController;
 

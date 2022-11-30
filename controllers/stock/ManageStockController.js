@@ -75,6 +75,7 @@ const ManageStockController = {
                 item_id: "$stockData.item_id",
                 unit_name: "$unitData.unit_name",
                 stock_date: "$stock_date",
+                project_name: "$projectData.project_name",
                 item_name: "$itemData.item_name",
                 qty: "$stockData.qty",
               },

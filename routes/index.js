@@ -51,6 +51,7 @@ import user_auth from '../middlewares/user_auth.js';
 router.get('/companies', AdminDashboardController.index);
 router.get('/pending-verify-payment', AdminDashboardController.pendingVerifyPayment);
 router.put('/payment-verify', AdminDashboardController.paymentVerify);
+router.get('/verified-company', AdminDashboardController.verifiedCompany);
 
 // router.get('/me', userController.me);
 router.post('/login', loginController.login);
@@ -58,6 +59,7 @@ router.post('/login', loginController.login);
 router.post('/company-login', CompanyController.companyLogin);
 router.get('/company', [auth, admin], CompanyController.index);
 router.post('/company', CompanyController.store);
+router.put('/company/:id', CompanyController.update);
 router.post('/company-logout', CompanyController.companyLogout);
 
 router.post('/verify-product-key', ProductKeyController.verifyProductKey);
@@ -226,7 +228,7 @@ router.get('/user-completed-works/:user_id', UserAssignWorkController.userComple
 router.put('/user-work-comment/:work_id', UserAssignWorkController.userWorkComment)
 
 //Tools And Machinery
-router.get('/tools-machinery', ToolsMachineryController.index);
+router.get('/tools-machinery/:company_id', ToolsMachineryController.index);
 router.get('/tools-machinery-report/:project_id/:user_id/:date', ToolsMachineryController.getTAndPReport);
 router.get('/edit-tools-machinery-report/:id', ToolsMachineryController.tAndPEditReport);
 router.get('/tools-machinery/:id', ToolsMachineryController.edit);
@@ -236,7 +238,7 @@ router.put('/tools-machinery/:id', ToolsMachineryController.update);
 router.delete('/tools-machinery/:id', ToolsMachineryController.destroy);
 
 //contractors
-router.get('/contractor', ContractorController.index);
+router.get('/contractor/:company_id', ContractorController.index);
 router.get('/project-by-contractor/:project_id', ContractorController.projectByContractor);
 router.post('/contractor', ContractorController.store);
 router.put('/contractor/:id', ContractorController.update);

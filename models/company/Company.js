@@ -8,6 +8,7 @@ const companySchema = mongoose.Schema({
     password: { type: String },
     role: { type: String, default: 'Administrator' },
     company_verify: { type: Boolean, default: false },
+    company_address: { type: String  },
 })
 
 export default mongoose.model('Company', companySchema, 'companies');
