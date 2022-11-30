@@ -276,6 +276,9 @@ router.get('/edit-quantity-report-item/:id', QuantityReportItemController.edit);
 router.put('/update-quantity-report-item/:id', QuantityReportItemController.update);
 router.delete('/delete-quantity-report-item/:id', QuantityReportItemController.destroy);
 router.get('/steel-quantity-item/:company_id', QuantityReportItemController.steelQuantityItem);
+router.get('/painting-quantity-item/:company_id', QuantityReportItemController.paintingQuantityItem);
+router.get('/floring-quantity-item/:company_id', QuantityReportItemController.floringQuantityItem);
+router.get('/plaster-quantity-item/:company_id', QuantityReportItemController.plasterQuantityItem);
 
 //quality type
 router.get('/quality-type/', QualityTypeController.index);
