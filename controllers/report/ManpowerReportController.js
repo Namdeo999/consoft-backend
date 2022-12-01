@@ -36,6 +36,15 @@ const ManpowerReportController = {
                 //     },
                 // },
                 {
+                    $lookup: { 
+                        from: 'projectTeam',
+                        localField: 'project_id',
+                        foreignField: 'project_id',
+                        as: 'projectCountData'
+                    }
+                },
+                  { $addFields: {projectTeamCount: {$size: "$projectCountData"}}},
+                {
                     $match: { 
                         "project_id": ObjectId(req.params.project_id),
                         "user_id": ObjectId(req.params.user_id),
@@ -88,6 +97,7 @@ const ManpowerReportController = {
                     $group:{
                         _id: "$manpowerMemberReportData.manpower_report_id" ,
                         "main_report_id": { "$first": "$_id" },
+                        "project_team_count":{ "$first": "$projectTeamCount"},
                         "company_id": { "$first": "$company_id" },
                         "project_id": { "$first": "$project_id" },
                         "user_id": { "$first": "$manpowerReportData.user_id" },
@@ -115,6 +125,7 @@ const ManpowerReportController = {
                         report_id:"$main_report_id",     
                         user_id: "$user_id",
                         manpower_count:"$manpower_count",
+                        project_Team_count:"$project_team_count",
                         contractor_id: "$contractor_id",
                         contractor_name: "$contractor_name",
                         manpower_report_date: 1,
@@ -539,7 +550,8 @@ const ManpowerReportController = {
                         "user_id": { "$first": "$user_id" },
                         "contractor_id": { "$first": "$contractor_id" },
                         "contractor_name": { "$first": "$contractorData.contractor_name" },
-                        "total_manpower": { $sum: "$manpowerMemberReportData.manpower_member" },
+                        "total_manpower": { $sum: "$manpowerMemberReportData.manpower_member" },  
+                                           
                         // "manpower_category_id_new": { $addToSet : "$manpowerMemberReportData.manpower_member" },//not use
                         "manpowerCategories":{
                             "$push":{
