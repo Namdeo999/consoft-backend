@@ -387,6 +387,15 @@ const ReportController = {
             }
             documents = await Report.aggregate([
                 {
+                    $lookup: { 
+                        from: 'projectTeam',
+                        localField: 'project_id',
+                        foreignField: 'project_id',
+                        as: 'projectCountData'
+                    }
+                },
+                  { $addFields: {projectTeamCount: {$size: "$projectCountData"}}},
+                {
                     $match: {
                         $and: [
                             condition,
@@ -436,6 +445,7 @@ const ReportController = {
                         company_address:"$companyData.company_address",
                         project_id: 1,
                         project_name: "$projectData.project_name",
+                        project_Team_count:"$projectTeamCount",
                         user_id: "$user_id",
                         user_name: "$userData.name",
                         report_date: 1,
