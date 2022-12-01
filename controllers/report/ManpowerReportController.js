@@ -91,10 +91,12 @@ const ManpowerReportController = {
                         "company_id": { "$first": "$company_id" },
                         "project_id": { "$first": "$project_id" },
                         "user_id": { "$first": "$manpowerReportData.user_id" },
+                        "manpower_count": { $sum: "$manpowerMemberReportData.manpower_member" },
                         "contractor_id": { "$first": "$manpowerReportData.contractor_id" },
                         "contractor_name": { "$first": "$contractorData.contractor_name" },
                         // "manpower_category_id_new": { $addToSet : "$manpowerMemberReportData.manpower_category_id" },
                         // "manpowerCategories":{"$push":'$manpowerMemberReportData'}
+
                         "manpowerCategories":{
                             "$push":{
                                 _id:'$manpowerMemberReportData._id', 
@@ -112,6 +114,7 @@ const ManpowerReportController = {
                         _id: 1,                         
                         report_id:"$main_report_id",     
                         user_id: "$user_id",
+                        manpower_count:"$manpower_count",
                         contractor_id: "$contractor_id",
                         contractor_name: "$contractor_name",
                         manpower_report_date: 1,
